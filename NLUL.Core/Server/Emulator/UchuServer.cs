@@ -11,8 +11,10 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Net.Http;
 using System.Xml.Serialization;
 using NLUL.Core.Server.Prerequisite;
+using NLUL.Core.Server.Util;
 
 namespace NLUL.Core.Server.Emulator
 {
@@ -21,7 +23,7 @@ namespace NLUL.Core.Server.Emulator
      */
     public class UchuState
     {
-        public string LastVersion;
+        public string CurrentVersion;
         public int ProcessId = 0;
     }
     
@@ -114,51 +116,20 @@ namespace NLUL.Core.Server.Emulator
         private UchuState State;
         
         /*
+         * Returns the current GitHub commit.
+         */
+        private static string GetCurrentGitHubCommit()
+        {
+            return GitHub.GetLastCommit("yuwui","Uchu");
+        }
+        
+        /*
          * Creates an Uchu Server object.
          */
         public UchuServer(ServerInfo info)
         {
             this.ServerInfo = info;
             this.ReadState();
-        }
-        
-        /*
-         * Returns the prerequisites for the server.
-         */
-        public List<IPrerequisite> GetPrerequisites()
-        {
-            return new List<IPrerequisite>()
-            {
-                new DotNetCore31(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools"))
-            };
-            
-            // TODO: Detect PostgresSQL install
-            // TODO: Redis support?
-        }
-        
-        /*
-         * Returns if the server is running.
-         */
-        public bool IsRunning()
-        {
-            // Return true if the process id isn't zero and the process exists.
-            try
-            {
-                if (this.State.ProcessId != 0)
-                {
-                    Process.GetProcessById(this.State.ProcessId);
-                    return true;
-                }
-            }
-            catch (ArgumentException)
-            {
-                // Update that the server is not running.
-                this.State.ProcessId = 0;
-                this.WriteState();
-            }
-
-            // Return false (not running).
-            return false;
         }
         
         /*
@@ -234,6 +205,53 @@ namespace NLUL.Core.Server.Emulator
             var configWriter = new StreamWriter(configLocation);  
             configSerializer.Serialize(configWriter,config);  
             configWriter.Close();  
+        }
+        
+        /*
+         * Returns the prerequisites for the server.
+         */
+        public List<IPrerequisite> GetPrerequisites()
+        {
+            return new List<IPrerequisite>()
+            {
+                new DotNetCore31(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools"))
+            };
+            
+            // TODO: Detect PostgresSQL install
+            // TODO: Redis support?
+        }
+        
+        /*
+         * Returns if the server is running.
+         */
+        public bool IsRunning()
+        {
+            // Return true if the process id isn't zero and the process exists.
+            try
+            {
+                if (this.State.ProcessId != 0)
+                {
+                    Process.GetProcessById(this.State.ProcessId);
+                    return true;
+                }
+            }
+            catch (ArgumentException)
+            {
+                // Update that the server is not running.
+                this.State.ProcessId = 0;
+                this.WriteState();
+            }
+
+            // Return false (not running).
+            return false;
+        }
+        
+        /*
+         * Returns if an update is available.
+         */
+        public bool IsUpdateAvailable()
+        {
+            return this.State.CurrentVersion == GetCurrentGitHubCommit();
         }
         
         /*
@@ -316,6 +334,7 @@ namespace NLUL.Core.Server.Emulator
             // Create the default configuration.
             Console.WriteLine("Creating the default configuration.");
             this.CreateConfig();
+            this.State.CurrentVersion = GetCurrentGitHubCommit();
             this.WriteState();
         }
 

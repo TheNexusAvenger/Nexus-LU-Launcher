@@ -22,6 +22,11 @@ namespace NLUL.Core.Server.Emulator
         public bool IsRunning();
         
         /*
+         * Returns if an update is available.
+         */
+        public bool IsUpdateAvailable();
+        
+        /*
          * Installs the server. Used for both initializing
          * the first time and updating.
          */
