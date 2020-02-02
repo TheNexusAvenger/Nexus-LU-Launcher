@@ -17,6 +17,15 @@ using NLUL.Core.Server.Prerequisite;
 namespace NLUL.Core.Server.Emulator
 {
     /*
+     * State of the Uchu server.
+     */
+    public class UchuState
+    {
+        public string LastVersion;
+        public int ProcessId = 0;
+    }
+    
+    /*
      * Database section of the Uchu config.
      */
     public class UchuDatabase
@@ -102,6 +111,7 @@ namespace NLUL.Core.Server.Emulator
         private const string DOTNET_APP_VERSION = "netcoreapp3.1";
         
         private ServerInfo ServerInfo;
+        private UchuState State;
         
         /*
          * Creates an Uchu Server object.
@@ -109,6 +119,7 @@ namespace NLUL.Core.Server.Emulator
         public UchuServer(ServerInfo info)
         {
             this.ServerInfo = info;
+            this.ReadState();
         }
         
         /*
@@ -123,6 +134,38 @@ namespace NLUL.Core.Server.Emulator
             
             // TODO: Detect PostgresSQL install
             // TODO: Redis support?
+        }
+        
+        /*
+         * Reads the current state.
+         */
+        private void ReadState()
+        {
+            var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.xml");
+            if (File.Exists(stateLocation))
+            {
+                var stateSerializer = new XmlSerializer(typeof(UchuState));  
+                var stateReader = new FileStream(stateLocation,FileMode.Open);  
+                this.State = (UchuState) stateSerializer.Deserialize(stateReader);  
+                stateReader.Close();  
+            }
+            else
+            {
+                this.State = new UchuState();
+            }
+        }
+        
+        /*
+         * Saves the current state.
+         */
+        private void WriteState()
+        {
+            // Serialize the state.
+            var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.xml");
+            var stateSerializer = new XmlSerializer(typeof(UchuState));  
+            var stateWriter = new StreamWriter(stateLocation);  
+            stateSerializer.Serialize(stateWriter,this.State);  
+            stateWriter.Close();
         }
         
         /*
@@ -248,6 +291,7 @@ namespace NLUL.Core.Server.Emulator
             // Create the default configuration.
             Console.WriteLine("Creating the default configuration.");
             this.CreateConfig();
+            this.WriteState();
         }
 
         /*
@@ -255,7 +299,21 @@ namespace NLUL.Core.Server.Emulator
          */
         public void Start()
         {
+            // Determine the file locations.
+            var masterServerDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"Server","Uchu-master","Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
+            var masterServerExecutable = Path.Combine(masterServerDirectory,"Uchu.Master");
             
+            // Create and start the process.
+            var uchuProcess = new Process();
+            uchuProcess.StartInfo.FileName = masterServerExecutable;
+            uchuProcess.StartInfo.WorkingDirectory = masterServerDirectory;
+            uchuProcess.StartInfo.CreateNoWindow = true;
+            uchuProcess.Start();
+            Console.WriteLine("Started Uchu server.");
+            
+            // Start and store the process id.
+            this.State.ProcessId = uchuProcess.Id;
+            this.WriteState();
         }
         
         /*
@@ -263,7 +321,17 @@ namespace NLUL.Core.Server.Emulator
          */
         public void Stop()
         {
-            
+            // Stop the process.
+            if (this.State.ProcessId != 0)
+            {
+                var uchuProcess = Process.GetProcessById(this.State.ProcessId);
+                uchuProcess.Kill(true);
+                Console.WriteLine("Stopped Uchu server.");
+            }
+
+            // Store 0 as the process id.
+            this.State.ProcessId = 0;
+            this.WriteState();
         }
     }
 }
