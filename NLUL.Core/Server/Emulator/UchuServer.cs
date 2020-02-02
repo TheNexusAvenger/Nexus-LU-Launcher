@@ -11,10 +11,91 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Xml.Serialization;
 using NLUL.Core.Server.Prerequisite;
 
 namespace NLUL.Core.Server.Emulator
 {
+    /*
+     * Database section of the Uchu config.
+     */
+    public class UchuDatabase
+    {
+        public string Provider = "postgres";
+        public string Database = "uchu";
+        public string Host = "localhost";
+        public string Username = "postgres";
+        public string Password = "postgres";
+    }
+    
+    /*
+     * ConsoleLogging section of the Uchu config.
+     */
+    public class UchuConsoleLogging
+    {
+        public string Level = "Debug";
+    }
+    
+    /*
+     * FileLogging section of the Uchu config.
+     */
+    public class UchuFileLogging
+    {
+        public string Level = "None";
+        public string Logfile = "uchu.log";
+    }
+    
+    /*
+     * DllSource section of the Uchu config.
+     */
+    public class UchuDllSource
+    {
+        public string ServerDllSourcePath = "../../../../";
+        public string DotNetPath = "dotnet";
+        public string ScriptDllSource = "Uchu.StandardScripts";
+    }
+    
+    /*
+     * ManagedScriptSources section of the Uchu config.
+     */
+    public class UchuManagedScriptSources
+    {
+        
+    }
+    
+    /*
+     * ResourcesConfiguration section of the Uchu config.
+     */
+    public class UchuResourcesConfiguration
+    {
+        public string GameResourceFolder = "/res";
+    }
+    
+    /*
+     * UchuNetworking section of the Uchu config.
+     */
+    public class UchuNetworking
+    {
+        public string Certificate;
+        public string Hostname;
+        public string CharacterPort = "2002";
+    }
+    
+    /*
+     * Uchu XML config structure.
+     */
+    [XmlRoot(ElementName = "Uchu")]
+    public class UchuConfig
+    {
+        public UchuDatabase Database = new UchuDatabase();
+        public UchuConsoleLogging ConsoleLogging = new UchuConsoleLogging();
+        public UchuFileLogging FileLogging = new UchuFileLogging();
+        public UchuDllSource DllSource = new UchuDllSource();
+        public UchuManagedScriptSources ManagedScriptSources = new UchuManagedScriptSources();
+        public UchuResourcesConfiguration ResourcesConfiguration = new UchuResourcesConfiguration();
+        public UchuNetworking Networking = new UchuNetworking();
+    }
+    
     public class UchuServer : IEmulator
     {
         private ServerInfo ServerInfo;
@@ -49,7 +130,7 @@ namespace NLUL.Core.Server.Emulator
             // Clean up the zip files.
             File.Delete(Path.Combine(this.ServerInfo.ServerFileLocation,"InfectedRose.zip"));
             File.Delete(Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet.zip"));
-            File.Delete(Path.Combine(this.ServerInfo.ServerFileLocation,"ServerDownload.zip"));
+            File.Delete(Path.Combine(this.ServerInfo.ServerFileLocation,"Server.zip"));
             
             // Clean up the extracted directories.
             var infectedRoseDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"InfectedRose");
@@ -70,6 +151,26 @@ namespace NLUL.Core.Server.Emulator
         }
         
         /*
+         * Creates the initial server configuration.
+         */
+        private void CreateConfig()
+        {
+            // Create the base config.
+            var config = new UchuConfig();
+            
+            // Set the values that are specific to the install.
+            config.DllSource.DotNetPath = Path.GetFullPath(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools","dotnet","dotnet"));
+            config.ResourcesConfiguration.GameResourceFolder = Path.GetFullPath(Path.Combine(this.ServerInfo.ClientLocation,"res"));
+            
+            // Write the config.
+            var configLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"Server","config.xml");
+            var configSerializer = new XmlSerializer(typeof(UchuConfig));  
+            var configWriter = new StreamWriter(configLocation);  
+            configSerializer.Serialize(configWriter,config);  
+            configWriter.Close();  
+        }
+        
+        /*
          * Installs the server. Used for both initializing
          * the first time and updating.
          */
@@ -79,6 +180,8 @@ namespace NLUL.Core.Server.Emulator
             var toolsLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"Tools");
             var dotNetDirectoryLocation = Path.Combine(toolsLocation,"dotnet3.1");
             var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation, "dotnet");
+            
+            // TODO: Verify client is unpacked.
             
             // Clear previous files.
             Console.WriteLine("Clearing old files");
@@ -145,6 +248,10 @@ namespace NLUL.Core.Server.Emulator
             // Clean up the download files.
             Console.WriteLine("Cleaning up files.");
             this.CleanupFiles();
+            
+            // Create the default configuration.
+            Console.WriteLine("Creating the default configuration.");
+            this.CreateConfig();
         }
 
         /*
