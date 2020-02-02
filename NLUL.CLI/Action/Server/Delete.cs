@@ -10,7 +10,7 @@ using System.IO;
 using NLUL.Core;
 using NLUL.Core.Server;
 
-namespace NLUL.Action.Server
+namespace NLUL.CLI.Action.Server
 {
     public class Delete : IAction
     {

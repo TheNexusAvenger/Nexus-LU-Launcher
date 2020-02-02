@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using NLUL.Core;
 
-namespace NLUL.Action
+namespace NLUL.CLI.Action
 {
     public interface IAction
     {

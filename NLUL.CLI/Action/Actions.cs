@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using NLUL.Action.Server;
+using NLUL.CLI.Action.Server;
 
-namespace NLUL.Action
+namespace NLUL.CLI.Action
 {
     public class Actions
     {

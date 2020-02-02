@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using NLUL.Core;
 using NLUL.Core.Server;
 
-namespace NLUL.Action.Server
+namespace NLUL.CLI.Action.Server
 {
     public class New : IAction
     {

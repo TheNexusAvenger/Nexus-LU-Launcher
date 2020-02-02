@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using NLUL.Action;
+using NLUL.CLI.Action;
 using NLUL.Core;
 
-namespace NLUL
+namespace NLUL.CLI
 {
     class Program
     {
