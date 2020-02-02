@@ -47,7 +47,7 @@ namespace NLUL.Action.Server
             var serverCreator = new ServerCreator(systemInfo);
             var server = serverCreator.GetServer(name);
             
-            // Print the status.
+            // Start the server.
             if (server == null)
             {
                 Console.WriteLine("Server \"" + name + "\" does not exist.");
