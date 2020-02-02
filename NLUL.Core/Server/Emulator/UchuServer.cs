@@ -245,7 +245,7 @@ namespace NLUL.Core.Server.Emulator
          */
         public bool IsUpdateAvailable()
         {
-            return this.State.CurrentVersion == GetCurrentGitHubCommit();
+            return this.State.CurrentVersion != GetCurrentGitHubCommit();
         }
         
         /*
