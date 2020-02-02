@@ -38,7 +38,7 @@ namespace NLUL.Action.Server
             if (arguments.Count < 3)
             {
                 Console.WriteLine("serverName not specified.");
-                Actions.PrintUsage("server","start");
+                Actions.PrintUsage("server","stop");
                 return;
             }
             var name = arguments[2];
