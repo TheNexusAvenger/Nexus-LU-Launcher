@@ -98,6 +98,9 @@ namespace NLUL.Core.Server.Emulator
     
     public class UchuServer : IEmulator
     {
+        private const string BUILD_MODE = "Debug";
+        private const string DOTNET_APP_VERSION = "netcoreapp3.1";
+        
         private ServerInfo ServerInfo;
         
         /*
@@ -141,12 +144,7 @@ namespace NLUL.Core.Server.Emulator
             var rakDotNetDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet");
             if (Directory.Exists(rakDotNetDirectory))
             {
-                Directory.Delete(rakDotNetDirectory,true);
-            }
-            var serverDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"ServerDownload");
-            if (Directory.Exists(serverDownloadDirectory))
-            {
-                Directory.Delete(serverDownloadDirectory,true);
+                Directory.Delete(rakDotNetDirectory, true);
             }
         }
         
@@ -159,11 +157,11 @@ namespace NLUL.Core.Server.Emulator
             var config = new UchuConfig();
             
             // Set the values that are specific to the install.
-            config.DllSource.DotNetPath = Path.GetFullPath(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools","dotnet","dotnet"));
+            config.DllSource.DotNetPath = Path.GetFullPath(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools","dotnet3.1","dotnet"));
             config.ResourcesConfiguration.GameResourceFolder = Path.GetFullPath(Path.Combine(this.ServerInfo.ClientLocation,"res"));
             
             // Write the config.
-            var configLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"Server","config.xml");
+            var configLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"Server","Uchu-master","Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION,"config.xml");
             var configSerializer = new XmlSerializer(typeof(UchuConfig));  
             var configWriter = new StreamWriter(configLocation);  
             configSerializer.Serialize(configWriter,config);  
@@ -187,6 +185,13 @@ namespace NLUL.Core.Server.Emulator
             Console.WriteLine("Clearing old files");
             this.CleanupFiles();
             
+            // Remove the previous server.
+            var serverOldDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"Server");
+            if (Directory.Exists(serverOldDirectory))
+            {
+                Directory.Delete(serverOldDirectory,true);
+            }
+            
             // Install additional tools.
             Console.WriteLine("Installing .NET Entity Framework Command Line Interface");
             var entityFrameworkInstallProcess = new Process();
@@ -201,12 +206,12 @@ namespace NLUL.Core.Server.Emulator
             // Download and extract the server files from master.
             var client = new WebClient();
             Console.WriteLine("Downloading the latest server from GitHub/yuwui/Uchu");
-            var targetServerDownloadZip = Path.Combine(this.ServerInfo.ServerFileLocation,"ServerDownload.zip");
-            var targetServerDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"ServerDownload");
-            client.DownloadFile("https://github.com/yuwui/Uchu/archive/master.zip",targetServerDownloadZip);
-            ZipFile.ExtractToDirectory(targetServerDownloadZip,targetServerDownloadDirectory);
-            Directory.Delete(Path.Combine(targetServerDownloadDirectory,"Uchu-master","InfectedRose"),true);
-            Directory.Delete(Path.Combine(targetServerDownloadDirectory,"Uchu-master","RakDotNet"),true);
+            var targetServerZip = Path.Combine(this.ServerInfo.ServerFileLocation,"Server.zip");
+            var targetServerDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"Server");
+            client.DownloadFile("https://github.com/yuwui/Uchu/archive/master.zip",targetServerZip);
+            ZipFile.ExtractToDirectory(targetServerZip,targetServerDirectory);
+            Directory.Delete(Path.Combine(targetServerDirectory,"Uchu-master","InfectedRose"),true);
+            Directory.Delete(Path.Combine(targetServerDirectory,"Uchu-master","RakDotNet"),true);
             
             // Download and extract InfectedRose.
             Console.WriteLine("Downloading the latest InfectedRose library from GitHub/Wincent01/InfectedRose");
@@ -214,7 +219,7 @@ namespace NLUL.Core.Server.Emulator
             var targetInfectedRoseDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"InfectedRose");
             client.DownloadFile("https://github.com/Wincent01/InfectedRose/archive/master.zip",targetInfectedRoseDownloadZip);
             ZipFile.ExtractToDirectory(targetInfectedRoseDownloadZip,targetInfectedRoseDownloadDirectory);
-            Directory.Move(Path.Combine(targetInfectedRoseDownloadDirectory,"InfectedRose-master"),Path.Combine(targetServerDownloadDirectory,"Uchu-master","InfectedRose"));
+            Directory.Move(Path.Combine(targetInfectedRoseDownloadDirectory,"InfectedRose-master"),Path.Combine(targetServerDirectory,"Uchu-master","InfectedRose"));
             
             // Download and extract InfectedRose.
             Console.WriteLine("Downloading the latest InfectedRose library from GitHub/yuwui/RakDotNet");
@@ -222,32 +227,23 @@ namespace NLUL.Core.Server.Emulator
             var targetRakDotNetDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet");
             client.DownloadFile("https://github.com/yuwui/RakDotNet/archive/3.25/tcpudp.zip",targetRakDotNetDownloadZip);
             ZipFile.ExtractToDirectory(targetRakDotNetDownloadZip,targetRakDotNetDownloadDirectory);
-            Directory.Move(Path.Combine(targetRakDotNetDownloadDirectory,"RakDotNet-3.25-tcpudp"),Path.Combine(targetServerDownloadDirectory,"Uchu-master","RakDotNet"));
+            Directory.Move(Path.Combine(targetRakDotNetDownloadDirectory,"RakDotNet-3.25-tcpudp"),Path.Combine(targetServerDirectory,"Uchu-master","RakDotNet"));
 
             // Compile the server.
             Console.WriteLine("Building the server.");
-            var buildDirectory = Path.Combine(targetServerDownloadDirectory,"Uchu-master");
+            var buildDirectory = Path.Combine(targetServerDirectory,"Uchu-master");
             var buildProcess = new Process();
             buildProcess.StartInfo.WorkingDirectory = buildDirectory;
             buildProcess.StartInfo.FileName = dotNetExecutableLocation;
             buildProcess.StartInfo.CreateNoWindow = true;
-            buildProcess.StartInfo.Arguments = "publish -c Debug";
+            buildProcess.StartInfo.Arguments = "build -c " + BUILD_MODE;
             buildProcess.Start();
             buildProcess.WaitForExit();
             buildProcess.Close();
-            
-            // Copy the files to the server directory.
-            Console.WriteLine("Creating the server files.");
-            var targetServerDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"Server");
-            if (Directory.Exists(targetServerDirectory))
-            {
-                Directory.Delete(targetServerDirectory,true);
-            }
-            Directory.Move(Path.Combine(targetServerDownloadDirectory,"Uchu-master","Uchu.Master","bin","Debug","netcoreapp3.1","publish"),targetServerDirectory);
-            
+
             // Clean up the download files.
             Console.WriteLine("Cleaning up files.");
-            this.CleanupFiles();
+            // this.CleanupFiles();
             
             // Create the default configuration.
             Console.WriteLine("Creating the default configuration.");
