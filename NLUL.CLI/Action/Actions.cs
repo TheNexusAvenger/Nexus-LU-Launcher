@@ -21,6 +21,7 @@ namespace NLUL.Action
                 {"stop", new Stop()},
                 {"update", new Update()},
                 {"new", new New()},
+                {"delete", new Delete()},
             }},
         };
         

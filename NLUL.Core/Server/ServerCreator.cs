@@ -102,5 +102,25 @@ namespace NLUL.Core.Server
             // Return the server emulator.
             return serverInfo.CreateEmulator();
         }
+        
+        /*
+         * Deletes a server.
+         */
+        public void DeleteServer(string name)
+        {
+            // Throw an error if the server name doesn't exist.
+            if (!this.Servers.ContainsKey(name.ToLower()))
+            {
+                throw new ArgumentException("Server doesn't exist.");
+            }
+            
+            // Get the server data and delete the server files.
+            var serverInfo = this.Servers[name.ToLower()];
+            Directory.Delete(serverInfo.ServerFileLocation,true);
+            
+            // Remove the server entry.
+            this.Servers.Remove(name.ToLower());
+            this.WriteServers();
+        }
     }
 }
