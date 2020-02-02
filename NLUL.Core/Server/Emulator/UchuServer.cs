@@ -11,8 +11,8 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using System.Net.Http;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
 using NLUL.Core.Server.Prerequisite;
 using NLUL.Core.Server.Util;
 
@@ -137,13 +137,10 @@ namespace NLUL.Core.Server.Emulator
          */
         private void ReadState()
         {
-            var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.xml");
+            var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.json");
             if (File.Exists(stateLocation))
             {
-                var stateSerializer = new XmlSerializer(typeof(UchuState));  
-                var stateReader = new FileStream(stateLocation,FileMode.Open);  
-                this.State = (UchuState) stateSerializer.Deserialize(stateReader);  
-                stateReader.Close();  
+                this.State = JsonConvert.DeserializeObject<UchuState>(File.ReadAllText(stateLocation));
             }
             else
             {
@@ -157,11 +154,8 @@ namespace NLUL.Core.Server.Emulator
         private void WriteState()
         {
             // Serialize the state.
-            var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.xml");
-            var stateSerializer = new XmlSerializer(typeof(UchuState));  
-            var stateWriter = new StreamWriter(stateLocation);  
-            stateSerializer.Serialize(stateWriter,this.State);  
-            stateWriter.Close();
+            var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.json");
+            File.WriteAllText(stateLocation,JsonConvert.SerializeObject(this.State,Formatting.Indented));
         }
         
         /*
@@ -329,7 +323,7 @@ namespace NLUL.Core.Server.Emulator
 
             // Clean up the download files.
             Console.WriteLine("Cleaning up files.");
-            // this.CleanupFiles();
+            this.CleanupFiles();
             
             // Create the default configuration.
             Console.WriteLine("Creating the default configuration.");
