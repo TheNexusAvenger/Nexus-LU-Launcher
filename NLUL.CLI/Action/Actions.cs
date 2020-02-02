@@ -20,6 +20,7 @@ namespace NLUL.Action
                 {"start", new Start()},
                 {"stop", new Stop()},
                 {"update", new Update()},
+                {"new", new New()},
             }},
         };
         
