@@ -16,7 +16,7 @@ namespace NLUL
         {
             var systemInfo = new SystemInfo(args[0],args[1]);
             var serverCreator = new ServerCreator(systemInfo);
-            var emulator = serverCreator.InitializeServer("UchuDev", ServerType.Uchu);
+            var emulator = serverCreator.CreateServer("UchuDev", ServerType.Uchu);
 
             foreach (var prerequisite in emulator.GetPrerequisites())
             {
