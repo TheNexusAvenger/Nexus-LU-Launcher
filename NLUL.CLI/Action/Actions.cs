@@ -19,6 +19,7 @@ namespace NLUL.Action
                 {"status", new Status()},
                 {"start", new Start()},
                 {"stop", new Stop()},
+                {"update", new Update()},
             }},
         };
         
