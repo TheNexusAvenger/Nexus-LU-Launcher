@@ -17,6 +17,8 @@ namespace NLUL.Action
             {"server",new Dictionary<string,IAction>()
             {
                 {"status", new Status()},
+                {"start", new Start()},
+                {"stop", new Stop()},
             }},
         };
         
