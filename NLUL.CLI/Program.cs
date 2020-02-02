@@ -4,6 +4,7 @@
  * Runs the program.
  */
 using System;
+using System.Threading;
 using NLUL.Core;
 using NLUL.Core.Server;
 
@@ -28,6 +29,9 @@ namespace NLUL
             }
             
             emulator.Install();
+            emulator.Start();
+            Thread.Sleep(30000);
+            emulator.Stop();
         }
     }
 }

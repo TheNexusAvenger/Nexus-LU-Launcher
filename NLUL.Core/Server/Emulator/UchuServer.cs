@@ -137,6 +137,31 @@ namespace NLUL.Core.Server.Emulator
         }
         
         /*
+         * Returns if the server is running.
+         */
+        public bool IsRunning()
+        {
+            // Return true if the process id isn't zero and the process exists.
+            try
+            {
+                if (this.State.ProcessId != 0)
+                {
+                    Process.GetProcessById(this.State.ProcessId);
+                    return true;
+                }
+            }
+            catch (ArgumentException)
+            {
+                // Update that the server is not running.
+                this.State.ProcessId = 0;
+                this.WriteState();
+            }
+
+            // Return false (not running).
+            return false;
+        }
+        
+        /*
          * Reads the current state.
          */
         private void ReadState()
@@ -299,6 +324,13 @@ namespace NLUL.Core.Server.Emulator
          */
         public void Start()
         {
+            // Return if the server is already running.
+            if (this.IsRunning())
+            {
+                Console.WriteLine("Server is already running.");
+                return;
+            }
+            
             // Determine the file locations.
             var masterServerDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"Server","Uchu-master","Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
             var masterServerExecutable = Path.Combine(masterServerDirectory,"Uchu.Master");
@@ -309,7 +341,7 @@ namespace NLUL.Core.Server.Emulator
             uchuProcess.StartInfo.WorkingDirectory = masterServerDirectory;
             uchuProcess.StartInfo.CreateNoWindow = true;
             uchuProcess.Start();
-            Console.WriteLine("Started Uchu server.");
+            Console.WriteLine("Started server.");
             
             // Start and store the process id.
             this.State.ProcessId = uchuProcess.Id;
@@ -322,11 +354,15 @@ namespace NLUL.Core.Server.Emulator
         public void Stop()
         {
             // Stop the process.
-            if (this.State.ProcessId != 0)
+            if (this.IsRunning())
             {
                 var uchuProcess = Process.GetProcessById(this.State.ProcessId);
                 uchuProcess.Kill(true);
-                Console.WriteLine("Stopped Uchu server.");
+                Console.WriteLine("Stopped server.");
+            }
+            else
+            {
+                Console.WriteLine("Server not running.");
             }
 
             // Store 0 as the process id.

@@ -17,6 +17,11 @@ namespace NLUL.Core.Server.Emulator
         public List<IPrerequisite> GetPrerequisites();
         
         /*
+         * Returns if the server is  running.
+         */
+        public bool IsRunning();
+        
+        /*
          * Installs the server. Used for both initializing
          * the first time and updating.
          */
