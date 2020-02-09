@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using NLUL.CLI.Action.Client;
 using NLUL.CLI.Action.Server;
 
 namespace NLUL.CLI.Action
@@ -22,6 +23,11 @@ namespace NLUL.CLI.Action
                 {"update", new Update()},
                 {"new", new New()},
                 {"delete", new Delete()},
+            }},
+            {"client",new Dictionary<string,IAction>()
+            {
+                {"download", new Download()},
+                {"extract", new Extract()},
             }},
         };
         
