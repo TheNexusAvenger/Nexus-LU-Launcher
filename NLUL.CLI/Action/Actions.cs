@@ -29,6 +29,7 @@ namespace NLUL.CLI.Action
                 {"download", new Download()},
                 {"extract", new Extract()},
                 {"install", new Install()},
+                {"launch", new Launch()},
             }},
         };
         

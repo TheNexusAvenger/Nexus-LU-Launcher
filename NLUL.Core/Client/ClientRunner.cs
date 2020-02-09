@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -137,6 +138,39 @@ namespace NLUL.Core.Client
                 Directory.CreateDirectory(Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim"));
                 File.Copy(Path.Join(this.SystemInfo.SystemFileLocation,"TcpUdp","mods","raknet_shim","mod.dll"), Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim","mod.dll"));
             }
+        }
+        
+        /*
+         * Launches the client.
+         */
+        public void Launch(string host)
+        {
+            // Modify the boot file.
+            Console.WriteLine("Setting to connect to \"" + host + "\"");
+            var bootConfigLocation = Path.Combine(this.SystemInfo.ClientLocation,"boot.cfg");
+            var newBootContents = "";
+            foreach (var line in File.ReadLines(bootConfigLocation))
+            {
+                if (line.StartsWith("AUTHSERVERIP="))
+                {
+                    newBootContents += "AUTHSERVERIP=0:" + host + ",\n";
+                }
+                else
+                {
+                    newBootContents += line + "\n";
+                }
+            }
+            File.WriteAllText(bootConfigLocation,newBootContents.Substring(0,newBootContents.Length - 1));
+            
+            // Launch the client.
+            Console.WriteLine("Launching the client.");
+            var clientProcess = new Process();
+            clientProcess.StartInfo.WorkingDirectory = this.SystemInfo.ClientLocation;
+            clientProcess.StartInfo.FileName = Path.Combine(this.SystemInfo.ClientLocation,"legouniverse.exe");
+            clientProcess.StartInfo.CreateNoWindow = true;
+            clientProcess.Start();
+            clientProcess.WaitForExit();
+            Console.WriteLine("Client closed.");
         }
     }
 }
