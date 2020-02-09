@@ -43,9 +43,10 @@ namespace NLUL.CLI.Action.Client
             } 
             
             // Return if the client doesn't exist.
-            if (!Directory.Exists(systemInfo.ClientLocation) || !File.Exists(Path.Combine(systemInfo.ClientLocation, "legouniverse.exe")))
+            if (!Directory.Exists(systemInfo.ClientLocation) || !File.Exists(Path.Combine(systemInfo.ClientLocation,"legouniverse.exe")))
             {
                 Console.WriteLine("Client is not installed. Use \"client install\" or \"client install --force\" to install.");
+                return;
             }
             
             // Launch the client.
