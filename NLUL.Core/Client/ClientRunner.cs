@@ -107,5 +107,36 @@ namespace NLUL.Core.Client
                 this.ExtractClient(force);
             }
         }
+        
+        /*
+         * Patches the client files.
+         */
+        public void PatchClient()
+        {
+            // Download the TcpUdp mod.
+            Console.WriteLine("Adding the TcpUdp mod.");
+            var tcpUdpModZipLocation = Path.Combine(this.SystemInfo.SystemFileLocation,"TcpUdp.zip");
+            var tcpUdpModExtractLocation = Path.Combine(this.SystemInfo.SystemFileLocation,"TcpUdp");
+            if (!File.Exists(tcpUdpModZipLocation))
+            {
+                var client = new WebClient();
+                client.DownloadFile("https://bitbucket.org/lcdr/raknet_shim_dll/downloads/shim_dll.zip",tcpUdpModZipLocation);
+            }
+            if (!Directory.Exists(tcpUdpModExtractLocation))
+            {
+                ZipFile.ExtractToDirectory(tcpUdpModZipLocation,tcpUdpModExtractLocation);
+            }
+            
+            // Copy the TcpUdp files.
+            if (!File.Exists(Path.Join(this.SystemInfo.SystemFileLocation,"Client","dinput8.dll")))
+            {
+                File.Copy(Path.Join(this.SystemInfo.SystemFileLocation,"TcpUdp","dinput8.dll"),Path.Join(this.SystemInfo.SystemFileLocation,"Client","dinput8.dll"));
+            }
+            if (!File.Exists(Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim","mod.dll")))
+            {
+                Directory.CreateDirectory(Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim"));
+                File.Copy(Path.Join(this.SystemInfo.SystemFileLocation,"TcpUdp","mods","raknet_shim","mod.dll"), Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim","mod.dll"));
+            }
+        }
     }
 }
