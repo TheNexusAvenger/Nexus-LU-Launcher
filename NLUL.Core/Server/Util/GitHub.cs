@@ -4,7 +4,6 @@
  * Helper methods for GitHub.
  */
 
-using System.Collections.Generic;
 using System.Net.Http;
 using Newtonsoft.Json;
 
@@ -23,17 +22,17 @@ namespace NLUL.Core.Server.Util
         /*
          * Returns the last commit id.
          */
-        public static string GetLastCommit(string user,string repository)
+        public static string GetLastCommit(string remote,string branch)
         {
             // Get the commits.
             var client = new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", "Uchu Commits Fetch");
-            var commitsResponse  = client.GetAsync("https://api.github.com/repos/" + user + "/" + repository + "/commits").Result;
+            var commitsResponse  = client.GetAsync("https://api.github.com/repos/" + remote + "/commits/" + branch).Result;
             var commitsJson = commitsResponse.Content.ReadAsStringAsync().Result;
             
             // Parse the JSON and return the last commit.
-            var commits = JsonConvert.DeserializeObject<List<GitCommit>>(commitsJson);
-            return commits[0].sha;
+            var commits = JsonConvert.DeserializeObject<GitCommit>(commitsJson);
+            return commits.sha;
         }
     }
 }

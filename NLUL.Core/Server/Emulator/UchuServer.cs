@@ -25,6 +25,8 @@ namespace NLUL.Core.Server.Emulator
     {
         public string CurrentVersion;
         public int ProcessId = 0;
+        public string GitRemote = "yuwui";
+        public string GitBranch = "master";
     }
     
     /*
@@ -118,9 +120,9 @@ namespace NLUL.Core.Server.Emulator
         /*
          * Returns the current GitHub commit.
          */
-        private static string GetCurrentGitHubCommit()
+        private string GetCurrentGitHubCommit()
         {
-            return GitHub.GetLastCommit("yuwui","Uchu");
+            return GitHub.GetLastCommit(this.State.GitRemote,this.State.GitBranch);
         }
         
         /*
@@ -137,6 +139,7 @@ namespace NLUL.Core.Server.Emulator
          */
         private void ReadState()
         {
+            // Read the state.
             var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.json");
             if (File.Exists(stateLocation))
             {
@@ -156,6 +159,15 @@ namespace NLUL.Core.Server.Emulator
             // Serialize the state.
             var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.json");
             File.WriteAllText(stateLocation,JsonConvert.SerializeObject(this.State,Formatting.Indented));
+        }
+        
+        /*
+         * Returns the server directory.
+         * Used since the name isn't guaranteed based on the remote and branch.
+         */
+        public string GetServerDirectory()
+        {
+            return Directory.GetDirectories(Path.Combine(this.ServerInfo.ServerFileLocation,"Server"))[0];
         }
         
         /*
@@ -194,7 +206,7 @@ namespace NLUL.Core.Server.Emulator
             config.ResourcesConfiguration.GameResourceFolder = Path.GetFullPath(Path.Combine(this.ServerInfo.ClientLocation,"res"));
             
             // Write the config.
-            var configLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"Server","Uchu-master","Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION,"config.xml");
+            var configLocation = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION,"config.xml");
             var configSerializer = new XmlSerializer(typeof(UchuConfig));  
             var configWriter = new StreamWriter(configLocation);  
             configSerializer.Serialize(configWriter,config);  
@@ -245,7 +257,7 @@ namespace NLUL.Core.Server.Emulator
          */
         public bool IsUpdateAvailable()
         {
-            return this.State.CurrentVersion != GetCurrentGitHubCommit();
+            return this.State.CurrentVersion != this.GetCurrentGitHubCommit();
         }
         
         /*
@@ -285,13 +297,13 @@ namespace NLUL.Core.Server.Emulator
             
             // Download and extract the server files from master.
             var client = new WebClient();
-            Console.WriteLine("Downloading the latest server from GitHub/yuwui/Uchu");
+            Console.WriteLine("Downloading the latest server from GitHub/" + this.State.GitRemote);
             var targetServerZip = Path.Combine(this.ServerInfo.ServerFileLocation,"Server.zip");
-            var targetServerDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"Server");
-            client.DownloadFile("https://github.com/yuwui/Uchu/archive/master.zip",targetServerZip);
+            var targetServerDirectory = this.GetServerDirectory();
+            client.DownloadFile("https://github.com/" + this.State.GitRemote + "/archive/" + this.State.GitBranch + ".zip",targetServerZip);
             ZipFile.ExtractToDirectory(targetServerZip,targetServerDirectory);
-            Directory.Delete(Path.Combine(targetServerDirectory,"Uchu-master","InfectedRose"),true);
-            Directory.Delete(Path.Combine(targetServerDirectory,"Uchu-master","RakDotNet"),true);
+            Directory.Delete(Path.Combine(targetServerDirectory,"InfectedRose"),true);
+            Directory.Delete(Path.Combine(targetServerDirectory,"RakDotNet"),true);
             
             // Download and extract InfectedRose.
             Console.WriteLine("Downloading the latest InfectedRose library from GitHub/Wincent01/InfectedRose");
@@ -299,7 +311,7 @@ namespace NLUL.Core.Server.Emulator
             var targetInfectedRoseDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"InfectedRose");
             client.DownloadFile("https://github.com/Wincent01/InfectedRose/archive/master.zip",targetInfectedRoseDownloadZip);
             ZipFile.ExtractToDirectory(targetInfectedRoseDownloadZip,targetInfectedRoseDownloadDirectory);
-            Directory.Move(Path.Combine(targetInfectedRoseDownloadDirectory,"InfectedRose-master"),Path.Combine(targetServerDirectory,"Uchu-master","InfectedRose"));
+            Directory.Move(Path.Combine(targetInfectedRoseDownloadDirectory,"InfectedRose-master"),Path.Combine(targetServerDirectory,"InfectedRose"));
             
             // Download and extract InfectedRose.
             Console.WriteLine("Downloading the latest InfectedRose library from GitHub/yuwui/RakDotNet");
@@ -307,13 +319,12 @@ namespace NLUL.Core.Server.Emulator
             var targetRakDotNetDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet");
             client.DownloadFile("https://github.com/yuwui/RakDotNet/archive/3.25/tcpudp.zip",targetRakDotNetDownloadZip);
             ZipFile.ExtractToDirectory(targetRakDotNetDownloadZip,targetRakDotNetDownloadDirectory);
-            Directory.Move(Path.Combine(targetRakDotNetDownloadDirectory,"RakDotNet-3.25-tcpudp"),Path.Combine(targetServerDirectory,"Uchu-master","RakDotNet"));
+            Directory.Move(Path.Combine(targetRakDotNetDownloadDirectory,"RakDotNet-3.25-tcpudp"),Path.Combine(targetServerDirectory,"RakDotNet"));
 
             // Compile the server.
             Console.WriteLine("Building the server.");
-            var buildDirectory = Path.Combine(targetServerDirectory,"Uchu-master");
             var buildProcess = new Process();
-            buildProcess.StartInfo.WorkingDirectory = buildDirectory;
+            buildProcess.StartInfo.WorkingDirectory = targetServerDirectory;
             buildProcess.StartInfo.FileName = dotNetExecutableLocation;
             buildProcess.StartInfo.CreateNoWindow = true;
             buildProcess.StartInfo.Arguments = "build -c " + BUILD_MODE;
@@ -328,7 +339,7 @@ namespace NLUL.Core.Server.Emulator
             // Create the default configuration.
             Console.WriteLine("Creating the default configuration.");
             this.CreateConfig();
-            this.State.CurrentVersion = GetCurrentGitHubCommit();
+            this.State.CurrentVersion = this.GetCurrentGitHubCommit();
             this.WriteState();
         }
 
@@ -345,7 +356,7 @@ namespace NLUL.Core.Server.Emulator
             }
             
             // Determine the file locations.
-            var masterServerDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"Server","Uchu-master","Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
+            var masterServerDirectory = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
             var masterServerExecutable = Path.Combine(masterServerDirectory,"Uchu.Master");
             
             // Create and start the process.
