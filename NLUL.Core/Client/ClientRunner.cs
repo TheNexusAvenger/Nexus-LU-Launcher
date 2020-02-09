@@ -138,6 +138,10 @@ namespace NLUL.Core.Client
                 Directory.CreateDirectory(Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim"));
                 File.Copy(Path.Join(this.SystemInfo.SystemFileLocation,"TcpUdp","mods","raknet_shim","mod.dll"), Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim","mod.dll"));
             }
+            
+            // Clear the files.
+            File.Delete(tcpUdpModZipLocation);
+            Directory.Delete(tcpUdpModExtractLocation,true);
         }
         
         /*
