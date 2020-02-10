@@ -356,13 +356,17 @@ namespace NLUL.Core.Server.Emulator
             }
             
             // Determine the file locations.
+            var toolsLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"Tools");
+            var dotNetDirectoryLocation = Path.Combine(toolsLocation,"dotnet3.1");
+            var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation, "dotnet");
             var masterServerDirectory = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
-            var masterServerExecutable = Path.Combine(masterServerDirectory,"Uchu.Master");
+            var masterServerExecutable = Path.Combine(masterServerDirectory,"Uchu.Master.dll");
             
             // Create and start the process.
             var uchuProcess = new Process();
-            uchuProcess.StartInfo.FileName = masterServerExecutable;
+            uchuProcess.StartInfo.FileName = dotNetExecutableLocation;
             uchuProcess.StartInfo.WorkingDirectory = masterServerDirectory;
+            uchuProcess.StartInfo.Arguments = masterServerExecutable;
             uchuProcess.StartInfo.CreateNoWindow = true;
             uchuProcess.Start();
             Console.WriteLine("Started server.");
