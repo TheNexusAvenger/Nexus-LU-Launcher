@@ -25,7 +25,7 @@ namespace NLUL.Core.Server.Emulator
     {
         public string CurrentVersion;
         public int ProcessId = 0;
-        public string GitRemote = "yuwui";
+        public string GitRemote = "yuwui/Uchu";
         public string GitBranch = "master";
     }
     
