@@ -48,6 +48,7 @@ namespace NLUL.Core.Client
             
             // Download the client.
             Console.WriteLine("Downloading the Lego Universe client.");
+            Directory.CreateDirectory(Path.GetDirectoryName(this.SystemInfo.ClientLocation));
             var client = new WebClient();
             client.DownloadFile("https://s3.amazonaws.com/luclient/luclient.zip",this.DownloadLocation);
         }
