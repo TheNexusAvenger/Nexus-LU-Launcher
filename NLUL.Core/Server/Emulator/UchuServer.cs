@@ -299,9 +299,9 @@ namespace NLUL.Core.Server.Emulator
             var client = new WebClient();
             Console.WriteLine("Downloading the latest server from GitHub/" + this.State.GitRemote);
             var targetServerZip = Path.Combine(this.ServerInfo.ServerFileLocation,"Server.zip");
-            var targetServerDirectory = this.GetServerDirectory();
             client.DownloadFile("https://github.com/" + this.State.GitRemote + "/archive/" + this.State.GitBranch + ".zip",targetServerZip);
-            ZipFile.ExtractToDirectory(targetServerZip,targetServerDirectory);
+            ZipFile.ExtractToDirectory(targetServerZip,Path.Combine(this.ServerInfo.ServerFileLocation,"Server"));
+            var targetServerDirectory = this.GetServerDirectory();
             Directory.Delete(Path.Combine(targetServerDirectory,"InfectedRose"),true);
             Directory.Delete(Path.Combine(targetServerDirectory,"RakDotNet"),true);
             
