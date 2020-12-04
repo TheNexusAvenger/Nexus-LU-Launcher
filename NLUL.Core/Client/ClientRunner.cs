@@ -116,6 +116,7 @@ namespace NLUL.Core.Client
         public void PatchClient()
         {
             // Download the TcpUdp mod.
+            // TODO: Migrate to https://github.com/lcdr/raknet_shim_dll/releases/tag/2020-11-07
             Console.WriteLine("Adding the TcpUdp mod.");
             var tcpUdpModZipLocation = Path.Combine(this.SystemInfo.SystemFileLocation,"TcpUdp.zip");
             var tcpUdpModExtractLocation = Path.Combine(this.SystemInfo.SystemFileLocation,"TcpUdp");
