@@ -207,8 +207,8 @@ namespace NLUL.Core.Server.Emulator
                 this.State.ConfigOverrides["DllSource"] = new Dictionary<string,object>()
                 {
                     {"DotNetPath",Path.GetFullPath(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools","dotnet3.1","dotnet"))},
-                    {"Instance",Path.GetFullPath(Path.Combine(buildLocation,"Uchu.Instance.dll"))},
-                    {"ScriptDllSource",Path.GetFullPath(Path.Combine(buildLocation,"Uchu.StandardScripts.dll"))},
+                    {"Instance","../../../../Uchu.Instance/bin/Debug/netcoreapp3.1/Uchu.Instance.dll"},
+                    {"ScriptDllSource","../../../../Uchu.StandardScripts/bin/Debug/netcoreapp3.1/Uchu.StandardScripts.dll"},
                 };
             }
 
