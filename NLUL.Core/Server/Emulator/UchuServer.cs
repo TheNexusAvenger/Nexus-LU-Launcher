@@ -10,11 +10,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
-using System.Xml.Serialization;
+using System.Threading;
+using System.Xml;
 using Newtonsoft.Json;
 using NLUL.Core.Server.Prerequisite;
 using NLUL.Core.Server.Util;
+using Formatting = Newtonsoft.Json.Formatting;
 
 namespace NLUL.Core.Server.Emulator
 {
@@ -25,90 +28,11 @@ namespace NLUL.Core.Server.Emulator
     {
         public string CurrentVersion;
         public int ProcessId = 0;
-        public string GitRemote = "yuwui/Uchu";
+        public string GitRemote = "UchuServer/Uchu";
         public string GitBranch = "master";
+        public Dictionary<string,object> ConfigOverrides = new Dictionary<string,object>();
     }
-    
-    /*
-     * Database section of the Uchu config.
-     */
-    public class UchuDatabase
-    {
-        public string Provider = "postgres";
-        public string Database = "uchu";
-        public string Host = "localhost";
-        public string Username = "postgres";
-        public string Password = "postgres";
-    }
-    
-    /*
-     * ConsoleLogging section of the Uchu config.
-     */
-    public class UchuConsoleLogging
-    {
-        public string Level = "Debug";
-    }
-    
-    /*
-     * FileLogging section of the Uchu config.
-     */
-    public class UchuFileLogging
-    {
-        public string Level = "None";
-        public string Logfile = "uchu.log";
-    }
-    
-    /*
-     * DllSource section of the Uchu config.
-     */
-    public class UchuDllSource
-    {
-        public string ServerDllSourcePath = "../../../../";
-        public string DotNetPath = "dotnet";
-        public string ScriptDllSource = "Uchu.StandardScripts";
-    }
-    
-    /*
-     * ManagedScriptSources section of the Uchu config.
-     */
-    public class UchuManagedScriptSources
-    {
-        
-    }
-    
-    /*
-     * ResourcesConfiguration section of the Uchu config.
-     */
-    public class UchuResourcesConfiguration
-    {
-        public string GameResourceFolder = "/res";
-    }
-    
-    /*
-     * UchuNetworking section of the Uchu config.
-     */
-    public class UchuNetworking
-    {
-        public string Certificate;
-        public string Hostname;
-        public string CharacterPort = "2002";
-    }
-    
-    /*
-     * Uchu XML config structure.
-     */
-    [XmlRoot(ElementName = "Uchu")]
-    public class UchuConfig
-    {
-        public UchuDatabase Database = new UchuDatabase();
-        public UchuConsoleLogging ConsoleLogging = new UchuConsoleLogging();
-        public UchuFileLogging FileLogging = new UchuFileLogging();
-        public UchuDllSource DllSource = new UchuDllSource();
-        public UchuManagedScriptSources ManagedScriptSources = new UchuManagedScriptSources();
-        public UchuResourcesConfiguration ResourcesConfiguration = new UchuResourcesConfiguration();
-        public UchuNetworking Networking = new UchuNetworking();
-    }
-    
+
     public class UchuServer : IEmulator
     {
         private const string BUILD_MODE = "Debug";
@@ -116,6 +40,55 @@ namespace NLUL.Core.Server.Emulator
         
         private ServerInfo ServerInfo;
         private UchuState State;
+        
+        /*
+         * Merges an element with a set of overrides.
+         */
+        public static void MergeXmlWithOverrides(XmlDocument document,XmlElement element,Dictionary<string,object> overrides)
+        {
+            // Merge the values.
+            foreach (var entry in overrides)
+            {
+                try
+                {
+                    // Merge the child elements.
+                    var subOverrides = JsonConvert.DeserializeObject<Dictionary<string,object>>(entry.Value.ToString());
+                    if (element.GetElementsByTagName(entry.Key).Count == 0)
+                    {
+                        element.AppendChild(document.CreateElement(entry.Key));
+                    }
+                    MergeXmlWithOverrides(document,(XmlElement) element.GetElementsByTagName(entry.Key)[0], subOverrides);
+                }
+                catch (JsonException)
+                {
+                    // Remove the existing nodes of the same name.
+                    var elementsToRemove = element.GetElementsByTagName(entry.Key).Cast<XmlElement>().ToList();
+                    foreach (var subElement in elementsToRemove)
+                    {
+                        element.RemoveChild(subElement);
+                    }
+                    
+                    try
+                    {
+                        // Replace the list of elements.
+                        var subOverrides = JsonConvert.DeserializeObject<List<object>>(entry.Value.ToString());
+                        foreach (var subOverride in subOverrides)
+                        {
+                            var newElement = document.CreateElement(entry.Key);
+                            newElement.InnerText = subOverride.ToString();
+                            element.AppendChild(newElement);
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        // Add a new node with the value.
+                        var newElement = document.CreateElement(entry.Key);
+                        newElement.InnerText = entry.Value.ToString();
+                        element.AppendChild(newElement);
+                    }
+                }
+            }
+        }
         
         /*
          * Returns the current GitHub commit.
@@ -198,21 +171,63 @@ namespace NLUL.Core.Server.Emulator
          */
         private void CreateConfig()
         {
-            // Create the base config.
-            var config = new UchuConfig();
+            // Delete the existing configuration.
+            Console.WriteLine("Deleting old configurations.");
+            var buildLocation = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
+            var defaultConfigLocation = Path.Combine(buildLocation,"config.default.xml");
+            var configLocation = Path.Combine(buildLocation,"config.xml");
+            if (File.Exists(defaultConfigLocation))
+            {
+                File.Delete(defaultConfigLocation);
+            }
+            if (File.Exists(configLocation))
+            {
+                File.Delete(configLocation);
+            }
             
-            // Set the values that are specific to the install.
-            config.DllSource.DotNetPath = Path.GetFullPath(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools","dotnet3.1","dotnet"));
-            config.ResourcesConfiguration.GameResourceFolder = Path.GetFullPath(Path.Combine(this.ServerInfo.ClientLocation,"res"));
+            // Run the executable to get the default configuration.
+            Console.WriteLine("Getting default configuration.");
+            this.Start();
+            while (!File.Exists(defaultConfigLocation))
+            {
+                Thread.Sleep(50);
+            }
+            this.Stop();
             
-            // Write the config.
-            var configLocation = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION,"config.xml");
-            var configSerializer = new XmlSerializer(typeof(UchuConfig));  
-            var configWriter = new StreamWriter(configLocation);  
-            configSerializer.Serialize(configWriter,config);  
-            configWriter.Close();  
+            // Add the defaults to the configuration overrides.
+            if (!this.State.ConfigOverrides.ContainsKey("ResourcesConfiguration"))
+            {
+                this.State.ConfigOverrides["ResourcesConfiguration"] = new Dictionary<string,object>()
+                {
+                    {"GameResourceFolder",Path.GetFullPath(Path.Combine(this.ServerInfo.ClientLocation,"res"))},
+                };
+            }
+            if (!this.State.ConfigOverrides.ContainsKey("DllSource"))
+            {
+                this.State.ConfigOverrides["DllSource"] = new Dictionary<string,object>()
+                {
+                    {"DotNetPath",Path.GetFullPath(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools","dotnet3.1","dotnet"))},
+                    {"Instance",Path.GetFullPath(Path.Combine(buildLocation,"Uchu.Instance.dll"))},
+                    {"ScriptDllSource",Path.GetFullPath(Path.Combine(buildLocation,"Uchu.StandardScripts.dll"))},
+                };
+            }
+
+            if (!this.State.ConfigOverrides.ContainsKey("Networking"))
+            {
+                this.State.ConfigOverrides["Networking"] = new Dictionary<string,object>()
+                {
+                    {"WorldPort",new List<int>() {2003,2004,2005,2006,2007,2008,2009,2010,2011,2012}},
+                };
+            }
+
+            // Read the configuration and apply the overrides.
+            Console.WriteLine("Writing the configuration.");
+            var document = new XmlDocument();
+            document.LoadXml(File.ReadAllText(defaultConfigLocation));
+            MergeXmlWithOverrides(document,document.DocumentElement,this.State.ConfigOverrides);
+            document.Save(configLocation);
         }
-        
+
         /*
          * Returns the prerequisites for the server.
          */
@@ -314,7 +329,7 @@ namespace NLUL.Core.Server.Emulator
             Directory.Move(Path.Combine(targetInfectedRoseDownloadDirectory,"InfectedRose-master"),Path.Combine(targetServerDirectory,"InfectedRose"));
             
             // Download and extract InfectedRose.
-            Console.WriteLine("Downloading the latest InfectedRose library from GitHub/yuwui/RakDotNet");
+            Console.WriteLine("Downloading the latest InfectedRose library from GitHub/UchuServer/RakDotNet");
             var targetRakDotNetDownloadZip = Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet.zip");
             var targetRakDotNetDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet");
             client.DownloadFile("https://github.com/yuwui/RakDotNet/archive/3.25/tcpudp.zip",targetRakDotNetDownloadZip);
