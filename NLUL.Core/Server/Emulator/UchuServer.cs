@@ -219,6 +219,10 @@ namespace NLUL.Core.Server.Emulator
                     {"WorldPort",new List<int>() {2003,2004,2005,2006,2007,2008,2009,2010,2011,2012}},
                 };
             }
+            
+            // Write and re-read the state to ensure the objects are consistent.
+            this.WriteState();
+            this.ReadState();
 
             // Read the configuration and apply the overrides.
             Console.WriteLine("Writing the configuration.");
