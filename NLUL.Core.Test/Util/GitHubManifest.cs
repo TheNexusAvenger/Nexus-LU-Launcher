@@ -63,7 +63,7 @@ namespace NLUL.Core.Test.Util
             Assert.IsFalse(entry4.IsBranchUpToDate("master"));
             
             // Assert that the last tags are valid.
-            Assert.AreEqual(entry1.GetLatestTag(),"3472794efb1707dd73a5ce3a8d3ef9b3ece228fe");
+            Assert.AreEqual(entry1.GetLatestTag().commit,"3472794efb1707dd73a5ce3a8d3ef9b3ece228fe");
             Assert.AreEqual(entry2.GetLatestTag(),null);
             
             // Fetch from the releases and commits and assert the files are correct.

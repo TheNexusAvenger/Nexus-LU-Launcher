@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using NLUL.Core.Client.Patch;
 
 namespace NLUL.Core.Client
 {
@@ -17,6 +18,7 @@ namespace NLUL.Core.Client
         private SystemInfo SystemInfo;
         private string DownloadLocation;
         private string ExtractLocation;
+        private ClientPatcher clientPatcher;
         
         /*
          * Creates a Client instance.
@@ -26,6 +28,7 @@ namespace NLUL.Core.Client
             this.SystemInfo = systemInfo;
             this.DownloadLocation = Path.Combine(systemInfo.SystemFileLocation,"client.zip");
             this.ExtractLocation = Path.Combine(systemInfo.SystemFileLocation,"ClientExtract");
+            this.clientPatcher = new ClientPatcher(systemInfo);
         }
         
         /*
@@ -111,39 +114,12 @@ namespace NLUL.Core.Client
         }
         
         /*
-         * Patches the client files.
+         * Patches the client files with the default patches.
          */
         public void PatchClient()
         {
-            // Download the TcpUdp mod.
-            // TODO: Migrate to https://github.com/lcdr/raknet_shim_dll/releases/tag/2020-11-07
-            Console.WriteLine("Adding the TcpUdp mod.");
-            var tcpUdpModZipLocation = Path.Combine(this.SystemInfo.SystemFileLocation,"TcpUdp.zip");
-            var tcpUdpModExtractLocation = Path.Combine(this.SystemInfo.SystemFileLocation,"TcpUdp");
-            if (!File.Exists(tcpUdpModZipLocation))
-            {
-                var client = new WebClient();
-                client.DownloadFile("https://bitbucket.org/lcdr/raknet_shim_dll/downloads/shim_dll.zip",tcpUdpModZipLocation);
-            }
-            if (!Directory.Exists(tcpUdpModExtractLocation))
-            {
-                ZipFile.ExtractToDirectory(tcpUdpModZipLocation,tcpUdpModExtractLocation);
-            }
-            
-            // Copy the TcpUdp files.
-            if (!File.Exists(Path.Join(this.SystemInfo.SystemFileLocation,"Client","dinput8.dll")))
-            {
-                File.Copy(Path.Join(this.SystemInfo.SystemFileLocation,"TcpUdp","dinput8.dll"),Path.Join(this.SystemInfo.SystemFileLocation,"Client","dinput8.dll"));
-            }
-            if (!File.Exists(Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim","mod.dll")))
-            {
-                Directory.CreateDirectory(Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim"));
-                File.Copy(Path.Join(this.SystemInfo.SystemFileLocation,"TcpUdp","mods","raknet_shim","mod.dll"), Path.Join(this.SystemInfo.SystemFileLocation,"Client","mods","raknet_shim","mod.dll"));
-            }
-            
-            // Clear the files.
-            File.Delete(tcpUdpModZipLocation);
-            Directory.Delete(tcpUdpModExtractLocation,true);
+            this.clientPatcher.Install(ClientPatchName.ModLoader);
+            this.clientPatcher.Install(ClientPatchName.RakNet);
         }
         
         /*

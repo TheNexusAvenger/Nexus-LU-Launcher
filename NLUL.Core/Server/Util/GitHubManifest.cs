@@ -15,6 +15,15 @@ using Newtonsoft.Json;
 namespace NLUL.Core.Server.Util
 {
     /*
+     * Data class for a GitHub tag.
+     */
+    public class GitHubTag
+    {
+        public string commit;
+        public string name;
+    }
+    
+    /*
      * Class for a Git commit result.
      */
     public class GitCommitResult
@@ -27,6 +36,7 @@ namespace NLUL.Core.Server.Util
      */
     public class GitTagResult
     {
+        public string name;
         public GitCommitResult commit;
     }
     
@@ -130,7 +140,7 @@ namespace NLUL.Core.Server.Util
         /*
          * Returns the latest tag.
          */
-        public string GetLatestTag()
+        public GitHubTag GetLatestTag()
         {
             // Send the HTTP request.
             var tagsJson = this.PerformRequest("https://api.github.com/repos/" + this.repository + "/tags");
@@ -139,7 +149,11 @@ namespace NLUL.Core.Server.Util
             var tags = JsonConvert.DeserializeObject<List<GitTagResult>>(tagsJson);
             if (tags.Count > 0)
             {
-                return tags[0].commit.sha;
+                return new GitHubTag()
+                {
+                    commit = tags[0].commit.sha,
+                    name = tags[0].name,
+                };
             }
             return null;
         }
@@ -149,7 +163,7 @@ namespace NLUL.Core.Server.Util
          */
         public bool IsTagUpToDate()
         {
-            return this.lastCommit == this.GetLatestTag();
+            return this.lastCommit == this.GetLatestTag().commit;
         }
         
         /*
@@ -208,7 +222,7 @@ namespace NLUL.Core.Server.Util
          */
         public void FetchLatestTag(bool force = false)
         {
-            this.FetchCommit(this.GetLatestTag(),force);
+            this.FetchCommit(this.GetLatestTag().commit,force);
         }
     }
     
