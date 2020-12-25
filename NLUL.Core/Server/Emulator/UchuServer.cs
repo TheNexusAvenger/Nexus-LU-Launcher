@@ -2,18 +2,17 @@
  * TheNexusAvenger
  *
  * Sets up and runs an Uchu instance.
- * https://github.com/yuwui/Uchu
+ * https://github.com/UchuServer/Uchu
  */
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Xml;
+using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using NLUL.Core.Server.Prerequisite;
 using NLUL.Core.Server.Util;
@@ -26,10 +25,13 @@ namespace NLUL.Core.Server.Emulator
      */
     public class UchuState
     {
-        public string CurrentVersion;
         public int ProcessId = 0;
         public string GitRemote = "UchuServer/Uchu";
         public string GitBranch = "master";
+        public string InfectedRoseRemote = "Wincent01/InfectedRose";
+        public string InfectedRoseBranch = "master";
+        public string RakDotNetRemote = "UchuServer/RakDotNet";
+        public string RakDotNetBranch = "uchu-optimized";
         public Dictionary<string,object> ConfigOverrides = new Dictionary<string,object>();
     }
 
@@ -38,8 +40,9 @@ namespace NLUL.Core.Server.Emulator
         private const string BUILD_MODE = "Debug";
         private const string DOTNET_APP_VERSION = "netcoreapp3.1";
         
-        private ServerInfo ServerInfo;
-        private UchuState State;
+        private ServerInfo serverInfo;
+        private UchuState state;
+        private GitHubManifest manifest;
         
         /*
          * Merges an element with a set of overrides.
@@ -91,36 +94,29 @@ namespace NLUL.Core.Server.Emulator
         }
         
         /*
-         * Returns the current GitHub commit.
-         */
-        private string GetCurrentGitHubCommit()
-        {
-            return GitHub.GetLastCommit(this.State.GitRemote,this.State.GitBranch);
-        }
-        
-        /*
          * Creates an Uchu Server object.
          */
         public UchuServer(ServerInfo info)
         {
-            this.ServerInfo = info;
+            this.serverInfo = info;
             this.ReadState();
+            this.manifest = new GitHubManifest(Path.Combine(this.serverInfo.ServerFileLocation,"github.json"));
         }
-        
+
         /*
          * Reads the current state.
          */
         private void ReadState()
         {
             // Read the state.
-            var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.json");
+            var stateLocation = Path.Combine(this.serverInfo.ServerFileLocation,"state.json");
             if (File.Exists(stateLocation))
             {
-                this.State = JsonConvert.DeserializeObject<UchuState>(File.ReadAllText(stateLocation));
+                this.state = JsonConvert.DeserializeObject<UchuState>(File.ReadAllText(stateLocation));
             }
             else
             {
-                this.State = new UchuState();
+                this.state = new UchuState();
             }
         }
         
@@ -130,8 +126,8 @@ namespace NLUL.Core.Server.Emulator
         private void WriteState()
         {
             // Serialize the state.
-            var stateLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"state.json");
-            File.WriteAllText(stateLocation,JsonConvert.SerializeObject(this.State,Formatting.Indented));
+            var stateLocation = Path.Combine(this.serverInfo.ServerFileLocation,"state.json");
+            File.WriteAllText(stateLocation,JsonConvert.SerializeObject(this.state,Formatting.Indented));
         }
         
         /*
@@ -140,30 +136,7 @@ namespace NLUL.Core.Server.Emulator
          */
         public string GetServerDirectory()
         {
-            return Directory.GetDirectories(Path.Combine(this.ServerInfo.ServerFileLocation,"Server"))[0];
-        }
-        
-        /*
-         * Cleans up files from installs.
-         */
-        private void CleanupFiles()
-        {
-            // Clean up the zip files.
-            File.Delete(Path.Combine(this.ServerInfo.ServerFileLocation,"InfectedRose.zip"));
-            File.Delete(Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet.zip"));
-            File.Delete(Path.Combine(this.ServerInfo.ServerFileLocation,"Server.zip"));
-            
-            // Clean up the extracted directories.
-            var infectedRoseDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"InfectedRose");
-            if (Directory.Exists(infectedRoseDirectory))
-            {
-                Directory.Delete(infectedRoseDirectory,true);
-            }
-            var rakDotNetDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet");
-            if (Directory.Exists(rakDotNetDirectory))
-            {
-                Directory.Delete(rakDotNetDirectory, true);
-            }
+            return Path.Combine(this.serverInfo.ServerFileLocation,"Server");
         }
         
         /*
@@ -195,26 +168,26 @@ namespace NLUL.Core.Server.Emulator
             this.Stop();
             
             // Add the defaults to the configuration overrides.
-            if (!this.State.ConfigOverrides.ContainsKey("ResourcesConfiguration"))
+            if (!this.state.ConfigOverrides.ContainsKey("ResourcesConfiguration"))
             {
-                this.State.ConfigOverrides["ResourcesConfiguration"] = new Dictionary<string,object>()
+                this.state.ConfigOverrides["ResourcesConfiguration"] = new Dictionary<string,object>()
                 {
-                    {"GameResourceFolder",Path.GetFullPath(Path.Combine(this.ServerInfo.ClientLocation,"res"))},
+                    {"GameResourceFolder",Path.GetFullPath(Path.Combine(this.serverInfo.ClientLocation,"res"))},
                 };
             }
-            if (!this.State.ConfigOverrides.ContainsKey("DllSource"))
+            if (!this.state.ConfigOverrides.ContainsKey("DllSource"))
             {
-                this.State.ConfigOverrides["DllSource"] = new Dictionary<string,object>()
+                this.state.ConfigOverrides["DllSource"] = new Dictionary<string,object>()
                 {
-                    {"DotNetPath",Path.GetFullPath(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools","dotnet3.1","dotnet"))},
+                    {"DotNetPath",Path.GetFullPath(Path.Combine(this.serverInfo.ServerFileLocation,"Tools","dotnet3.1","dotnet"))},
                     {"Instance","../../../../Uchu.Instance/bin/Debug/netcoreapp3.1/Uchu.Instance.dll"},
                     {"ScriptDllSource","../../../../Uchu.StandardScripts/bin/Debug/netcoreapp3.1/Uchu.StandardScripts.dll"},
                 };
             }
 
-            if (!this.State.ConfigOverrides.ContainsKey("Networking"))
+            if (!this.state.ConfigOverrides.ContainsKey("Networking"))
             {
-                this.State.ConfigOverrides["Networking"] = new Dictionary<string,object>()
+                this.state.ConfigOverrides["Networking"] = new Dictionary<string,object>()
                 {
                     {"WorldPort",new List<int>() {2003,2004,2005,2006,2007,2008,2009,2010,2011,2012}},
                 };
@@ -228,7 +201,7 @@ namespace NLUL.Core.Server.Emulator
             Console.WriteLine("Writing the configuration.");
             var document = new XmlDocument();
             document.LoadXml(File.ReadAllText(defaultConfigLocation));
-            MergeXmlWithOverrides(document,document.DocumentElement,this.State.ConfigOverrides);
+            MergeXmlWithOverrides(document,document.DocumentElement,this.state.ConfigOverrides);
             document.Save(configLocation);
         }
 
@@ -239,7 +212,7 @@ namespace NLUL.Core.Server.Emulator
         {
             return new List<IPrerequisite>()
             {
-                new DotNetCore31(Path.Combine(this.ServerInfo.ServerFileLocation,"Tools"))
+                new DotNetCore31(Path.Combine(this.serverInfo.ServerFileLocation,"Tools"))
             };
             
             // TODO: Detect PostgresSQL install
@@ -254,16 +227,16 @@ namespace NLUL.Core.Server.Emulator
             // Return true if the process id isn't zero and the process exists.
             try
             {
-                if (this.State.ProcessId != 0)
+                if (this.state.ProcessId != 0)
                 {
-                    Process.GetProcessById(this.State.ProcessId);
+                    Process.GetProcessById(this.state.ProcessId);
                     return true;
                 }
             }
             catch (ArgumentException)
             {
                 // Update that the server is not running.
-                this.State.ProcessId = 0;
+                this.state.ProcessId = 0;
                 this.WriteState();
             }
 
@@ -276,7 +249,7 @@ namespace NLUL.Core.Server.Emulator
          */
         public bool IsUpdateAvailable()
         {
-            return this.State.CurrentVersion != this.GetCurrentGitHubCommit();
+            return !this.manifest.GetEntry(this.state.GitRemote,this.GetServerDirectory()).IsBranchUpToDate(this.state.GitBranch);
         }
         
         /*
@@ -286,21 +259,17 @@ namespace NLUL.Core.Server.Emulator
         public void Install()
         {
             // Get the tool locations.
-            var toolsLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"Tools");
+            var toolsLocation = Path.Combine(this.serverInfo.ServerFileLocation,"Tools");
             var dotNetDirectoryLocation = Path.Combine(toolsLocation,"dotnet3.1");
             var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation, "dotnet");
             
             // TODO: Verify client is unpacked.
             
-            // Clear previous files.
-            Console.WriteLine("Clearing old files");
-            this.CleanupFiles();
-            
             // Remove the previous server.
-            var serverOldDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"Server");
-            if (Directory.Exists(serverOldDirectory))
+            Console.WriteLine("Clearing old files");
+            if (Directory.Exists(this.GetServerDirectory()))
             {
-                Directory.Delete(serverOldDirectory,true);
+                Directory.Delete(this.GetServerDirectory(),true);
             }
             
             // Install additional tools.
@@ -315,30 +284,22 @@ namespace NLUL.Core.Server.Emulator
             entityFrameworkInstallProcess.Close();
             
             // Download and extract the server files from master.
-            var client = new WebClient();
-            Console.WriteLine("Downloading the latest server from GitHub/" + this.State.GitRemote);
-            var targetServerZip = Path.Combine(this.ServerInfo.ServerFileLocation,"Server.zip");
-            client.DownloadFile("https://github.com/" + this.State.GitRemote + "/archive/" + this.State.GitBranch + ".zip",targetServerZip);
-            ZipFile.ExtractToDirectory(targetServerZip,Path.Combine(this.ServerInfo.ServerFileLocation,"Server"));
             var targetServerDirectory = this.GetServerDirectory();
+            this.manifest.GetEntry(this.state.GitRemote,this.GetServerDirectory()).FetchLatestBranch(this.state.GitBranch,true);
             Directory.Delete(Path.Combine(targetServerDirectory,"InfectedRose"),true);
             Directory.Delete(Path.Combine(targetServerDirectory,"RakDotNet"),true);
-            
+
             // Download and extract InfectedRose.
-            Console.WriteLine("Downloading the latest InfectedRose library from GitHub/Wincent01/InfectedRose");
-            var targetInfectedRoseDownloadZip = Path.Combine(this.ServerInfo.ServerFileLocation,"InfectedRose.zip");
-            var targetInfectedRoseDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"InfectedRose");
-            client.DownloadFile("https://github.com/Wincent01/InfectedRose/archive/master.zip",targetInfectedRoseDownloadZip);
-            ZipFile.ExtractToDirectory(targetInfectedRoseDownloadZip,targetInfectedRoseDownloadDirectory);
-            Directory.Move(Path.Combine(targetInfectedRoseDownloadDirectory,"InfectedRose-master"),Path.Combine(targetServerDirectory,"InfectedRose"));
+            Console.WriteLine("Downloading the latest InfectedRose library from GitHub/" + this.state.InfectedRoseRemote);
+            var infectedRoseDirectory = Path.Combine(this.serverInfo.ServerFileLocation,"InfectedRose");
+            this.manifest.GetEntry(this.state.InfectedRoseRemote,infectedRoseDirectory).FetchLatestBranch(this.state.InfectedRoseBranch);
+            FileSystem.CopyDirectory(infectedRoseDirectory,Path.Combine(targetServerDirectory,"InfectedRose"));
             
-            // Download and extract InfectedRose.
-            Console.WriteLine("Downloading the latest InfectedRose library from GitHub/UchuServer/RakDotNet");
-            var targetRakDotNetDownloadZip = Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet.zip");
-            var targetRakDotNetDownloadDirectory = Path.Combine(this.ServerInfo.ServerFileLocation,"RakDotNet");
-            client.DownloadFile("https://github.com/yuwui/RakDotNet/archive/3.25/tcpudp.zip",targetRakDotNetDownloadZip);
-            ZipFile.ExtractToDirectory(targetRakDotNetDownloadZip,targetRakDotNetDownloadDirectory);
-            Directory.Move(Path.Combine(targetRakDotNetDownloadDirectory,"RakDotNet-3.25-tcpudp"),Path.Combine(targetServerDirectory,"RakDotNet"));
+            // Download and extract RakDotNet.
+            Console.WriteLine("Downloading the latest RakDotNet library from GitHub/" + this.state.RakDotNetRemote);
+            var rakDotNetDirectory = Path.Combine(this.serverInfo.ServerFileLocation,"RakDotNet");
+            this.manifest.GetEntry(this.state.RakDotNetRemote,rakDotNetDirectory).FetchLatestBranch(this.state.RakDotNetBranch);
+            FileSystem.CopyDirectory(rakDotNetDirectory,Path.Combine(targetServerDirectory,"RakDotNet"));
 
             // Compile the server.
             Console.WriteLine("Building the server.");
@@ -350,15 +311,10 @@ namespace NLUL.Core.Server.Emulator
             buildProcess.Start();
             buildProcess.WaitForExit();
             buildProcess.Close();
-
-            // Clean up the download files.
-            Console.WriteLine("Cleaning up files.");
-            this.CleanupFiles();
             
             // Create the default configuration.
             Console.WriteLine("Creating the default configuration.");
             this.CreateConfig();
-            this.State.CurrentVersion = this.GetCurrentGitHubCommit();
             this.WriteState();
         }
 
@@ -375,7 +331,7 @@ namespace NLUL.Core.Server.Emulator
             }
             
             // Determine the file locations.
-            var toolsLocation = Path.Combine(this.ServerInfo.ServerFileLocation,"Tools");
+            var toolsLocation = Path.Combine(this.serverInfo.ServerFileLocation,"Tools");
             var dotNetDirectoryLocation = Path.Combine(toolsLocation,"dotnet3.1");
             var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation, "dotnet");
             var masterServerDirectory = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
@@ -391,7 +347,7 @@ namespace NLUL.Core.Server.Emulator
             Console.WriteLine("Started server.");
             
             // Start and store the process id.
-            this.State.ProcessId = uchuProcess.Id;
+            this.state.ProcessId = uchuProcess.Id;
             this.WriteState();
         }
         
@@ -403,7 +359,7 @@ namespace NLUL.Core.Server.Emulator
             // Stop the process.
             if (this.IsRunning())
             {
-                var uchuProcess = Process.GetProcessById(this.State.ProcessId);
+                var uchuProcess = Process.GetProcessById(this.state.ProcessId);
                 uchuProcess.Kill(true);
                 Console.WriteLine("Stopped server.");
             }
@@ -413,7 +369,7 @@ namespace NLUL.Core.Server.Emulator
             }
 
             // Store 0 as the process id.
-            this.State.ProcessId = 0;
+            this.state.ProcessId = 0;
             this.WriteState();
         }
     }

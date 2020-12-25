@@ -155,10 +155,10 @@ namespace NLUL.Core.Server.Util
         /*
          * Fetches a specified commit.
          */
-        public void FetchCommit(string commit)
+        public void FetchCommit(string commit,bool force = false)
         {
             // Return if the commit is the same as the latest fetch.
-            if (commit == this.lastCommit)
+            if (commit == this.lastCommit && force != true)
             {
                 return;
             }
@@ -198,17 +198,17 @@ namespace NLUL.Core.Server.Util
         /*
          * Fetches the latest branch.
          */
-        public void FetchLatestBranch(string branch)
+        public void FetchLatestBranch(string branch,bool force = false)
         {
-            this.FetchCommit(this.GetLatestCommit(branch));
+            this.FetchCommit(this.GetLatestCommit(branch),force);
         }
         
         /*
          * Fetches the latest tag.
          */
-        public void FetchLatestTag()
+        public void FetchLatestTag(bool force = false)
         {
-            this.FetchCommit(this.GetLatestTag());
+            this.FetchCommit(this.GetLatestTag(),force);
         }
     }
     
