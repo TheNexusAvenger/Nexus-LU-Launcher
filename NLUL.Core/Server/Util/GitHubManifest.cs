@@ -115,7 +115,7 @@ namespace NLUL.Core.Server.Util
             var commitsJson = this.PerformRequest("https://api.github.com/repos/" + this.repository + "/commits/" + branch);
             
             // Parse the JSON and return the last tag.
-            var commits = JsonConvert.DeserializeObject<GitCommit>(commitsJson);
+            var commits = JsonConvert.DeserializeObject<GitCommitResult>(commitsJson);
             return commits.sha;
         }
         
