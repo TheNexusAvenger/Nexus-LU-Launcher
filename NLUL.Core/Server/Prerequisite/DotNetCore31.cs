@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -139,6 +140,27 @@ namespace NLUL.Core.Server.Prerequisite
             else
             {
                 ZipFile.ExtractToDirectory(binaryDownloadLocation,this.InstallDirectory);
+            }
+            
+            // Set the permissions for Unix-based systems.
+            var dotNetExecutable = Path.Combine(this.InstallDirectory,"dotnet");
+            if (File.Exists(dotNetExecutable) && File.Exists("/bin/bash"))
+            {
+                using var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        FileName = "/bin/bash",
+                        Arguments = "-c \"chmod +x \"" + dotNetExecutable.Replace("\"","\\\"") + "\"\"",
+                    }
+                };
+
+                process.Start();
+                process.WaitForExit();
             }
             
             // Clean up the download file.
