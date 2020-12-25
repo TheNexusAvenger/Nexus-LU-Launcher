@@ -89,7 +89,15 @@ namespace NLUL.Core.Client.Patch
          */
         public void Uninstall()
         {
-            // Patch does not support uninstalling.
+            // Remove the mod loader DLL.
+            File.Delete(Path.Combine(this.systemInfo.ClientLocation,"dinput8.dll"));
+            
+            // Remove the mods directory if it is empty.
+            var modsDirectory = Path.Join(this.systemInfo.ClientLocation,"mods");
+            if (Directory.GetDirectories(modsDirectory).Length == 0 && Directory.GetFiles(modsDirectory).Length == 0)
+            {
+                Directory.Delete(modsDirectory);
+            }
         }
     }
 }
