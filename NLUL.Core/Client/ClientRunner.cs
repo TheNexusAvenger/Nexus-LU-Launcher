@@ -9,10 +9,22 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Runtime.InteropServices;
 using NLUL.Core.Client.Patch;
 
 namespace NLUL.Core.Client
 {
+    public class WineNotInstalledException : NotSupportedException
+    {
+        /*
+         * Creates the exception.
+         */
+        public WineNotInstalledException() : base("WINE is not detected.")
+        {
+            
+        }
+    }
+    
     public class ClientRunner
     {
         private SystemInfo SystemInfo;
@@ -147,9 +159,37 @@ namespace NLUL.Core.Client
             // Launch the client.
             Console.WriteLine("Launching the client.");
             var clientProcess = new Process();
+            var legoUniverseLocation = Path.Combine(this.SystemInfo.ClientLocation,"legouniverse.exe");
             clientProcess.StartInfo.WorkingDirectory = this.SystemInfo.ClientLocation;
-            clientProcess.StartInfo.FileName = Path.Combine(this.SystemInfo.ClientLocation,"legouniverse.exe");
             clientProcess.StartInfo.CreateNoWindow = true;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                clientProcess.StartInfo.FileName = legoUniverseLocation;
+            }
+            else
+            {
+                // Determine if WINE exists in the system path.
+                var wineExists = false;
+                foreach (var directory in Environment.GetEnvironmentVariable("PATH").Split(":"))
+                {
+                    if (File.Exists(Path.Combine(directory,"wine")))
+                    {
+                        wineExists = true;
+                        break;
+                    }
+                }
+                
+                // Throw an error if WINE doesn't exist.
+                if (!wineExists)
+                {
+                    throw new WineNotInstalledException();
+                }
+
+                // Set the WINE parameters.
+                clientProcess.StartInfo.FileName = "wine";
+                clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES","dinput8.dll=n,b");
+                clientProcess.StartInfo.Arguments = legoUniverseLocation;
+            }
             clientProcess.Start();
             clientProcess.WaitForExit();
             Console.WriteLine("Client closed.");
