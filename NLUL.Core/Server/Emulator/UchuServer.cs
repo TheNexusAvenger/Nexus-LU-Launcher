@@ -212,7 +212,8 @@ namespace NLUL.Core.Server.Emulator
         {
             return new List<IPrerequisite>()
             {
-                new DotNetCore31(Path.Combine(this.serverInfo.ServerFileLocation,"Tools"))
+                new DotNetCore31(Path.Combine(this.serverInfo.ServerFileLocation,"Tools")),
+                new UnpackedLegoUniverseClient(this.serverInfo.SystemInfo),
             };
             
             // TODO: Detect PostgresSQL install
@@ -262,9 +263,7 @@ namespace NLUL.Core.Server.Emulator
             var toolsLocation = Path.Combine(this.serverInfo.ServerFileLocation,"Tools");
             var dotNetDirectoryLocation = Path.Combine(toolsLocation,"dotnet3.1");
             var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation, "dotnet");
-            
-            // TODO: Verify client is unpacked.
-            
+
             // Remove the previous server.
             Console.WriteLine("Clearing old files");
             if (Directory.Exists(this.GetServerDirectory()))
