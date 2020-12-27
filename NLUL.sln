@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLUL.Core", "NLUL.Core\NLUL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLUL.Core.Test", "NLUL.Core.Test\NLUL.Core.Test.csproj", "{756056EE-304F-403B-927F-E45C8DEF707A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLUL.GUI", "NLUL.GUI\NLUL.GUI.csproj", "{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{756056EE-304F-403B-927F-E45C8DEF707A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{756056EE-304F-403B-927F-E45C8DEF707A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{756056EE-304F-403B-927F-E45C8DEF707A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

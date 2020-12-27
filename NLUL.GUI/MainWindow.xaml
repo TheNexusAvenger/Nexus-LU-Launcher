@@ -1,0 +1,20 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:NLUL.GUI.Component="clr-namespace:NLUL.GUI.Component"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="420"
+        x:Class="NLUL.GUI.MainWindow"
+        d:WindowTransparencyLevelHint="Transparent"
+        Width="680" Height="420"
+        TransparencyLevelHint="Transparent"
+        Background="Transparent"
+        HasSystemDecorations="false"
+        Title="Nexus Lego Universe Launcher">
+    <Border Background="#1A1922" BorderBrush="#12131C"
+            BorderThickness="3" CornerRadius="20">
+        <StackPanel>
+            <NLUL.GUI.Component:TopBar Height="62"/>
+        </StackPanel>
+    </Border>
+</Window>
