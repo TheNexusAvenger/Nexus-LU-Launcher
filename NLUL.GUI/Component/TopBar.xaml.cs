@@ -4,11 +4,10 @@
  * Top bar of the main window.
  */
 
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using NLUL.GUI.Component.Base;
 
 namespace NLUL.GUI.Component
 {

@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:NLUL.GUI.Component="clr-namespace:NLUL.GUI.Component"
+        xmlns:NLUL.GUI.Component.Play="clr-namespace:NLUL.GUI.Component.Play"
         mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="420"
         x:Class="NLUL.GUI.MainWindow"
         d:WindowTransparencyLevelHint="Transparent"
@@ -15,6 +16,8 @@
             BorderThickness="3" CornerRadius="20">
         <StackPanel>
             <NLUL.GUI.Component:TopBar Height="62"/>
+            <Panel Background="#000000" Height="256" Margin="2,0"></Panel>
+            <NLUL.GUI.Component.Play:PlayPanel/>
         </StackPanel>
     </Border>
 </Window>

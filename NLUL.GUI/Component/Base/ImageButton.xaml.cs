@@ -14,7 +14,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 
-namespace NLUL.GUI.Component
+namespace NLUL.GUI.Component.Base
 {
     public class ImageButton : Image
     {
@@ -37,21 +37,21 @@ namespace NLUL.GUI.Component
             get { return GetValue(HoverSourceProperty); }
             set { SetValue(HoverSourceProperty,value); }
         }
-        public static readonly StyledProperty<string> HoverSourceProperty = AvaloniaProperty.Register<Window,string>(nameof(BaseSource),"");
+        public static readonly StyledProperty<string> HoverSourceProperty = AvaloniaProperty.Register<Window,string>(nameof(HoverSource),"");
         
         public string PressSource
         {
             get { return GetValue(PressSourceProperty); }
             set { SetValue(PressSourceProperty,value); }
         }
-        public static readonly StyledProperty<string> PressSourceProperty = AvaloniaProperty.Register<Window,string>(nameof(BaseSource),"");
+        public static readonly StyledProperty<string> PressSourceProperty = AvaloniaProperty.Register<Window,string>(nameof(PressSource),"");
         
         public bool Active
         {
             get { return GetValue(ActiveProperty); }
             set { SetValue(ActiveProperty,value); }
         }
-        public static readonly StyledProperty<bool> ActiveProperty = AvaloniaProperty.Register<Window,bool>(nameof(BaseSource),true);
+        public static readonly StyledProperty<bool> ActiveProperty = AvaloniaProperty.Register<Window,bool>(nameof(Active),true);
 
         private bool hovering;
         private bool pressing;

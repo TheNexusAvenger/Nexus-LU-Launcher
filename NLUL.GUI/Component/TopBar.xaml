@@ -1,20 +1,20 @@
 <Panel xmlns="https://github.com/avaloniaui"
            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-           xmlns:NLUL.GUI.Component="clr-namespace:NLUL.GUI.Component"
+           xmlns:NLUL.GUI.Component.Base="clr-namespace:NLUL.GUI.Component.Base"
            x:Class="NLUL.GUI.Component.TopBar">
     <DockPanel HorizontalAlignment="Right">
         <StackPanel Height="36" Width="36">
-            <NLUL.GUI.Component:ImageButton Width="24" Height="24" Name="Minimize"
-                                            NLUL.GUI.Component:ImageButton.BaseSource="/Assets/Images/TopBar/MinimizeNormal.png"
-                                            NLUL.GUI.Component:ImageButton.HoverSource="/Assets/Images/TopBar/MinimizeHover.png"
-                                            NLUL.GUI.Component:ImageButton.PressSource="/Assets/Images/TopBar/MinimizePress.png"
+            <NLUL.GUI.Component.Base:ImageButton Width="24" Height="24" Name="Minimize"
+                                            BaseSource="/Assets/Images/TopBar/MinimizeNormal.png"
+                                            HoverSource="/Assets/Images/TopBar/MinimizeHover.png"
+                                            PressSource="/Assets/Images/TopBar/MinimizePress.png"
                                             />
         </StackPanel>
         <StackPanel Height="36" Width="36">
-            <NLUL.GUI.Component:ImageButton Width="24" Height="24" Name="Close"
-                                            NLUL.GUI.Component:ImageButton.BaseSource="/Assets/Images/TopBar/CloseNormal.png"
-                                            NLUL.GUI.Component:ImageButton.HoverSource="/Assets/Images/TopBar/CloseHover.png"
-                                            NLUL.GUI.Component:ImageButton.PressSource="/Assets/Images/TopBar/ClosePress.png"
+            <NLUL.GUI.Component.Base:ImageButton Width="24" Height="24" Name="Close"
+                                            BaseSource="/Assets/Images/TopBar/CloseNormal.png"
+                                            HoverSource="/Assets/Images/TopBar/CloseHover.png"
+                                            PressSource="/Assets/Images/TopBar/ClosePress.png"
                                             />
         </StackPanel>
         <Panel Width="8"></Panel>

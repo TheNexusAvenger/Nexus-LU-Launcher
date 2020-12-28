@@ -99,7 +99,7 @@ namespace NLUL.Core.Client
          * Tries to extract the client files. If it fails,
          * the client is re-downloaded.
          */
-        public void TryExtractClient(bool force)
+        public void TryExtractClient(bool force,Action<string> statusCallback = null)
         {
             // Return if the client was already extracted.
             if (!force && Directory.Exists(this.SystemInfo.ClientLocation))
@@ -109,18 +109,22 @@ namespace NLUL.Core.Client
             }
             
             // Download the client if not done already.
+            statusCallback?.Invoke("Download");
             this.DownloadClient(false);
             
             // Extract the files.
             try
             {
                 Console.WriteLine("Trying to extract client files.");
+                statusCallback?.Invoke("Extract");
                 this.ExtractClient(force);
             }
             catch (InvalidDataException)
             {
                 Console.WriteLine("Failed to extract the files (download corrupted); retrying download.");
+                statusCallback?.Invoke("Download");
                 this.DownloadClient(true);
+                statusCallback?.Invoke("Extract");
                 this.ExtractClient(force);
             }
         }
