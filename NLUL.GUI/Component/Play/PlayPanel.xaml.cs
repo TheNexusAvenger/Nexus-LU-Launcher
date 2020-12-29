@@ -171,9 +171,10 @@ namespace NLUL.GUI.Component.Play
             }
             else if (state == PlayState.Ready)
             {
+                var selectedServer = PersistentState.GetSelectedServer();
                 this.playButton.Color = ButtonNormalColor;
                 this.playButton.Active = true;
-                this.loadingText.Text = "Ready to launch: SERVER_NAME (localhost)"; // TODO: Fetch server name and actual host.
+                this.loadingText.Text = "Ready to launch: " + selectedServer.serverName + " (" + selectedServer.serverAddress + ")";
                 this.SetLoadingBar(0);
             }
             else if (state == PlayState.Launching)

@@ -99,8 +99,14 @@ namespace NLUL.GUI.State
             // Set the game state.
             if (!state.ManualChangeOnly)
             {
-                // TODO: Pending storing of hosts.
-                SetState(PlayState.Ready);
+                if (PersistentState.GetSelectedServer() == null)
+                {
+                    SetState(PlayState.NoSelectedServer);
+                }
+                else
+                {
+                    SetState(PlayState.Ready);
+                }
             }
         }
         
@@ -180,7 +186,11 @@ namespace NLUL.GUI.State
          */
         public static void Launch()
         {
-            clientRunner.Launch("localhost"); // TODO: Fetch host to use.
+            var selectedServer = PersistentState.GetSelectedServer();
+            if (selectedServer != null)
+            {
+                clientRunner.Launch(selectedServer.serverAddress,false);
+            }
         }
     }
 }

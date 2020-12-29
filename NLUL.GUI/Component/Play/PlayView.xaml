@@ -4,15 +4,8 @@
         x:Class="NLUL.GUI.Component.Play.PlayView">
     <StackPanel>
         <Border Background="#0C0D16" Width="664" Height="256" Margin="2,0" CornerRadius="7">
-            <ScrollViewer VerticalAlignment="Top">
-                <StackPanel Name="ServerList" Margin="0,0,0,5">
-                    <!--TODO: Temporary for testing/demo-->
-                    <NLUL.GUI.Component.Play:ServerEntry ServerName="Test Server 1" ServerAddress="localhost" Selected="true"></NLUL.GUI.Component.Play:ServerEntry>
-                    <NLUL.GUI.Component.Play:ServerEntry ServerName="Test Server 2" ServerAddress="127.0.0.1" Selected="false"></NLUL.GUI.Component.Play:ServerEntry>
-                    <NLUL.GUI.Component.Play:ServerEntry ServerName="Test Server 3" ServerAddress="127.0.0.1:10200" Selected="false"></NLUL.GUI.Component.Play:ServerEntry>
-                    <NLUL.GUI.Component.Play:ServerEntry ServerName="Test Server 4" ServerAddress="192.168.0.1" Selected="false"></NLUL.GUI.Component.Play:ServerEntry>
-                    <NLUL.GUI.Component.Play:ServerEntry ServerName="Test Server 5" ServerAddress="125.62.62.24" Selected="false"></NLUL.GUI.Component.Play:ServerEntry>
-                </StackPanel>
+            <ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left">
+                <StackPanel Name="ServerList" Margin="0,0,0,5"/>
             </ScrollViewer>
         </Border>
         <NLUL.GUI.Component.Play:PlayPanel/>

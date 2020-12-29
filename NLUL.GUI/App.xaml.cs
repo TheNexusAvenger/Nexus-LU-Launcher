@@ -7,6 +7,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using NLUL.GUI.State;
 
 namespace NLUL.GUI
 {
@@ -19,6 +20,9 @@ namespace NLUL.GUI
         {
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
+            
+            // Load the launcher state.
+            PersistentState.LoadState();
         }
         
         /*

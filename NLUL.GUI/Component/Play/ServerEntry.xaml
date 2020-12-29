@@ -4,11 +4,11 @@
            x:Class="NLUL.GUI.Component.Play.ServerEntry"
            Height="58" Margin="5,5,5,0" Background="#1A1B24" CornerRadius="3">
     <DockPanel HorizontalAlignment="Right">
-        <StackPanel HorizontalAlignment="Left" Width="456">
+        <StackPanel HorizontalAlignment="Left" MinWidth="456">
             <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="ServerName"
-                       FontSize="24" Margin="0,4,0,0"></TextBlock>
+                       FontSize="24" Margin="8,4,0,0"></TextBlock>
             <TextBlock TextAlignment="Left" Foreground="#AAAAAA" FontFamily="Arial" Name="ServerAddress"
-                       FontSize="18" Margin="4,4,0,0"></TextBlock>
+                       FontSize="18" Margin="12,4,0,0"></TextBlock>
         </StackPanel>
         <NLUL.GUI.Component.Base:RoundedButton Name="SelectButton"
                                                Width="110" Height="38">

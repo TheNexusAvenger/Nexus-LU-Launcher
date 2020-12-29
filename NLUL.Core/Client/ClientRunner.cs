@@ -141,7 +141,7 @@ namespace NLUL.Core.Client
         /*
          * Launches the client.
          */
-        public void Launch(string host)
+        public void Launch(string host,bool waitForFinish = true)
         {
             // Modify the boot file.
             Console.WriteLine("Setting to connect to \"" + host + "\"");
@@ -195,8 +195,13 @@ namespace NLUL.Core.Client
                 clientProcess.StartInfo.Arguments = legoUniverseLocation;
             }
             clientProcess.Start();
-            clientProcess.WaitForExit();
-            Console.WriteLine("Client closed.");
+            
+            // Wait for the client to close.
+            if (waitForFinish)
+            {
+                clientProcess.WaitForExit();
+                Console.WriteLine("Client closed.");
+            }
         }
     }
 }

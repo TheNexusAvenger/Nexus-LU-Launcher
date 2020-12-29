@@ -9,6 +9,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using NLUL.GUI.Component.Base;
+using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component.Play
 {
@@ -75,12 +76,13 @@ namespace NLUL.GUI.Component.Play
             };
             this.selectButton.ButtonPressed += (sender, args) =>
             {
-                // TODO: Implement
+                PersistentState.SetSelectedServer(this.ServerName);
             };
             this.removeButton.ButtonPressed += (sender, args) =>
             {
-                // TODO: Implement
+                PersistentState.RemoveServerEntry(this.ServerName);
             };
+            PersistentState.SelectedServerChanged += this.UpdateSelectButton;
             
             // Update the initial button.
             this.UpdateSelectButton();
