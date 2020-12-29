@@ -4,7 +4,7 @@
            x:Class="NLUL.GUI.Component.Play.ServerEntry"
            Height="58" Margin="10,5,10,0" Background="#1A1B24" CornerRadius="3">
     <DockPanel HorizontalAlignment="Right">
-        <StackPanel HorizontalAlignment="Left" Width="440">
+        <StackPanel HorizontalAlignment="Left" Width="446">
             <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="ServerName"
                        FontSize="24" Margin="0,4,0,0"></TextBlock>
             <TextBlock TextAlignment="Left" Foreground="#AAAAAA" FontFamily="Arial" Name="ServerAddress"
