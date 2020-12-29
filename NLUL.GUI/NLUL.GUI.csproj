@@ -5,6 +5,7 @@
         <PublishSingleFile>true</PublishSingleFile>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <RootNamespace>NLUL.GUI</RootNamespace>
+        <ApplicationIcon>Assets/Images/NexusLegoUniverseLauncherLogo.ico</ApplicationIcon>
     </PropertyGroup>
     <ItemGroup>
         <Compile Update="**\*.xaml.cs">

@@ -18,7 +18,7 @@ namespace NLUL.GUI.Component.Play
 {
     public class PlayPanel : DockPanel
     {
-        public static readonly SolidColorBrush ButtonNormalColor = new SolidColorBrush(new Color(255,15,38,174));
+        public static readonly SolidColorBrush ButtonNormalColor = new SolidColorBrush(new Color(255,0,170,255));
         public static readonly SolidColorBrush ButtonDisabledColor = new SolidColorBrush(new Color(255,44,44,50));
         
         private List<LoadingDot> loadingDots = new List<LoadingDot>();
