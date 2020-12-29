@@ -1,7 +1,6 @@
 <DockPanel xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:NLUL.GUI.Component.Base="clr-namespace:NLUL.GUI.Component.Base"
-        xmlns:NLUL.GUI.Component.Play="clr-namespace:NLUL.GUI.Component.Play"
         x:Class="NLUL.GUI.Component.Play.PlayPanel"
         Height="42" HorizontalAlignment="Right" Margin="0,7,0,0">
     <StackPanel HorizontalAlignment="Left">
