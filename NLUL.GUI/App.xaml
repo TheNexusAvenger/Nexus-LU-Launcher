@@ -4,5 +4,56 @@
     <Application.Styles>
         <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
         <StyleInclude Source="avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"/>
+        
+        <Style Selector="ScrollBar">
+          <Setter Property="Cursor" Value="Arrow" />
+          <Setter Property="Template">
+            <ControlTemplate>
+              <Track
+                     Minimum="{TemplateBinding Minimum}"
+                     Maximum="{TemplateBinding Maximum}"
+                     Value="{TemplateBinding Value, Mode=TwoWay}"
+                     ViewportSize="{TemplateBinding ViewportSize}"
+                     Orientation="{TemplateBinding Orientation}"
+                     IsDirectionReversed="True"
+                     Width="14">
+                <Thumb Classes="thumb"
+                       Opacity="1"
+                       Width="{DynamicResource ScrollBarSize}"
+                       MinHeight="{DynamicResource ScrollBarSize}"
+                       RenderTransformOrigin="100%,50%"/>
+              </Track>
+            </ControlTemplate>
+          </Setter>
+        </Style>
+        <Style Selector="ScrollBar:horizontal">
+          <Setter Property="Height" Value="{DynamicResource ScrollBarThickness}" />
+          <Setter Property="Template">
+            <ControlTemplate>
+              <Track
+                     Minimum="{TemplateBinding Minimum}"
+                     Maximum="{TemplateBinding Maximum}"
+                     Value="{TemplateBinding Value, Mode=TwoWay}"
+                     ViewportSize="{TemplateBinding ViewportSize}"
+                     Orientation="{TemplateBinding Orientation}"
+                     Height="14">
+                <Thumb Classes="thumb"
+                       Opacity="1"
+                       Width="{DynamicResource ScrollBarSize}"
+                       MinHeight="{DynamicResource ScrollBarSize}"
+                       RenderTransformOrigin="100%,50%"/>
+              </Track>
+            </ControlTemplate>
+          </Setter>
+        </Style>
+        <Style Selector="ScrollBar /template/ Thumb.thumb">
+          <Setter Property="Template">
+            <Setter.Value>
+              <ControlTemplate>
+                <Border x:Name="ThumbVisual" Background="#FFFFFF" CornerRadius="7"/>
+              </ControlTemplate>
+            </Setter.Value>
+          </Setter>
+        </Style>
     </Application.Styles>
 </Application>
