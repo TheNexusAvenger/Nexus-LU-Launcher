@@ -1,7 +1,7 @@
 /*
  * TheNexusAvenger
  *
- * Buttons displayed at the bottom of the play view.
+ * Buttons displayed at the bottom of the host view.
  */
 
 using System.Diagnostics;
@@ -9,18 +9,18 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using NLUL.GUI.Component.Base;
 
-namespace NLUL.GUI.Component.Play
+namespace NLUL.GUI.Component.Host
 {
-    public class PlayButtons : DockPanel
+    public class HostButtons : DockPanel
     {
         /*
-         * Creates the play buttons.
+         * Creates a host buttons.
          */
-        public PlayButtons()
+        public HostButtons()
         {
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
-
+            
             // Connect the events.
             this.Get<ImageTextButton>("GitHubButton").ButtonPressed += (sender, args) =>
             {
@@ -30,7 +30,7 @@ namespace NLUL.GUI.Component.Play
                 webProcess.StartInfo.UseShellExecute = true;
                 webProcess.Start(); 
             };
-            this.Get<ImageTextButton>("HostButton").ButtonPressed += (sender, args) =>
+            this.Get<ImageTextButton>("PlayButton").ButtonPressed += (sender, args) =>
             {
                 // Get the toggle view.
                 IControl toggleView = this;
@@ -40,11 +40,7 @@ namespace NLUL.GUI.Component.Play
                 }
                 
                 // Toggle the view.
-                ((ToggleView) toggleView)?.SetView(ActiveView.Host);
-            };
-            this.Get<ImageTextButton>("PatchesButton").ButtonPressed += (sender, args) =>
-            {
-                // TODO: Implement
+                ((ToggleView) toggleView)?.SetView(ActiveView.Play);
             };
         }
     }

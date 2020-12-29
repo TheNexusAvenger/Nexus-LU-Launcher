@@ -1,0 +1,10 @@
+<Canvas xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:NLUL.GUI.Component.Play="clr-namespace:NLUL.GUI.Component.Play"
+        xmlns:NLUL.GUI.Component.Host="clr-namespace:NLUL.GUI.Component.Host"
+        x:Class="NLUL.GUI.Component.ToggleView">
+    <Canvas>
+       <NLUL.GUI.Component.Play:PlayView Name="PlayView"/>
+       <NLUL.GUI.Component.Host:HostView Name="HostView"/>
+    </Canvas>
+</Canvas>

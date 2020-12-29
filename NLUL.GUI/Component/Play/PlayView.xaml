@@ -1,0 +1,10 @@
+<StackPanel xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:NLUL.GUI.Component.Play="clr-namespace:NLUL.GUI.Component.Play"
+        x:Class="NLUL.GUI.Component.Play.PlayView">
+    <StackPanel>
+        <Panel Background="#000000" Width="664" Height="256" Margin="2,0"></Panel>
+        <NLUL.GUI.Component.Play:PlayPanel/>
+        <NLUL.GUI.Component.Play:PlayButtons Margin="60,12,0,0"/>
+    </StackPanel>
+</StackPanel>
