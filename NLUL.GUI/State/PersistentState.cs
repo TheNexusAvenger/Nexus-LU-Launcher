@@ -70,7 +70,7 @@ namespace NLUL.GUI.State
          */
         public static void Save()
         {
-            // File.WriteAllText(SaveLocation,JsonConvert.SerializeObject(State,Formatting.Indented));
+            File.WriteAllText(SaveLocation,JsonConvert.SerializeObject(State,Formatting.Indented));
         }
         
         /*
