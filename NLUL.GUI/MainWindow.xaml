@@ -18,6 +18,7 @@
             <NLUL.GUI.Component:TopBar Height="62"/>
             <Panel Background="#000000" Height="256" Margin="2,0"></Panel>
             <NLUL.GUI.Component.Play:PlayPanel/>
+            <NLUL.GUI.Component.Play:PlayButtons Margin="60,12,0,0"/>
         </StackPanel>
     </Border>
 </Window>

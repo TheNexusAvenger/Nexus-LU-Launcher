@@ -1,0 +1,8 @@
+<Panel xmlns="https://github.com/avaloniaui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       x:Class="NLUL.GUI.Component.Base.ImageTextButton">
+       <DockPanel>
+              <Image Name="ButtonImage"></Image>
+              <TextBlock Name="ButtonText" Margin="7,0,0,0" VerticalAlignment="Center"></TextBlock>
+       </DockPanel>
+</Panel>

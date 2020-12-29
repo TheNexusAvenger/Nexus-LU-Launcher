@@ -1,0 +1,9 @@
+<DockPanel xmlns="https://github.com/avaloniaui"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+           xmlns:NLUL.GUI.Component.Base="clr-namespace:NLUL.GUI.Component.Base"
+           x:Class="NLUL.GUI.Component.Play.PlayButtons"
+           HorizontalAlignment="Left">
+    <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GitHubLogo.png" Name="GitHubButton" Text="GitHub" Width="120" Height="24"/>
+    <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/LegoHand.png" Name="HostButton" Text="Host" Width="120" Height="24"/>
+    <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GearIcon.png" Name="PatchesButton" Text="Patches" Width="120" Height="24"/>
+</DockPanel>
