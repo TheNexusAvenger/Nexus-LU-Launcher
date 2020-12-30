@@ -15,6 +15,7 @@ namespace NLUL.GUI.Component.Play
     {
         private StackPanel serverListContainer;
         private List<ServerEntry> serverEntries = new List<ServerEntry>();
+        private NewServerEntry newServerEntry;
         
         /*
         * Creates a play view.
@@ -24,6 +25,8 @@ namespace NLUL.GUI.Component.Play
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
             this.serverListContainer = this.Get<StackPanel>("ServerList");
+            this.newServerEntry = new NewServerEntry();
+            this.serverListContainer.Children.Add(this.newServerEntry);
             
             // Connect the events.
             PersistentState.ServerListChanged += this.UpdateServerList;
@@ -65,6 +68,9 @@ namespace NLUL.GUI.Component.Play
                 this.serverEntries.Remove(oldEntry);
                 this.serverListContainer.Children.Remove(oldEntry);
             }
+            
+            // Move the add server entry to the end.
+            this.serverListContainer.Children.Move(this.serverListContainer.Children.IndexOf(this.newServerEntry),this.serverListContainer.Children.Count - 1);
         }
     }
 }
