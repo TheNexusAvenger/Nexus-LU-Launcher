@@ -9,4 +9,8 @@
       <PackageReference Include="SharpZipLib" Version="1.2.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\InfectedRose\InfectedRose.Lvl\InfectedRose.Lvl.csproj" />
+    </ItemGroup>
+
 </Project>

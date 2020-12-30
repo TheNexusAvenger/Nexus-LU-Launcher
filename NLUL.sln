@@ -8,6 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLUL.Core.Test", "NLUL.Core
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLUL.GUI", "NLUL.GUI\NLUL.GUI.csproj", "{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfectedRose.Lvl", "InfectedRose\InfectedRose.Lvl\InfectedRose.Lvl.csproj", "{53411A31-E823-46BB-88C7-C7F291135A6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfectedRose.Core", "InfectedRose\InfectedRose.Core\InfectedRose.Core.csproj", "{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8B3F507-F7EB-453B-BF1A-25A1E8F659D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53411A31-E823-46BB-88C7-C7F291135A6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53411A31-E823-46BB-88C7-C7F291135A6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53411A31-E823-46BB-88C7-C7F291135A6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53411A31-E823-46BB-88C7-C7F291135A6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

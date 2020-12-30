@@ -10,7 +10,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
+using InfectedRose.Lvl;
 using NLUL.Core.Client.Patch;
+using RakDotNet.IO;
 
 namespace NLUL.Core.Client
 {
@@ -146,19 +149,9 @@ namespace NLUL.Core.Client
             // Modify the boot file.
             Console.WriteLine("Setting to connect to \"" + host + "\"");
             var bootConfigLocation = Path.Combine(this.SystemInfo.ClientLocation,"boot.cfg");
-            var newBootContents = "";
-            foreach (var line in File.ReadLines(bootConfigLocation))
-            {
-                if (line.StartsWith("AUTHSERVERIP="))
-                {
-                    newBootContents += "AUTHSERVERIP=0:" + host + ",\n";
-                }
-                else
-                {
-                    newBootContents += line + "\n";
-                }
-            }
-            File.WriteAllText(bootConfigLocation,newBootContents.Substring(0,newBootContents.Length - 1));
+            var bootConfig = LegoDataDictionary.FromString(File.ReadAllText(bootConfigLocation));
+            bootConfig["AUTHSERVERIP"] = host;
+            File.WriteAllText(bootConfigLocation,bootConfig.ToString("\n"));
             
             // Launch the client.
             Console.WriteLine("Launching the client.");
