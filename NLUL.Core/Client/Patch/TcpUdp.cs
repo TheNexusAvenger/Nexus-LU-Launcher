@@ -1,7 +1,7 @@
 /*
  * TheNexusAvenger
  *
- * Patch for RakNet.
+ * Patch for TCP/UDP.
  */
 
 using System.IO;
@@ -10,7 +10,7 @@ using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
 {
-    public class RakNet : IPatch
+    public class TcpUdp : IPatch
     {
         private SystemInfo systemInfo;
         private GitHubManifest manifest;
@@ -19,11 +19,11 @@ namespace NLUL.Core.Client.Patch
         /*
          * Creates the patch.
          */
-        public RakNet(SystemInfo systemInfo,GitHubManifest manifest)
+        public TcpUdp(SystemInfo systemInfo,GitHubManifest manifest)
         {
             this.systemInfo = systemInfo;
             this.manifest = manifest;
-            this.repositoryEntry = manifest.GetEntry("lcdr/raknet_shim_dll",Path.Combine(systemInfo.SystemFileLocation,"raknet"));
+            this.repositoryEntry = manifest.GetEntry("lcdr/raknet_shim_dll",Path.Combine(systemInfo.SystemFileLocation,"tcpudp"));
         }
         
         /*

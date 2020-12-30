@@ -16,7 +16,7 @@ namespace NLUL.Core.Client.Patch
     public enum ClientPatchName
     {
         ModLoader,
-        RakNet,
+        TcpUdp,
     }
     
     /*
@@ -38,7 +38,7 @@ namespace NLUL.Core.Client.Patch
             this.patches = new Dictionary<ClientPatchName,IPatch>()
             {
                 {ClientPatchName.ModLoader,new ModLoader(systemInfo,this.manifest)},
-                {ClientPatchName.RakNet,new RakNet(systemInfo,this.manifest)},
+                {ClientPatchName.TcpUdp,new TcpUdp(systemInfo,this.manifest)},
             };
         }
         

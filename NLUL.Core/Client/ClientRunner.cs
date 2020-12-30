@@ -136,7 +136,7 @@ namespace NLUL.Core.Client
         public void PatchClient()
         {
             this.clientPatcher.Install(ClientPatchName.ModLoader);
-            this.clientPatcher.Install(ClientPatchName.RakNet);
+            this.clientPatcher.Install(ClientPatchName.TcpUdp);
         }
         
         /*
