@@ -1,15 +1,15 @@
-# Nexus Lego Universe Launcher
-Nexus Lego Universe Launcher is a custom, cross-platform
-user interface for installing and launching Lego Universe
-for community-run Lego Universe servers.
+# Nexus LU Launcher
+Nexus LU (LEGO Universe) Launcher is a custom, cross-platform
+user interface for installing and launching LEGO Universe
+for community-run LEGO Universe servers.
 ![Launcher example](images/launcher.png)
 
 ## Goals
 The goals of the launcher is the following:
 * Allow for launching the client on Windows, macOS, and Linux.
-* Use a user interface similar to the original Lego Universe launcher.
+* Use a user interface similar to the original LEGO Universe launcher.
 * Automate the process of downloading the client, installing patches,
-  and launching Lego Universe.
+  and launching LEGO Universe.
 * Be able to select from a list of servers to connect to.
 * Enable the installation of optional patches.
 * Automate the process of basic setup for servers.
@@ -28,7 +28,7 @@ be made at some point:
 * Enable advanced, configurable patches, such as modifying the client database.
 
 # Building
-Nexus Lego Universe Launcher requires .NET 5.0 to be installed
+Nexus LEGO Universe Launcher requires .NET 5.0 to be installed
 since it allows packaging as single files without the requirement of
 decompressing files. After cloning the repository **with the submodules**,
 building can be done with the `dotnet build`:
@@ -60,3 +60,8 @@ requirements. It *will be* recommended to focus on servers that have a high
 level of functionality, like Uchu and Operation Crux. At this point, pull
 requests may not be accepted as the implementation is incomplete and may
 change.
+
+### Disclaimer
+LEGO<sup>Ⓡ</sup> is a trademark of the LEGO Group. The LEGO Group is not
+affiliated with this project, has not endorsed or authorized its operation,
+and is not liable for any safety issues in relation to its operation.
