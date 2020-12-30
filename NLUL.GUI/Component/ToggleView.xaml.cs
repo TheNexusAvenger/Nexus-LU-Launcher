@@ -7,6 +7,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using NLUL.GUI.Component.Host;
+using NLUL.GUI.Component.Patches;
 using NLUL.GUI.Component.Play;
 
 namespace NLUL.GUI.Component
@@ -15,12 +16,14 @@ namespace NLUL.GUI.Component
     {
         Play,
         Host,
+        Patches,
     }
     
     public class ToggleView : Canvas
     {
         private PlayView playView;
         private HostView hostView;
+        private PatchesView patchesView;
         
         /*
          * Creates a toggle view panel.
@@ -31,6 +34,7 @@ namespace NLUL.GUI.Component
             AvaloniaXamlLoader.Load(this);
             this.playView = this.Get<PlayView>("PlayView");
             this.hostView = this.Get<HostView>("HostView");
+            this.patchesView = this.Get<PatchesView>("PatchesView");
 
             // Set the active view.
             this.SetView(ActiveView.Play);
@@ -44,6 +48,7 @@ namespace NLUL.GUI.Component
             // Update the visibility.
             this.playView.IsVisible = (view == ActiveView.Play);
             this.hostView.IsVisible = (view == ActiveView.Host);
+            this.patchesView.IsVisible = (view == ActiveView.Patches);
         }
     }
 }

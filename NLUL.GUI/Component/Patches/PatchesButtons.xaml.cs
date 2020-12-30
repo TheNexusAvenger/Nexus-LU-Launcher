@@ -1,7 +1,7 @@
 /*
  * TheNexusAvenger
  *
- * Buttons displayed at the bottom of the play view.
+ * Buttons displayed at the bottom of the patches view.
  */
 
 using System.Diagnostics;
@@ -9,18 +9,18 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using NLUL.GUI.Component.Base;
 
-namespace NLUL.GUI.Component.Play
+namespace NLUL.GUI.Component.Patches
 {
-    public class PlayButtons : DockPanel
+    public class PatchesButtons : DockPanel
     {
         /*
-         * Creates the play buttons.
+         * Creates a patches buttons.
          */
-        public PlayButtons()
+        public PatchesButtons()
         {
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
-
+            
             // Connect the events.
             this.Get<ImageTextButton>("GitHubButton").ButtonPressed += (sender, args) =>
             {
@@ -30,7 +30,7 @@ namespace NLUL.GUI.Component.Play
                 webProcess.StartInfo.UseShellExecute = true;
                 webProcess.Start(); 
             };
-            this.Get<ImageTextButton>("HostButton").ButtonPressed += (sender, args) =>
+            this.Get<ImageTextButton>("PlayButton").ButtonPressed += (sender, args) =>
             {
                 // Get the toggle view.
                 IControl toggleView = this;
@@ -40,19 +40,7 @@ namespace NLUL.GUI.Component.Play
                 }
                 
                 // Toggle the view.
-                ((ToggleView) toggleView)?.SetView(ActiveView.Host);
-            };
-            this.Get<ImageTextButton>("PatchesButton").ButtonPressed += (sender, args) =>
-            {
-                // Get the toggle view.
-                IControl toggleView = this;
-                while (toggleView != null && !(toggleView is ToggleView))
-                {
-                    toggleView = toggleView.Parent;
-                }
-                
-                // Toggle the view.
-                ((ToggleView) toggleView)?.SetView(ActiveView.Patches);
+                ((ToggleView) toggleView)?.SetView(ActiveView.Play);
             };
         }
     }
