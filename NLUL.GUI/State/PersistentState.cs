@@ -5,7 +5,7 @@
  */
 
 
-using System;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -70,6 +70,13 @@ namespace NLUL.GUI.State
          */
         public static void Save()
         {
+            // Create the directories.
+            if (!Directory.Exists(ProgramSystemInfo.SystemInfo.SystemFileLocation))
+            {
+                Directory.CreateDirectory(ProgramSystemInfo.SystemInfo.SystemFileLocation);
+            }
+            
+            // Write the state as JSON.
             File.WriteAllText(SaveLocation,JsonConvert.SerializeObject(State,Formatting.Indented));
         }
         

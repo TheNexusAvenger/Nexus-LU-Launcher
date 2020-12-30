@@ -51,6 +51,12 @@ namespace NLUL.Core.Client.Patch
             // Get the tag information.
             var tag = this.repositoryEntry.GetLatestTag();
             
+            // Create the client directory if it doesn't exist.
+            if (!Directory.Exists(this.systemInfo.ClientLocation))
+            {
+                Directory.CreateDirectory(this.systemInfo.ClientLocation);
+            }
+            
             // Download the mod loader ZIP.
             var client = new WebClient();
             var modDownloadDirectory = Path.Combine(this.systemInfo.SystemFileLocation,"modloader.zip");
