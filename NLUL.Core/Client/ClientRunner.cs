@@ -10,10 +10,8 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Text;
 using InfectedRose.Lvl;
 using NLUL.Core.Client.Patch;
-using RakDotNet.IO;
 
 namespace NLUL.Core.Client
 {
