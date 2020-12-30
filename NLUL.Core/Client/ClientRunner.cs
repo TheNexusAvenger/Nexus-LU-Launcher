@@ -147,7 +147,15 @@ namespace NLUL.Core.Client
             // Modify the boot file.
             Console.WriteLine("Setting to connect to \"" + host + "\"");
             var bootConfigLocation = Path.Combine(this.SystemInfo.ClientLocation,"boot.cfg");
-            var bootConfig = LegoDataDictionary.FromString(File.ReadAllText(bootConfigLocation));
+            LegoDataDictionary bootConfig = null;
+            try
+            {
+                bootConfig = LegoDataDictionary.FromString(File.ReadAllText(bootConfigLocation).Trim());
+            }
+            catch (FormatException)
+            {
+                bootConfig = LegoDataDictionary.FromString(File.ReadAllText(Path.Combine(this.SystemInfo.ClientLocation,"boot_backup.cfg")).Trim());
+            }
             bootConfig["AUTHSERVERIP"] = host;
             File.WriteAllText(bootConfigLocation,bootConfig.ToString("\n"));
             
