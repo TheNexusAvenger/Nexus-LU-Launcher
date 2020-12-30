@@ -26,7 +26,7 @@ namespace NLUL.GUI.Component.Patches
                 PatchEnum = ClientPatchName.ModLoader,
             },
             new PatchData() {
-                PatchName = "RakNet",
+                PatchName = "RakNet TCP/UDP Shim",
                 PatchDescription = "Enables connecting to community-run Lego Universe servers. Requires the Mod Loader to be installed.",
                 PatchEnum = ClientPatchName.RakNet,
             },
