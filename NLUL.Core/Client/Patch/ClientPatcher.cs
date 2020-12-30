@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using System.IO;
-using NLUL.Core.Server.Util;
+using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
 {

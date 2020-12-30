@@ -12,7 +12,7 @@ using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json;
 
-namespace NLUL.Core.Server.Util
+namespace NLUL.Core.Util
 {
     /*
      * Data class for a GitHub tag.

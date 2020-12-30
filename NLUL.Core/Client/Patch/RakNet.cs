@@ -6,7 +6,7 @@
 
 using System.IO;
 using System.Net;
-using NLUL.Core.Server.Util;
+using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
 {

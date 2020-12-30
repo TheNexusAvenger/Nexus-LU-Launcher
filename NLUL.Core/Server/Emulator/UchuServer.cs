@@ -15,7 +15,7 @@ using System.Xml;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using NLUL.Core.Server.Prerequisite;
-using NLUL.Core.Server.Util;
+using NLUL.Core.Util;
 using Formatting = Newtonsoft.Json.Formatting;
 
 namespace NLUL.Core.Server.Emulator

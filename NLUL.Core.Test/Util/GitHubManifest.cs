@@ -6,7 +6,7 @@
 
 using System;
 using System.IO;
-using NLUL.Core.Server.Util;
+using NLUL.Core.Util;
 using NUnit.Framework;
 
 namespace NLUL.Core.Test.Util
