@@ -126,7 +126,7 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Pending client download.";
                 this.SetLoadingBar(0);
             }
-            else if (state == PlayState.PatchingClient)
+            else if (state == PlayState.DownloadingClient)
             {
                 this.playButton.Color = ButtonDisabledColor;
                 this.playButton.Active = false;
