@@ -27,7 +27,7 @@ namespace NLUL.GUI.Component.Patches
             },
             new PatchData() {
                 PatchName = "TCP/UDP Shim",
-                PatchDescription = "Enables connecting to community-run Lego Universe servers. Requires the Mod Loader to be installed.",
+                PatchDescription = "Enables connecting to community-run LEGO Universe servers. Requires the Mod Loader to be installed.",
                 PatchEnum = ClientPatchName.TcpUdp,
             },
         };

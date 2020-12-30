@@ -10,7 +10,7 @@
         TransparencyLevelHint="Transparent"
         Background="Transparent"
         HasSystemDecorations="false"
-        Title="Nexus Lego Universe Launcher"
+        Title="Nexus LEGO Universe Launcher"
         Icon="/Assets/Images/NexusLegoUniverseLauncherLogo.ico">
     <Canvas>
         <Border Background="#1A1922" BorderBrush="#12131C" BorderThickness="3" CornerRadius="20" Width="674" Height="420" Canvas.Top="50">
