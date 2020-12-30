@@ -61,7 +61,7 @@ level of functionality, like Uchu and Operation Crux. At this point, pull
 requests may not be accepted as the implementation is incomplete and may
 change.
 
-### Disclaimer
+# Disclaimer
 LEGO<sup>Ⓡ</sup> is a trademark of the LEGO Group. The LEGO Group is not
 affiliated with this project, has not endorsed or authorized its operation,
 and is not liable for any safety issues in relation to its operation.
