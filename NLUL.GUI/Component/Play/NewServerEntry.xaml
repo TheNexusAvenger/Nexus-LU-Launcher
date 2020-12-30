@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:NLUL.GUI.Component.Base="clr-namespace:NLUL.GUI.Component.Base"
         x:Class="NLUL.GUI.Component.Play.NewServerEntry"
-        Height="58" Margin="5,5,5,0" Background="#1A1B24" CornerRadius="3">
+        Height="58" Margin="5,5,5,0" Background="#1A1B24" CornerRadius="3" MinWidth="626">
     <DockPanel HorizontalAlignment="Center">
         <StackPanel HorizontalAlignment="Left" MinWidth="456" Name="Inputs">
             <DockPanel HorizontalAlignment="Left">
