@@ -49,7 +49,7 @@ namespace NLUL.GUI.Component.Patches
         public static readonly StyledProperty<ClientPatcher> PatcherProperty = AvaloniaProperty.Register<Window,ClientPatcher>(nameof(Patcher));
 
         public static readonly SolidColorBrush InstallColor = new SolidColorBrush(new Color(255,0,205,0));
-        public static readonly SolidColorBrush RemoveColor = new SolidColorBrush(new Color(255,205,0,0));
+        public static readonly SolidColorBrush UninstallColor = new SolidColorBrush(new Color(255,205,0,0));
         
         private PatchState patchState = PatchState.NotInstalled;
         private TextBlock patchName;
@@ -292,8 +292,8 @@ namespace NLUL.GUI.Component.Patches
             else if (this.patchState == PatchState.Installed)
             {
                 this.installButton.IsVisible = true;
-                this.installButton.Color = RemoveColor;
-                this.installText.Text = "Remove";
+                this.installButton.Color = UninstallColor;
+                this.installText.Text = "Uninstall";
                 this.updateButton.IsVisible = false;
                 this.statusText.IsVisible = false;
             }
@@ -316,7 +316,7 @@ namespace NLUL.GUI.Component.Patches
             else if (this.patchState == PatchState.FailedToUninstall)
             {
                 this.installButton.IsVisible = true;
-                this.installButton.Color = RemoveColor;
+                this.installButton.Color = UninstallColor;
                 this.installText.Text = "Uninstall";
                 this.updateButton.IsVisible = false;
                 this.statusText.IsVisible = true;
@@ -325,7 +325,7 @@ namespace NLUL.GUI.Component.Patches
             else if (this.patchState == PatchState.CheckingForUpdates)
             {
                 this.installButton.IsVisible = true;
-                this.installButton.Color = RemoveColor;
+                this.installButton.Color = UninstallColor;
                 this.installText.Text = "Uninstall";
                 this.updateButton.IsVisible = false;
                 this.statusText.IsVisible = true;
@@ -334,7 +334,7 @@ namespace NLUL.GUI.Component.Patches
             else if (this.patchState == PatchState.UpdatesCheckFailed)
             {
                 this.installButton.IsVisible = true;
-                this.installButton.Color = RemoveColor;
+                this.installButton.Color = UninstallColor;
                 this.installText.Text = "Uninstall";
                 this.updateButton.IsVisible = false;
                 this.statusText.IsVisible = true;
@@ -343,7 +343,7 @@ namespace NLUL.GUI.Component.Patches
             else if (this.patchState == PatchState.UpdateAvailable)
             {
                 this.installButton.IsVisible = true;
-                this.installButton.Color = RemoveColor;
+                this.installButton.Color = UninstallColor;
                 this.installText.Text = "Uninstall";
                 this.updateButton.IsVisible = true;
                 this.statusText.IsVisible = true;
@@ -359,7 +359,7 @@ namespace NLUL.GUI.Component.Patches
             else if (this.patchState == PatchState.FailedToUpdate)
             {
                 this.installButton.IsVisible = true;
-                this.installButton.Color = RemoveColor;
+                this.installButton.Color = UninstallColor;
                 this.installText.Text = "Uninstall";
                 this.updateButton.IsVisible = true;
                 this.statusText.IsVisible = true;
