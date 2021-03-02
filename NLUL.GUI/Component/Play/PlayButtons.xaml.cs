@@ -8,6 +8,7 @@ using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using NLUL.GUI.Component.Base;
+using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component.Play
 {
@@ -22,6 +23,7 @@ namespace NLUL.GUI.Component.Play
             AvaloniaXamlLoader.Load(this);
 
             // Connect the events.
+            var patchesButton = this.Get<ImageTextButton>("PatchesButton");
             this.Get<ImageTextButton>("GitHubButton").ButtonPressed += (sender, args) =>
             {
                 // Open the repository in a browser.
@@ -42,7 +44,7 @@ namespace NLUL.GUI.Component.Play
                 // Toggle the view.
                 ((ToggleView) toggleView)?.SetView(ActiveView.Host);
             };
-            this.Get<ImageTextButton>("PatchesButton").ButtonPressed += (sender, args) =>
+            patchesButton.ButtonPressed += (sender, args) =>
             {
                 // Get the toggle view.
                 IControl toggleView = this;
@@ -54,6 +56,13 @@ namespace NLUL.GUI.Component.Play
                 // Toggle the view.
                 ((ToggleView) toggleView)?.SetView(ActiveView.Patches);
             };
+            Client.StateChanged += () =>
+            {
+                // Hide the patches button if the client is not installed.
+                var state = Client.state;
+                patchesButton.IsVisible = (state == PlayState.NoSelectedServer || state == PlayState.Ready || state == PlayState.Launching);
+            };
+            patchesButton.IsVisible = (Client.state == PlayState.NoSelectedServer || Client.state == PlayState.Ready || Client.state == PlayState.Launching);
         }
     }
 }
