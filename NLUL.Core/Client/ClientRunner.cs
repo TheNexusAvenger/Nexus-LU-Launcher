@@ -92,6 +92,12 @@ namespace NLUL.Core.Client
             // Move the files.
             Directory.Move(Path.Combine(this.ExtractLocation,"LCDR Unpacked"),this.SystemInfo.ClientLocation);
             Directory.Delete(this.ExtractLocation);
+            
+            // Delete the client archive.
+            if (File.Exists(this.DownloadLocation))
+            {
+                File.Delete(this.DownloadLocation);
+            }
         }
         
         /*
