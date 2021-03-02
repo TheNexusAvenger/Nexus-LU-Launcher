@@ -25,7 +25,7 @@ namespace NLUL.Core.Client.Runtime
             this.runtimes = new List<IRuntime>()
             {
                 // Native Windows.
-                // new NativeWindows(),
+                new NativeWindows(),
 
                 // User-installed WINE.
                 new UserInstalledWine(),
