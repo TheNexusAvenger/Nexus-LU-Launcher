@@ -2,6 +2,7 @@
 Nexus LU (LEGO Universe) Launcher is a custom, cross-platform
 user interface for installing and launching LEGO Universe
 for community-run LEGO Universe servers.
+
 ![Launcher example](images/launcher.png)
 
 ## Goals
@@ -46,6 +47,9 @@ CLI and GUI projects for win-x64, osx-x64, and linux-x64:
 python publish.py
 cd bin/ # The ZIP files of the distributables will be in bin/ of the repository.
 ```
+
+**For distributing non-Windows builds, make sure to run the script on
+macOS or Linux.** Otherwise, the executable permissions will be missing.
 
 # Additions
 ## Patches
