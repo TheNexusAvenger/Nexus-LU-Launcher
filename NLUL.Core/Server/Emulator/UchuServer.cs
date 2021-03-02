@@ -27,7 +27,7 @@ namespace NLUL.Core.Server.Emulator
     {
         public int ProcessId = 0;
         public string GitRemote = "UchuServer/Uchu";
-        public string GitBranch = "master";
+        public string GitBranch = "dev";
         public string InfectedRoseRemote = "Wincent01/InfectedRose";
         public string InfectedRoseBranch = "master";
         public string RakDotNetRemote = "UchuServer/RakDotNet";
