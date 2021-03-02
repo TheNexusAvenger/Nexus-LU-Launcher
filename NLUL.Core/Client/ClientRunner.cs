@@ -5,33 +5,22 @@
  */
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-using System.Runtime.InteropServices;
 using InfectedRose.Lvl;
 using NLUL.Core.Client.Patch;
+using NLUL.Core.Client.Runtime;
 
 namespace NLUL.Core.Client
 {
-    public class WineNotInstalledException : NotSupportedException
-    {
-        /*
-         * Creates the exception.
-         */
-        public WineNotInstalledException() : base("WINE is not detected.")
-        {
-            
-        }
-    }
-    
     public class ClientRunner
     {
         private SystemInfo SystemInfo;
         private string DownloadLocation;
         private string ExtractLocation;
         private ClientPatcher clientPatcher;
+        private ClientRuntime runtime;
         
         /*
          * Creates a Client instance.
@@ -42,6 +31,15 @@ namespace NLUL.Core.Client
             this.DownloadLocation = Path.Combine(systemInfo.SystemFileLocation,"client.zip");
             this.ExtractLocation = Path.Combine(systemInfo.SystemFileLocation,"ClientExtract");
             this.clientPatcher = new ClientPatcher(systemInfo);
+            this.runtime = new ClientRuntime(systemInfo);
+        }
+        
+        /*
+         * Returns the runtime for the client.
+         */
+        public IRuntime GetRuntime()
+        {
+            return this.runtime;
         }
         
         /*
@@ -144,6 +142,22 @@ namespace NLUL.Core.Client
          */
         public void Launch(string host,bool waitForFinish = true)
         {
+            // Set up the runtime if it isn't installed.
+            if (!this.runtime.IsInstalled())
+            {
+                if (this.runtime.CanInstall())
+                {
+                    // Install the runtime.
+                    this.runtime.Install();
+                }
+                else
+                {
+                    // Stop the launch if a valid runtime isn't set up.
+                    Console.WriteLine("Failed to launch: " + this.runtime.GetManualRuntimeInstallMessage());
+                    return;
+                }
+            }
+            
             // Modify the boot file.
             Console.WriteLine("Setting to connect to \"" + host + "\"");
             var bootConfigLocation = Path.Combine(this.SystemInfo.ClientLocation,"boot.cfg");
@@ -161,46 +175,13 @@ namespace NLUL.Core.Client
             
             // Launch the client.
             Console.WriteLine("Launching the client.");
-            var clientProcess = new Process();
-            var legoUniverseLocation = Path.Combine(this.SystemInfo.ClientLocation,"legouniverse.exe");
-            clientProcess.StartInfo.WorkingDirectory = this.SystemInfo.ClientLocation;
-            clientProcess.StartInfo.CreateNoWindow = true;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                clientProcess.StartInfo.FileName = legoUniverseLocation;
-            }
-            else
-            {
-                // Determine if WINE exists in the system path.
-                var wineExists = false;
-                foreach (var directory in Environment.GetEnvironmentVariable("PATH").Split(":"))
-                {
-                    if (File.Exists(Path.Combine(directory,"wine")))
-                    {
-                        wineExists = true;
-                        break;
-                    }
-                }
-                
-                // Throw an error if WINE doesn't exist.
-                if (!wineExists)
-                {
-                    throw new WineNotInstalledException();
-                }
-
-                // Set the WINE parameters.
-                clientProcess.StartInfo.FileName = "wine";
-                clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES","dinput8.dll=n,b");
-                clientProcess.StartInfo.Arguments = legoUniverseLocation;
-            }
+            var clientProcess = this.runtime.RunApplication(Path.Combine(this.SystemInfo.ClientLocation,"legouniverse.exe"), this.SystemInfo.ClientLocation);
             clientProcess.Start();
             
             // Wait for the client to close.
-            if (waitForFinish)
-            {
-                clientProcess.WaitForExit();
-                Console.WriteLine("Client closed.");
-            }
+            if (!waitForFinish) return;
+            clientProcess.WaitForExit();
+            Console.WriteLine("Client closed.");
         }
     }
 }
