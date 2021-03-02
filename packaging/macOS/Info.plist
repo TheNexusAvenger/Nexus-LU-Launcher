@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>CFBundleIconFile</key>
+		<string>NexusLULauncherLogo.icns</string>
+		<key>CFBundleIdentifier</key>
+		<string>com.nlul.gui</string>
+		<key>CFBundleName</key>
+		<string>Nexus LU Launcher</string>
+		<key>CFBundleDisplayName</key>
+		<string>Nexus LU Launcher</string>
+		<key>LSMinimumSystemVersion</key>
+		<string>10.9.0</string>
+		<key>CFBundleExecutable</key>
+		<string>NLUL.GUI</string>
+		<key>NSHighResolutionCapable</key>
+		<true/>
+	</dict>
+</plist>

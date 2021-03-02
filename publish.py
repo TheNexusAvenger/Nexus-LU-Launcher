@@ -20,6 +20,7 @@ PLATFORMS = [
 import os
 import shutil
 import subprocess
+import sys
 
 
 """
@@ -32,6 +33,10 @@ def cleanDirectory(directory):
 
 
 
+# Display a warning for Windows runs.
+if os.name == "nt":
+    sys.stderr.write("Windows was detected. Linux and macOS binaries will be missing the permissions to run.\n")
+
 # Create the directory.
 if os.path.exists("bin"):
     shutil.rmtree("bin")
@@ -42,7 +47,7 @@ for project in PROJECTS:
     for platform in PLATFORMS:
         # Compile the project for the platform.
         print("Exporting " + project + " for " + platform[0])
-        subprocess.call(["dotnet","publish","-r",platform[1],"-c","Release","NLUL." + project + "/NLUL." + project + ".csproj"])
+        subprocess.call(["dotnet","publish","-r",platform[1],"-c","Release","NLUL." + project + "/NLUL." + project + ".csproj"],stdout=open(os.devnull,"w"))
 
         # Clear the unwanted files of the compile.
         dotNetVersion = os.listdir("NLUL." + project + "/bin/Release/")[0]
@@ -53,3 +58,18 @@ for project in PROJECTS:
 
         # Create the archive.
         shutil.make_archive("bin/NLUL-" + project + "-" + platform[0],"zip","NLUL." + project + "/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish")
+
+# Clear the existing macOS GUI release.
+if os.path.exists("bin/NLUL-GUI-macOS-x64.zip"):
+    print("Clearing the macOS x64 NLUL-GUI release.")
+    os.remove("bin/NLUL-GUI-macOS-x64.zip")
+
+# Package the macOS release.
+print("Packaging macOS release.")
+dotNetVersion = os.listdir("NLUL.GUI/bin/Release/")[0]
+shutil.copytree("NLUL.GUI/bin/Release/" + dotNetVersion + "/osx-x64/publish","bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/MacOS")
+os.mkdir("bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/Resources")
+shutil.copy("packaging/macOS/NexusLULauncherLogo.icns","bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/Resources/NexusLULauncherLogo.icns")
+shutil.copy("packaging/macOS/Info.plist","bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/Info.plist")
+shutil.make_archive("bin/NLUL-GUI-macOS-x64","zip","bin/NLUL-GUI-macOS-x64")
+shutil.rmtree("bin/NLUL-GUI-macOS-x64")
