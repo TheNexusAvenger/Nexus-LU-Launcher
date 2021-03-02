@@ -106,6 +106,34 @@ namespace NLUL.GUI.Component.Play
         }
         
         /*
+         * Displays a loading bar animation until
+         * the state is no longer the same.
+         */
+        private void DisplayLoadingBarAnimation(PlayState state)
+        {
+            new Thread(() =>
+            {
+                var animationPercent = -0.25;
+                while (Client.state == state)
+                {
+                    // Update the animation.
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        this.SetLoadingAnimation(animationPercent);
+                        animationPercent += 0.025;
+                        if (animationPercent > 1.25)
+                        {
+                            animationPercent = -0.25;
+                        }
+                    });
+
+                    // Wait to update the animation.
+                    Thread.Sleep(25);
+                }
+            }).Start();
+        }
+        
+        /*
          * Invokes when the state changes.
          */
         private void OnStateChanged()
@@ -126,6 +154,30 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Pending client download.";
                 this.SetLoadingBar(0);
             }
+            else if (state == PlayState.DownloadRuntime)
+            {
+                this.playButton.Color = ButtonNormalColor;
+                this.playButton.Active = true;
+                this.loadingText.Text = "Pending " + Client.GetRuntimeName() + " download.";
+                this.SetLoadingBar(0);
+            }
+            else if (state == PlayState.DownloadRuntimeAndClient)
+            {
+                this.playButton.Color = ButtonNormalColor;
+                this.playButton.Active = true;
+                this.loadingText.Text = "Pending " + Client.GetRuntimeName() + " and client download.";
+                this.SetLoadingBar(0);
+            }
+            else if (state == PlayState.DownloadingRuntime)
+            {
+                // Set the button and loading text.
+                this.playButton.Color = ButtonDisabledColor;
+                this.playButton.Active = false;
+                this.loadingText.Text = "Downloading and installing " + Client.GetRuntimeName() + ".";
+
+                // Run the animation in a thread.
+                this.DisplayLoadingBarAnimation(PlayState.DownloadingRuntime);
+            }
             else if (state == PlayState.DownloadingClient)
             {
                 this.playButton.Color = ButtonDisabledColor;
@@ -139,26 +191,7 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Extracting client.";
                 
                 // Run the animation in a thread.
-                new Thread(() =>
-                {
-                    var animationPercent = -0.25;
-                    while (Client.state == PlayState.ExtractingClient)
-                    {
-                        // Update the animation.
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            this.SetLoadingAnimation(animationPercent);
-                            animationPercent += 0.025;
-                            if (animationPercent > 1.25)
-                            {
-                                animationPercent = -0.25;
-                            }
-                        });
-                        
-                        // Wait to update the animation.
-                        Thread.Sleep(25);
-                    }
-                }).Start();
+                this.DisplayLoadingBarAnimation(PlayState.ExtractingClient);
             }
             else if (state == PlayState.PatchingClient)
             {
@@ -204,7 +237,24 @@ namespace NLUL.GUI.Component.Play
         private void OnButtonPressed()
         {
             var state = Client.state;
-            if (state == PlayState.DownloadClient)
+            if (state == PlayState.DownloadRuntime || state == PlayState.DownloadRuntimeAndClient)
+            {
+                // Start the download in a thread.
+                Client.SetState(PlayState.DownloadingRuntime);
+                new Thread(() =>
+                {
+                    // Start the runtime download.
+                    Client.DownloadRuntime(() =>
+                    {
+                        // Start the download if the client is required.
+                        if (Client.state == PlayState.DownloadClient)
+                        {
+                            this.OnButtonPressed();
+                        }
+                    });
+                }).Start();
+            }
+            else if (state == PlayState.DownloadClient)
             {
                 // Start the download in a thread.
                 Client.SetState(PlayState.DownloadingClient);

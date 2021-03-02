@@ -23,6 +23,9 @@ namespace NLUL.GUI.State
         
         // Download client requirement.
         public static readonly PlayState DownloadClient = new PlayState(false);
+        public static readonly PlayState DownloadRuntime = new PlayState(false);
+        public static readonly PlayState DownloadRuntimeAndClient = new PlayState(false);
+        public static readonly PlayState DownloadingRuntime = new PlayState(true);
         public static readonly PlayState DownloadingClient = new PlayState(true);
         public static readonly PlayState ExtractingClient = new PlayState(true);
         public static readonly PlayState PatchingClient = new PlayState(true);
@@ -64,7 +67,15 @@ namespace NLUL.GUI.State
          */
         public static string GetManualRuntimeInstallMessage()
         {
-            return clientRunner.GetRuntime().GetManualRuntimeInstallMessage();
+            return clientRunner.GetRuntime().GetManualRuntimeInstallMessage() ?? "(No runtime install message)";
+        }
+        
+        /*
+         * Returns the name of the runtime to install.
+         */
+        public static string GetRuntimeName()
+        {
+            return clientRunner.GetRuntime().GetName() ?? "(No runtime name)";
         }
         
         /*
@@ -77,7 +88,6 @@ namespace NLUL.GUI.State
             {
                 SetState(PlayState.ManualRuntimeNotInstalled);
                 return;
-                
             }
             
             // Check for the download to be complete.
@@ -85,9 +95,25 @@ namespace NLUL.GUI.State
             {
                 if (!state.ManualChangeOnly)
                 {
-                    SetState(PlayState.DownloadClient);
+                    if (clientRunner.GetRuntime().IsInstalled())
+                    {
+                        SetState(PlayState.DownloadClient);
+                        return;
+                    }
+                    else
+                    {
+                        SetState(PlayState.DownloadRuntimeAndClient);
+                        return;
+                    }
                 }
-                return;
+            }
+            else
+            {
+                if (!state.ManualChangeOnly && !clientRunner.GetRuntime().IsInstalled())
+                {
+                    SetState(PlayState.DownloadRuntime);
+                    return;
+                }
             }
             
             // Set the game state.
@@ -121,6 +147,23 @@ namespace NLUL.GUI.State
             Dispatcher.UIThread.InvokeAsync(() => { SetState(newState); });
         }
 
+        /*
+         * Runs the runtime download.
+         */
+        public static void DownloadRuntime(Action callback)
+        {
+            // Download the runtime.
+            clientRunner.GetRuntime().Install();
+            
+            // Update the state and invoke the callback.
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                SetState(PlayState.Uninitialized);
+                UpdateState();
+                callback();
+            });
+        }
+        
         /*
          * Runs the client download.
          * Calls back a method with the loading message

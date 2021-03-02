@@ -13,6 +13,14 @@ namespace NLUL.Core.Client.Runtime
     public class NativeWindows : IRuntime
     {
         /*
+         * Returns the name of the runtime.
+         */
+        public string GetName()
+        {
+            return "Native Windows";
+        }
+        
+        /*
          * Returns if the emulator is supported on the current platform.
          */
         public bool IsSupported()

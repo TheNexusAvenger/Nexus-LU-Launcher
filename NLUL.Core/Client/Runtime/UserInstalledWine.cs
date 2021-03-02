@@ -14,6 +14,14 @@ namespace NLUL.Core.Client.Runtime
     public class UserInstalledWine : IRuntime
     {
         /*
+         * Returns the name of the runtime.
+         */
+        public string GetName()
+        {
+            return "WINE";
+        }
+        
+        /*
          * Returns if the emulator is supported on the current platform.
          */
         public bool IsSupported()

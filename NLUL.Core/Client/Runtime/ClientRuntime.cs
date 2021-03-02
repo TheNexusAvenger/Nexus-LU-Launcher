@@ -31,8 +31,22 @@ namespace NLUL.Core.Client.Runtime
                 new UserInstalledWine(),
 
                 // Automated WINE installs.
-                // TODO
+                new MacOsWineCrossover(systemInfo),
             };
+        }
+        
+        /*
+         * Returns the name of the runtime.
+         */
+        public string GetName()
+        {
+            foreach (var runtime in this.GetSupportedRuntimes())
+            {
+                if (!runtime.CanInstall() || runtime.IsInstalled()) continue;
+                return runtime.GetName();
+            }
+
+            return null;
         }
         
         /*

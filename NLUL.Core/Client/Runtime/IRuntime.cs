@@ -11,6 +11,11 @@ namespace NLUL.Core.Client.Runtime
     public interface IRuntime
     {
         /*
+         * Returns the name of the runtime.
+         */
+        public string GetName();
+        
+        /*
          * Returns if the emulator is supported on the current platform.
          */
         public bool IsSupported();
