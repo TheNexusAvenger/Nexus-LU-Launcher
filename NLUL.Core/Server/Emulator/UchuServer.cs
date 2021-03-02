@@ -38,7 +38,8 @@ namespace NLUL.Core.Server.Emulator
     public class UchuServer : IEmulator
     {
         private const string BUILD_MODE = "Debug";
-        private const string DOTNET_APP_VERSION = "netcoreapp3.1";
+        private const string DOTNET_SDK_DIRECTORY_NAME = "dotnet5";
+        private static readonly List<string> DOTNET_APP_VERSIONS = new List<string>() { "net5.0","netcoreapp3.1" };
         
         private ServerInfo serverInfo;
         private UchuState state;
@@ -140,13 +141,30 @@ namespace NLUL.Core.Server.Emulator
         }
         
         /*
+         * Returns the .NET version, since it may be
+         * a legacy version or current version.
+         * The code must be compiled.
+         */
+        private string GetDotNetVersion()
+        {
+            foreach (var version in DOTNET_APP_VERSIONS)
+            {
+                if (Directory.Exists(Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,version)))
+                {
+                    return version;
+                }
+            }
+            return null;
+        }
+        
+        /*
          * Creates the initial server configuration.
          */
         private void CreateConfig()
         {
             // Delete the existing configuration.
             Console.WriteLine("Deleting old configurations.");
-            var buildLocation = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
+            var buildLocation = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,this.GetDotNetVersion());
             var defaultConfigLocation = Path.Combine(buildLocation,"config.default.xml");
             var configLocation = Path.Combine(buildLocation,"config.xml");
             if (File.Exists(defaultConfigLocation))
@@ -179,9 +197,9 @@ namespace NLUL.Core.Server.Emulator
             {
                 this.state.ConfigOverrides["DllSource"] = new Dictionary<string,object>()
                 {
-                    {"DotNetPath",Path.GetFullPath(Path.Combine(this.serverInfo.ServerFileLocation,"Tools","dotnet3.1","dotnet"))},
-                    {"Instance","../../../../Uchu.Instance/bin/Debug/netcoreapp3.1/Uchu.Instance.dll"},
-                    {"ScriptDllSource","../../../../Uchu.StandardScripts/bin/Debug/netcoreapp3.1/Uchu.StandardScripts.dll"},
+                    {"DotNetPath",Path.GetFullPath(Path.Combine(this.serverInfo.ServerFileLocation,"Tools",DOTNET_SDK_DIRECTORY_NAME,"dotnet"))},
+                    {"Instance","../../../../Uchu.Instance/bin/Debug/" + this.GetDotNetVersion() + "/Uchu.Instance.dll"},
+                    {"ScriptDllSource","../../../../Uchu.StandardScripts/bin/Debug/" + this.GetDotNetVersion() + "/Uchu.StandardScripts.dll"},
                 };
             }
 
@@ -212,7 +230,7 @@ namespace NLUL.Core.Server.Emulator
         {
             return new List<IPrerequisite>()
             {
-                new DotNetCore31(Path.Combine(this.serverInfo.ServerFileLocation,"Tools")),
+                new DotNet5(Path.Combine(this.serverInfo.ServerFileLocation,"Tools")),
                 new UnpackedLegoUniverseClient(this.serverInfo.SystemInfo),
             };
             
@@ -261,8 +279,8 @@ namespace NLUL.Core.Server.Emulator
         {
             // Get the tool locations.
             var toolsLocation = Path.Combine(this.serverInfo.ServerFileLocation,"Tools");
-            var dotNetDirectoryLocation = Path.Combine(toolsLocation,"dotnet3.1");
-            var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation, "dotnet");
+            var dotNetDirectoryLocation = Path.Combine(toolsLocation,DOTNET_SDK_DIRECTORY_NAME);
+            var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation,"dotnet");
 
             // Remove the previous server.
             Console.WriteLine("Clearing old files");
@@ -270,17 +288,6 @@ namespace NLUL.Core.Server.Emulator
             {
                 Directory.Delete(this.GetServerDirectory(),true);
             }
-            
-            // Install additional tools.
-            Console.WriteLine("Installing .NET Entity Framework Command Line Interface");
-            var entityFrameworkInstallProcess = new Process();
-            entityFrameworkInstallProcess.StartInfo.WorkingDirectory = dotNetDirectoryLocation;
-            entityFrameworkInstallProcess.StartInfo.FileName = dotNetExecutableLocation;
-            entityFrameworkInstallProcess.StartInfo.CreateNoWindow = true;
-            entityFrameworkInstallProcess.StartInfo.Arguments = "tool install --global dotnet-ef";
-            entityFrameworkInstallProcess.Start();
-            entityFrameworkInstallProcess.WaitForExit();
-            entityFrameworkInstallProcess.Close();
             
             // Download and extract the server files from master.
             var targetServerDirectory = this.GetServerDirectory();
@@ -331,9 +338,9 @@ namespace NLUL.Core.Server.Emulator
             
             // Determine the file locations.
             var toolsLocation = Path.Combine(this.serverInfo.ServerFileLocation,"Tools");
-            var dotNetDirectoryLocation = Path.Combine(toolsLocation,"dotnet3.1");
+            var dotNetDirectoryLocation = Path.Combine(toolsLocation,DOTNET_SDK_DIRECTORY_NAME);
             var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation, "dotnet");
-            var masterServerDirectory = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,DOTNET_APP_VERSION);
+            var masterServerDirectory = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,this.GetDotNetVersion());
             var masterServerExecutable = Path.Combine(masterServerDirectory,"Uchu.Master.dll");
             
             // Create and start the process.

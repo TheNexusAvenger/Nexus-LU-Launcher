@@ -1,7 +1,7 @@
 /*
  * TheNexusAvenger
  *
- * Prerequisite that requires .NET Core 3.1.
+ * Prerequisite that requires .NET 5.
  * Downloads the binaries to a known location.
  */
 
@@ -17,35 +17,34 @@ using ICSharpCode.SharpZipLib.Tar;
 
 namespace NLUL.Core.Server.Prerequisite
 {
-    public class DotNetCore31 : IPrerequisite
+    public class DotNet5 : IPrerequisite
     {
-        public static readonly Dictionary<OSPlatform,Dictionary<Architecture,string>> DOTNET_CORE_3_DOWNLOADS =
+        public static readonly Dictionary<OSPlatform,Dictionary<Architecture,string>> DOTNET_5_DOWNLOADS =
             new Dictionary<OSPlatform,Dictionary<Architecture,string>>()
             {
                 {
                     OSPlatform.Windows,
                     new Dictionary<Architecture,string>()
                     {
-                        {Architecture.X64,"https://download.visualstudio.microsoft.com/download/pr/87955c8d-c571-471a-9d2d-90fd069cf1f2/9fbde37bbe8b156cec97a25b735f9465/dotnet-sdk-3.1.101-win-x64.zip"},
-                        {Architecture.X86,"https://download.visualstudio.microsoft.com/download/pr/551b970a-9cb6-418c-9ad9-45fafdab5758/1ba88620682289810c461057c4671bfa/dotnet-sdk-3.1.101-win-x86.zip"},
-                        {Architecture.Arm64,"https://download.visualstudio.microsoft.com/download/pr/7363a148-a9e0-4393-b0f6-4e51ecba3e27/4b28aec090c9854d71925bb6d50c8314/dotnet-sdk-3.1.101-win-arm.zip"},
-                        {Architecture.Arm,"https://download.visualstudio.microsoft.com/download/pr/7363a148-a9e0-4393-b0f6-4e51ecba3e27/4b28aec090c9854d71925bb6d50c8314/dotnet-sdk-3.1.101-win-arm.zip"},
+                        {Architecture.X64,"https://download.visualstudio.microsoft.com/download/pr/178989cb-2bd9-4da8-881f-1acde0d4386c/5cdcc54c9d8f004ab748397a685d5d1b/dotnet-sdk-5.0.103-win-x64.zip"},
+                        {Architecture.X86,"https://download.visualstudio.microsoft.com/download/pr/5696bb86-54a9-4d91-b34d-5ff4cf2daac4/c868e23c87303018994c934b2758ab06/dotnet-sdk-5.0.103-win-x86.zip"},
+                        {Architecture.Arm64,"https://download.visualstudio.microsoft.com/download/pr/3fd92d44-eace-490d-aa9d-f7aef699162e/501e8fdd1438b3795afc55ab72397143/dotnet-sdk-5.0.103-win-arm64.zip"},
                     }
                 },
                 {
                     OSPlatform.OSX,
                     new Dictionary<Architecture,string>()
                     {
-                        {Architecture.X64,"https://download.visualstudio.microsoft.com/download/pr/515b77f4-4678-4b6f-a981-c48cf5607c5a/24b33941ba729ec421aa358fa452fd2f/dotnet-sdk-3.1.101-osx-x64.tar.gz"},
+                        {Architecture.X64,"https://download.visualstudio.microsoft.com/download/pr/3de2d949-fcb5-4586-a217-2c33854d295f/943f0d92252338e11fd11b002a3a3861/dotnet-sdk-5.0.103-osx-x64.tar.gz"},
                     }
                 },
                 {
                     OSPlatform.Linux,
                     new Dictionary<Architecture,string>()
                     {
-                        {Architecture.X64,"https://download.visualstudio.microsoft.com/download/pr/c4b503d6-2f41-4908-b634-270a0a1dcfca/c5a20e42868a48a2cd1ae27cf038044c/dotnet-sdk-3.1.101-linux-x64.tar.gz"},
-                        {Architecture.Arm64,"https://download.visualstudio.microsoft.com/download/pr/cf54dd72-eab1-4f5c-ac1e-55e2a9006739/d66fc7e2d4ee6c709834dd31db23b743/dotnet-sdk-3.1.101-linux-arm64.tar.gz"},
-                        {Architecture.Arm,"https://download.visualstudio.microsoft.com/download/pr/d52fa156-1555-41d5-a5eb-234305fbd470/173cddb039d613c8f007c9f74371f8bb/dotnet-sdk-3.1.101-linux-arm.tar.gz"},
+                        {Architecture.X64,"https://download.visualstudio.microsoft.com/download/pr/a2052604-de46-4cd4-8256-9bc222537d32/a798771950904eaf91c0c37c58f516e1/dotnet-sdk-5.0.103-linux-x64.tar.gz"},
+                        {Architecture.Arm64,"https://download.visualstudio.microsoft.com/download/pr/5c2e5668-d7f9-4705-acb0-04ceeda6dadf/4eca3d1ffd92cb2b5f9152155a5529b4/dotnet-sdk-5.0.103-linux-arm64.tar.gz"},
+                        {Architecture.Arm,"https://download.visualstudio.microsoft.com/download/pr/cd11b0d1-8d79-493f-a702-3ecbadb040aa/d24855458a90944d251dd4c68041d0b7/dotnet-sdk-5.0.103-linux-arm.tar.gz"},
                     }
                 },
             };
@@ -55,15 +54,15 @@ namespace NLUL.Core.Server.Prerequisite
         private string BinaryToDownload;
         
         /*
-         * Creates a .NET Core 3.1 Prerequisite object.
+         * Creates a .NET 5 Prerequisite object.
          */
-        public DotNetCore31(string parentDirectory)
+        public DotNet5(string parentDirectory)
         {
             this.ParentDirectory = parentDirectory;
-            this.InstallDirectory = Path.Combine(this.ParentDirectory,"dotnet3.1");
+            this.InstallDirectory = Path.Combine(this.ParentDirectory,"dotnet5");
             
             // Determine the binary to download.
-            foreach (var operatingSystems in DOTNET_CORE_3_DOWNLOADS)
+            foreach (var operatingSystems in DOTNET_5_DOWNLOADS)
             {
                 if (RuntimeInformation.IsOSPlatform(operatingSystems.Key) && operatingSystems.Value.ContainsKey(RuntimeInformation.OSArchitecture))
                 {
@@ -78,7 +77,7 @@ namespace NLUL.Core.Server.Prerequisite
          */
         public string GetName()
         {
-             return ".NET Core 3.1";
+             return ".NET 5";
         }
         
         /*
@@ -87,7 +86,7 @@ namespace NLUL.Core.Server.Prerequisite
          */
         public string GetErrorMessage()
         {
-            return ".NET Core 3.1 is not installed. Due to how installed, seeing this means an error occured.";
+            return ".NET 5 is not installed. Due to how installed, seeing this means an error occured.";
         }
         
         /*
@@ -100,7 +99,7 @@ namespace NLUL.Core.Server.Prerequisite
             // Throw an exception for an unsupported platform.
             if (this.BinaryToDownload == null)
             {
-                throw new PlatformNotSupportedException(".NET Core 3.1 can't be downloaded for your OS and architecture.");
+                throw new PlatformNotSupportedException(".NET 5 can't be downloaded for your OS and architecture.");
             }
             
             // Set up the parent directory and clean the existing directory.
