@@ -125,5 +125,13 @@ namespace NLUL.GUI.Component.Play
                 this.addButton.Color = new SolidColorBrush(ButtonEnabledColor);
             }
         }
+        
+        /*
+         * Updates the width.
+         */
+        public void UpdateWidth(bool hasScrollBar)
+        {
+            this.inputs.MinWidth = hasScrollBar ? 456 : 484;
+        }
     }
 }

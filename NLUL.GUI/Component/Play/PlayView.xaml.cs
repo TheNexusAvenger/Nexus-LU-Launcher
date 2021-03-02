@@ -61,6 +61,7 @@ namespace NLUL.GUI.Component.Play
                 entryDisplay.ServerAddress = entry.serverAddress;
                 entryDisplay.Selected = (selectedServer == entry);
             }
+            this.newServerEntry.UpdateWidth((PersistentState.State.servers.Count + 1) >= 4);
             
             // Remove the old entries.
             for (var i = PersistentState.State.servers.Count; i < this.serverEntries.Count; i++)
