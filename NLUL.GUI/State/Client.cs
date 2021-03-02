@@ -6,7 +6,6 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Avalonia.Threading;
 using NLUL.Core.Client;
@@ -34,7 +33,7 @@ namespace NLUL.GUI.State
         public static readonly PlayState Launching = new PlayState(true);
         
         // External setup.
-        public static readonly PlayState WineNotInstalled = new PlayState(false);
+        public static readonly PlayState ManualRuntimeNotInstalled = new PlayState(false);
             
         public bool ManualChangeOnly;
         
@@ -60,30 +59,25 @@ namespace NLUL.GUI.State
         public static PlayState state = PlayState.Uninitialized;
         
         /*
+         * Returns the message to display to the user if the runtime
+         * isn't installed and can't be automatically installed.
+         */
+        public static string GetManualRuntimeInstallMessage()
+        {
+            return clientRunner.GetRuntime().GetManualRuntimeInstallMessage();
+        }
+        
+        /*
          * Updates the state.
          */
         public static void UpdateState()
         {
-            // Check for WINE on non-Windows installs.
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            // Check for the runtime to be installed.
+            if (!clientRunner.GetRuntime().IsInstalled() && !clientRunner.GetRuntime().CanInstall())
             {
-                // Determine if WINE exists in the system path.
-                var wineExists = false;
-                foreach (var directory in Environment.GetEnvironmentVariable("PATH").Split(":"))
-                {
-                    if (File.Exists(Path.Combine(directory,"wine")))
-                    {
-                        wineExists = true;
-                        break;
-                    }
-                }
+                SetState(PlayState.ManualRuntimeNotInstalled);
+                return;
                 
-                // Set the state if WINE isn't detected.
-                if (!wineExists)
-                {
-                    SetState(PlayState.WineNotInstalled);
-                    return;
-                }
             }
             
             // Check for the download to be complete.

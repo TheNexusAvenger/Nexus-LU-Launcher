@@ -189,11 +189,11 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Launching...";
                 this.SetLoadingBar(1);
             }
-            else if (state == PlayState.WineNotInstalled)
+            else if (state == PlayState.ManualRuntimeNotInstalled)
             {
                 this.playButton.Color = ButtonDisabledColor;
                 this.playButton.Active = false;
-                this.loadingText.Text = "WINE must be installed.";
+                this.loadingText.Text = Client.GetManualRuntimeInstallMessage();
                 this.SetLoadingBar(0);
             }
         }
