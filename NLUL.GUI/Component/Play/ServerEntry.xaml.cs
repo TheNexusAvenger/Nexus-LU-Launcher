@@ -36,6 +36,7 @@ namespace NLUL.GUI.Component.Play
         }
         public static readonly StyledProperty<bool> SelectedProperty = AvaloniaProperty.Register<Window,bool>(nameof(Selected),false);
 
+        private StackPanel backgroundPanel;
         private TextBlock serverNameText;
         private TextBlock serverAddressText;
         private RoundedButton selectButton;
@@ -49,6 +50,7 @@ namespace NLUL.GUI.Component.Play
         {
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
+            this.backgroundPanel = this.Get<StackPanel>("Background");
             this.serverNameText = this.Get<TextBlock>("ServerName");
             this.serverAddressText = this.Get<TextBlock>("ServerAddress");
             this.selectButton = this.Get<RoundedButton>("SelectButton");
@@ -103,6 +105,14 @@ namespace NLUL.GUI.Component.Play
                 this.selectButton.Color = new SolidColorBrush(new Color(255,0,120,205));
                 this.selectText.Text = "Select";
             }
+        }
+        
+        /*
+         * Updates the width.
+         */
+        public void UpdateWidth(bool hasScrollBar)
+        {
+            this.backgroundPanel.MinWidth = hasScrollBar ? 456 : 484;
         }
     }
 }

@@ -55,6 +55,7 @@ namespace NLUL.GUI.Component.Play
                 
                 // Set the entry.
                 var entryDisplay = this.serverEntries[i];
+                entryDisplay.UpdateWidth((PersistentState.State.servers.Count + 1) >= 4);
                 var entry = PersistentState.State.servers[i];
                 entryDisplay.ServerName = entry.serverName;
                 entryDisplay.ServerAddress = entry.serverAddress;
