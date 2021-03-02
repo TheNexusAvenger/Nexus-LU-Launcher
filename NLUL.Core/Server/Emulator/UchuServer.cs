@@ -202,12 +202,18 @@ namespace NLUL.Core.Server.Emulator
                     {"ScriptDllSource","../../../../Uchu.StandardScripts/bin/Debug/" + this.GetDotNetVersion() + "/Uchu.StandardScripts.dll"},
                 };
             }
-
             if (!this.state.ConfigOverrides.ContainsKey("Networking"))
             {
                 this.state.ConfigOverrides["Networking"] = new Dictionary<string,object>()
                 {
                     {"WorldPort",new List<int>() {2003,2004,2005,2006,2007,2008,2009,2010,2011,2012}},
+                };
+            }
+            if (!this.state.ConfigOverrides.ContainsKey("Cache"))
+            {
+                this.state.ConfigOverrides["Cache"] = new Dictionary<string,object>()
+                {
+                    {"UseService","false"},
                 };
             }
             
@@ -233,9 +239,6 @@ namespace NLUL.Core.Server.Emulator
                 new DotNet5(Path.Combine(this.serverInfo.ServerFileLocation,"Tools")),
                 new UnpackedLegoUniverseClient(this.serverInfo.SystemInfo),
             };
-            
-            // TODO: Detect PostgresSQL install
-            // TODO: Redis support?
         }
         
         /*
