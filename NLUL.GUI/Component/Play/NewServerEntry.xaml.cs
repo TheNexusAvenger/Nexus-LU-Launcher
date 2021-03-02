@@ -131,7 +131,7 @@ namespace NLUL.GUI.Component.Play
          */
         public void UpdateWidth(bool hasScrollBar)
         {
-            this.inputs.MinWidth = hasScrollBar ? 456 : 484;
+            this.MinWidth = hasScrollBar ? 626 : 654;
         }
     }
 }
