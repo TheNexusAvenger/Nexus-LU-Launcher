@@ -13,7 +13,7 @@
 		<key>LSMinimumSystemVersion</key>
 		<string>10.9.0</string>
 		<key>CFBundleExecutable</key>
-		<string>NLUL.GUI</string>
+		<string>Nexus-LU-Launcher</string>
 		<key>NSHighResolutionCapable</key>
 		<true/>
 	</dict>

@@ -58,6 +58,13 @@ for project in PROJECTS:
             if file.endswith(".pdb"):
                 os.remove(outputDirectory + "/" + file)
 
+        # Rename the GUI executables.
+        if project == "GUI":
+            if os.path.exists(outputDirectory + "/NLUL.GUI"):
+                os.rename(outputDirectory + "/NLUL.GUI",outputDirectory + "/Nexus-LU-Launcher")
+            elif os.path.exists(outputDirectory + "/NLUL.GUI.exe"):
+                os.rename(outputDirectory + "/NLUL.GUI.exe",outputDirectory + "/Nexus-LU-Launcher.exe")
+
         # Create the archive.
         shutil.make_archive("bin/NLUL-" + project + "-" + platform[0],"zip","NLUL." + project + "/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish")
 
