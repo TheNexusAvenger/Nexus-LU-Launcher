@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Threading;
 using Avalonia.Threading;
 using NLUL.Core;
@@ -32,6 +33,7 @@ namespace NLUL.GUI.State
         public static readonly PlayState ExtractingClient = new PlayState(true);
         public static readonly PlayState VerifyingClient = new PlayState(true);
         public static readonly PlayState PatchingClient = new PlayState(true);
+        public static readonly PlayState DownloadFailed = new PlayState(false);
         public static readonly PlayState VerifyFailed = new PlayState(false);
         
         // Ready to play requirements.
@@ -241,6 +243,12 @@ namespace NLUL.GUI.State
                         SetStateThreadSafe(PlayState.VerifyingClient);
                     }
                 });
+            }
+            catch (WebException)
+            {
+                // Set the state as the download failed.
+                SetStateThreadSafe(PlayState.DownloadFailed);
+                return; 
             }
             catch (FileNotFoundException)
             {

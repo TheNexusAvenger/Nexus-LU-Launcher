@@ -154,6 +154,13 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Pending client download.";
                 this.SetLoadingBar(0);
             }
+            else if (state == PlayState.DownloadFailed)
+            {
+                this.playButton.Color = ButtonNormalColor;
+                this.playButton.Active = true;
+                this.loadingText.Text = "Client download failed. Retry required.";
+                this.SetLoadingBar(0);
+            }
             else if (state == PlayState.VerifyFailed)
             {
                 this.playButton.Color = ButtonNormalColor;
@@ -264,14 +271,14 @@ namespace NLUL.GUI.Component.Play
                     Client.DownloadRuntime(() =>
                     {
                         // Start the download if the client is required.
-                        if (Client.state == PlayState.DownloadClient || state == PlayState.VerifyFailed)
+                        if (Client.state == PlayState.DownloadClient || Client.state == PlayState.VerifyFailed || Client.state == PlayState.DownloadFailed)
                         {
                             this.OnButtonPressed();
                         }
                     });
                 }).Start();
             }
-            else if (state == PlayState.DownloadClient || state == PlayState.VerifyFailed)
+            else if (state == PlayState.DownloadClient || state == PlayState.VerifyFailed || state == PlayState.DownloadFailed)
             {
                 // Start the download in a thread.
                 Client.SetState(PlayState.DownloadingClient);
