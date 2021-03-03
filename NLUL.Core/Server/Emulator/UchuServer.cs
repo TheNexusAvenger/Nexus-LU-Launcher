@@ -154,7 +154,7 @@ namespace NLUL.Core.Server.Emulator
                     return version;
                 }
             }
-            return null;
+            return "not_compiled";
         }
         
         /*
@@ -285,6 +285,19 @@ namespace NLUL.Core.Server.Emulator
             var dotNetDirectoryLocation = Path.Combine(toolsLocation,DOTNET_SDK_DIRECTORY_NAME);
             var dotNetExecutableLocation = Path.Combine(dotNetDirectoryLocation,"dotnet");
 
+            // Back-up the SQLite data.
+            var baseDatabaseLocation = Path.Combine(this.GetServerDirectory(),"Uchu.Master","bin",BUILD_MODE,this.GetDotNetVersion(),"Uchu.sqlite");
+            var backupDatabaseLocation = Path.Combine(this.serverInfo.ServerFileLocation,"Uchu-backup.sqlite");
+            if (File.Exists(baseDatabaseLocation))
+            {
+                Console.WriteLine("Backing up SQLite database.");
+                if (File.Exists(backupDatabaseLocation))
+                {
+                    File.Delete(backupDatabaseLocation);
+                }
+                File.Copy(baseDatabaseLocation,backupDatabaseLocation);
+            }
+            
             // Remove the previous server.
             Console.WriteLine("Clearing old files");
             if (Directory.Exists(this.GetServerDirectory()))
@@ -325,6 +338,13 @@ namespace NLUL.Core.Server.Emulator
             Console.WriteLine("Creating the default configuration.");
             this.CreateConfig();
             this.WriteState();
+            
+            // Restore the SQLite data.
+            if (File.Exists(backupDatabaseLocation))
+            {
+                Console.WriteLine("Restoring SQLite database.");
+                File.Copy(backupDatabaseLocation,baseDatabaseLocation);
+            }
         }
 
         /*
