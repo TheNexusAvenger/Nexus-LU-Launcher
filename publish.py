@@ -75,3 +75,8 @@ shutil.copy("packaging/macOS/NexusLULauncherLogo.icns","bin/NLUL-GUI-macOS-x64/N
 shutil.copy("packaging/macOS/Info.plist","bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/Info.plist")
 shutil.make_archive("bin/NLUL-GUI-macOS-x64","zip","bin/NLUL-GUI-macOS-x64")
 shutil.rmtree("bin/NLUL-GUI-macOS-x64")
+
+# Rename the GUI releases to be more clear.
+# The GUI releases are expected to be used by more users.
+for platform in PLATFORMS:
+    os.rename("bin/NLUL-GUI-" + platform[0] + ".zip","bin/Nexus-LU-Launcher-" + platform[0] + ".zip")
