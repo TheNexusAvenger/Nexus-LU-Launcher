@@ -43,6 +43,14 @@ namespace NLUL.Core.Client
         }
         
         /*
+         * Returns the client patcher.
+         */
+        public ClientPatcher GetPatcher()
+        {
+            return this.clientPatcher;
+        }
+        
+        /*
          * Downloads the client.
          */
         public void DownloadClient(bool force)

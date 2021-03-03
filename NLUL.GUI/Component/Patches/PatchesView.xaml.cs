@@ -44,7 +44,7 @@ namespace NLUL.GUI.Component.Patches
             AvaloniaXamlLoader.Load(this);
             
             // Add the patch frames.
-            var patcher = new ClientPatcher(ProgramSystemInfo.SystemInfo);
+            var patcher = Client.GetPatcher();
             var patchesList = this.Get<StackPanel>("PatchesList");
             foreach (var patch in PatchData.Patches)
             {

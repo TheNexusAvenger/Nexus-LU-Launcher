@@ -9,6 +9,7 @@ using System.IO;
 using System.Threading;
 using Avalonia.Threading;
 using NLUL.Core.Client;
+using NLUL.Core.Client.Patch;
 
 namespace NLUL.GUI.State
 {
@@ -76,6 +77,14 @@ namespace NLUL.GUI.State
         public static string GetRuntimeName()
         {
             return clientRunner.GetRuntime().GetName() ?? "(No runtime name)";
+        }
+        
+        /*
+         * Returns the client patcher.
+         */
+        public static ClientPatcher GetPatcher()
+        {
+            return clientRunner.GetPatcher();
         }
         
         /*
