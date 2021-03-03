@@ -100,12 +100,6 @@ namespace NLUL.Core.Client
             // Move the files.
             Directory.Move(Path.Combine(this.ExtractLocation,"LCDR Unpacked"),this.SystemInfo.ClientLocation);
             Directory.Delete(this.ExtractLocation);
-            
-            // Delete the client archive.
-            if (File.Exists(this.DownloadLocation))
-            {
-                File.Delete(this.DownloadLocation);
-            }
         }
         
         /*
@@ -140,6 +134,10 @@ namespace NLUL.Core.Client
                 statusCallback?.Invoke("Extract");
                 this.ExtractClient(force);
             }
+            
+            // Verify the client was extracted.
+            statusCallback?.Invoke("Verify");
+            this.VerifyExtractedClient();
         }
         
         /*
@@ -149,6 +147,56 @@ namespace NLUL.Core.Client
         {
             this.clientPatcher.Install(ClientPatchName.ModLoader);
             this.clientPatcher.Install(ClientPatchName.TcpUdp);
+        }
+        
+        /*
+         * Returns if the client extract can be verified.
+         */
+        public bool CanVerifyExtractedClient()
+        {
+            return File.Exists(this.DownloadLocation);
+        }
+        
+        /*
+         * Verifies if the extracting of the client
+         * is valid. Throws an exception if the
+         * verification failed.
+         */
+        public void VerifyExtractedClient()
+        {
+            // Return if the client can't be verified.
+            if (!CanVerifyExtractedClient())
+            {
+                return;
+            }
+            
+            // Verify the files exist and throw an exception if a file is missing.
+            using (var zipFile = ZipFile.OpenRead(this.DownloadLocation))
+            {
+                var entries = zipFile.Entries;
+                foreach (var entry in entries)
+                {
+                    // Remove "LCDR Unpacked" from the file name.
+                    var fileName = entry.FullName;
+                    if (fileName.ToLower().StartsWith("lcdr unpacked"))
+                    {
+                        fileName = fileName.Substring(fileName.IndexOf("/", StringComparison.Ordinal) + 1);
+                    }
+                    
+                    // Throw an exception if the file is missing.
+                    var filePath = Path.Combine(this.SystemInfo.ClientLocation, fileName);
+                    if (entry.Length != 0 &&  !File.Exists(filePath))
+                    {
+                        throw new FileNotFoundException("File not found in extracted client: " + filePath);
+                    }
+                }
+            }
+            
+            // Delete the client archive.
+            if (File.Exists(this.DownloadLocation))
+            {
+                File.Delete(this.DownloadLocation);
+            }
         }
         
         /*

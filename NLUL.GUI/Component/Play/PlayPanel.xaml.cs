@@ -154,6 +154,13 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Pending client download.";
                 this.SetLoadingBar(0);
             }
+            else if (state == PlayState.VerifyFailed)
+            {
+                this.playButton.Color = ButtonNormalColor;
+                this.playButton.Active = true;
+                this.loadingText.Text = "Client extracting failed. Retry required.";
+                this.SetLoadingBar(0);
+            }
             else if (state == PlayState.DownloadRuntime)
             {
                 this.playButton.Color = ButtonNormalColor;
@@ -189,6 +196,16 @@ namespace NLUL.GUI.Component.Play
                 this.playButton.Color = ButtonDisabledColor;
                 this.playButton.Active = false;
                 this.loadingText.Text = "Extracting client.";
+                
+                // Run the animation in a thread.
+                this.DisplayLoadingBarAnimation(PlayState.ExtractingClient);
+            }
+            else if (state == PlayState.VerifyingClient)
+            {
+                // Set the button and loading text.
+                this.playButton.Color = ButtonDisabledColor;
+                this.playButton.Active = false;
+                this.loadingText.Text = "Verifying client.";
                 
                 // Run the animation in a thread.
                 this.DisplayLoadingBarAnimation(PlayState.ExtractingClient);
@@ -247,14 +264,14 @@ namespace NLUL.GUI.Component.Play
                     Client.DownloadRuntime(() =>
                     {
                         // Start the download if the client is required.
-                        if (Client.state == PlayState.DownloadClient)
+                        if (Client.state == PlayState.DownloadClient || state == PlayState.VerifyFailed)
                         {
                             this.OnButtonPressed();
                         }
                     });
                 }).Start();
             }
-            else if (state == PlayState.DownloadClient)
+            else if (state == PlayState.DownloadClient || state == PlayState.VerifyFailed)
             {
                 // Start the download in a thread.
                 Client.SetState(PlayState.DownloadingClient);

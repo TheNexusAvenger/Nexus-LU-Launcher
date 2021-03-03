@@ -30,7 +30,9 @@ namespace NLUL.GUI.State
         public static readonly PlayState DownloadingRuntime = new PlayState(true);
         public static readonly PlayState DownloadingClient = new PlayState(true);
         public static readonly PlayState ExtractingClient = new PlayState(true);
+        public static readonly PlayState VerifyingClient = new PlayState(true);
         public static readonly PlayState PatchingClient = new PlayState(true);
+        public static readonly PlayState VerifyFailed = new PlayState(false);
         
         // Ready to play requirements.
         public static readonly PlayState NoSelectedServer = new PlayState(false);
@@ -129,6 +131,22 @@ namespace NLUL.GUI.State
             // Set the game state.
             if (!state.ManualChangeOnly)
             {
+                // Verify the client.
+                if (clientRunner.CanVerifyExtractedClient())
+                {
+                    try
+                    {
+                        clientRunner.VerifyExtractedClient();
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        // Set the state as the verified failed.
+                        SetState(PlayState.VerifyFailed);
+                        return;
+                    }
+                }
+
+                // Set the select state.
                 if (PersistentState.GetSelectedServer() == null)
                 {
                     SetState(PlayState.NoSelectedServer);
@@ -183,40 +201,53 @@ namespace NLUL.GUI.State
         {
             // Run the download.
             SetStateThreadSafe(PlayState.DownloadingClient);
-            clientRunner.TryExtractClient(false,(downloadState) =>
-            {
-                if (downloadState.Equals("Download"))
+            try {
+                clientRunner.TryExtractClient(true, (downloadState) =>
                 {
-                    // Set the state as downloading.
-                    SetStateThreadSafe(PlayState.DownloadingClient);
-                    
-                    // Start updating the size.
-                    var clientZip = Path.Combine(SystemInfo.GetDefault().SystemFileLocation,"client.zip");
-                    new Thread(() =>
+                    if (downloadState.Equals("Download"))
                     {
-                        while (state == PlayState.DownloadingClient)
+                        // Set the state as downloading.
+                        SetStateThreadSafe(PlayState.DownloadingClient);
+                        
+                        // Start updating the size.
+                        var clientZip = Path.Combine(SystemInfo.GetDefault().SystemFileLocation,"client.zip");
+                        new Thread(() =>
                         {
-                            // Get the current size.
-                            double clientSize = 0;
-                            if (File.Exists(clientZip))
+                            while (state == PlayState.DownloadingClient)
                             {
-                                clientSize = new FileInfo(clientZip).Length;
-                            }
+                                // Get the current size.
+                                double clientSize = 0;
+                                if (File.Exists(clientZip))
+                                {
+                                    clientSize = new FileInfo(clientZip).Length;
+                                }
 
-                            // Update the text.
-                            callback("Downloading client (" + (clientSize/ByteToGigabyte).ToString("F") + " GB / " + (ExpectedClientZipSize/ByteToGigabyte).ToString("F") + " GB)",clientSize/ExpectedClientZipSize);
-                            
-                            // Wait to update again.
-                            Thread.Sleep(100);
-                        }
-                    }).Start();
-                }
-                else if (downloadState.Equals("Extract"))
-                {
-                    // Set the state as extracting.
-                    SetStateThreadSafe(PlayState.ExtractingClient);
-                }
-            });
+                                // Update the text.
+                                callback("Downloading client (" + (clientSize/ByteToGigabyte).ToString("F") + " GB / " + (ExpectedClientZipSize/ByteToGigabyte).ToString("F") + " GB)",clientSize/ExpectedClientZipSize);
+                                
+                                // Wait to update again.
+                                Thread.Sleep(100);
+                            }
+                        }).Start();
+                    }
+                    else if (downloadState.Equals("Extract"))
+                    {
+                        // Set the state as extracting.
+                        SetStateThreadSafe(PlayState.ExtractingClient);
+                    }
+                    else if (downloadState.Equals("Verify"))
+                    {
+                        // Set the state as verifying.
+                        SetStateThreadSafe(PlayState.VerifyingClient);
+                    }
+                });
+            }
+            catch (FileNotFoundException)
+            {
+                // Set the state as the verified failed.
+                SetStateThreadSafe(PlayState.VerifyFailed);
+                return;
+            }
             
             // Run the patch.
             SetStateThreadSafe(PlayState.PatchingClient);
