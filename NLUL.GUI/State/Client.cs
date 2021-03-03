@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Threading;
 using Avalonia.Threading;
+using NLUL.Core;
 using NLUL.Core.Client;
 using NLUL.Core.Client.Patch;
 
@@ -55,7 +56,7 @@ namespace NLUL.GUI.State
         public const long ExpectedClientZipSize = 4513866950; // May not be correct at any given point. Only used for the visuals.
         public const double ByteToGigabyte = 1000000000;
 
-        private static ClientRunner clientRunner = new ClientRunner(ProgramSystemInfo.SystemInfo);
+        private static ClientRunner clientRunner = new ClientRunner(SystemInfo.GetDefault());
         
         public delegate void EmptyEventHandler();
         public static event EmptyEventHandler StateChanged;
@@ -100,7 +101,7 @@ namespace NLUL.GUI.State
             }
             
             // Check for the download to be complete.
-            if (!File.Exists(Path.Combine(ProgramSystemInfo.SystemInfo.ClientLocation,"legouniverse.exe")))
+            if (!File.Exists(Path.Combine(SystemInfo.GetDefault().ClientLocation,"legouniverse.exe")))
             {
                 if (!state.ManualChangeOnly)
                 {
@@ -190,7 +191,7 @@ namespace NLUL.GUI.State
                     SetStateThreadSafe(PlayState.DownloadingClient);
                     
                     // Start updating the size.
-                    var clientZip = Path.Combine(ProgramSystemInfo.SystemInfo.SystemFileLocation,"client.zip");
+                    var clientZip = Path.Combine(SystemInfo.GetDefault().SystemFileLocation,"client.zip");
                     new Thread(() =>
                     {
                         while (state == PlayState.DownloadingClient)

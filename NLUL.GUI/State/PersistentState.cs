@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
+using NLUL.Core;
 
 namespace NLUL.GUI.State
 {
@@ -40,7 +41,7 @@ namespace NLUL.GUI.State
         public static event EmptyEventHandler ServerListChanged;
         public static event EmptyEventHandler SelectedServerChanged;
         
-        public static readonly string SaveLocation = Path.Combine(ProgramSystemInfo.SystemInfo.SystemFileLocation,"launcher.json");
+        public static readonly string SaveLocation = Path.Combine(SystemInfo.GetDefault().SystemFileLocation,"launcher.json");
         public static PersistentSettings State = new PersistentSettings();
         
         /*
@@ -71,9 +72,10 @@ namespace NLUL.GUI.State
         public static void Save()
         {
             // Create the directories.
-            if (!Directory.Exists(ProgramSystemInfo.SystemInfo.SystemFileLocation))
+            var systemInfo = SystemInfo.GetDefault();
+            if (!Directory.Exists(systemInfo.SystemFileLocation))
             {
-                Directory.CreateDirectory(ProgramSystemInfo.SystemInfo.SystemFileLocation);
+                Directory.CreateDirectory(systemInfo.SystemFileLocation);
             }
             
             // Write the state as JSON.

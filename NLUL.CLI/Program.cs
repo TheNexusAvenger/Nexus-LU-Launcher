@@ -41,9 +41,7 @@ namespace NLUL.CLI
             }
             
             // Run the action.
-            var programData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),".nlul");
-            var systemInfo = new SystemInfo(programData,Path.Combine(programData,"Client"));
-            Actions.ACTIONS[args[0].ToLower()][args[1]].Run(new List<string>(args),systemInfo);
+            Actions.ACTIONS[args[0].ToLower()][args[1]].Run(new List<string>(args),SystemInfo.GetDefault());
         }
     }
 }
