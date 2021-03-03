@@ -14,6 +14,7 @@ using Avalonia.Media;
 using Avalonia.Threading;
 using NLUL.Core.Client.Patch;
 using NLUL.GUI.Component.Base;
+using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component.Patches
 {
@@ -106,6 +107,25 @@ namespace NLUL.GUI.Component.Patches
             // Set the state as uninstalled if the mod isn't installed.
             if (!this.Patcher.IsInstalled(this.PatchData.PatchEnum))
             {
+                // Connect refreshing the state when the client finishes patching.
+                var patchingStarted = false;
+                Client.StateChanged += () =>
+                {
+                    var state = Client.state;
+                    if (state == PlayState.DownloadingClient || state == PlayState.PatchingClient)
+                    {
+                        // Prepare to update the state after the download/patching ends.
+                        patchingStarted = true;
+                    }
+                    else if (patchingStarted && (state == PlayState.NoSelectedServer || state == PlayState.Ready || state == PlayState.Launching))
+                    {
+                        // Update the state.
+                        patchingStarted = false;
+                        CheckForUpdates();
+                    }
+                };
+                
+                // Set the initial state as uninstalled.
                 this.SetState(PatchState.NotInstalled);
                 return;
             }
