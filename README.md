@@ -28,6 +28,12 @@ be made at some point:
 * Enable management of hosted servers, such as player permissions.
 * Enable advanced, configurable patches, such as modifying the client database.
 
+## Custom Download Location
+By default, Nexus LU Launcher will download files to a directory named
+`.nlul` in your user directory. This can be changed by setting `NLULHome`
+in your system's environment variables. See other guides on how to do
+this for your specific operating system.
+
 # Building
 Nexus LEGO Universe Launcher requires .NET 5.0 to be installed
 since it allows packaging as single files without the requirement of
