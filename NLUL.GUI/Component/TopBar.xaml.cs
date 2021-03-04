@@ -4,6 +4,7 @@
  * Top bar of the main window.
  */
 
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -35,7 +36,11 @@ namespace NLUL.GUI.Component
                     this.window.WindowState = WindowState.Minimized;
                 }
             };
-            this.Get<ImageButton>("Close").ButtonPressed += (sender, args) => window?.Close();
+            this.Get<ImageButton>("Close").ButtonPressed += (sender, args) =>
+            {
+                window?.Close();
+                Process.GetCurrentProcess().Kill();
+            };
             
             // Set the background for accepting events.
             this.Background = new SolidColorBrush(new Color(0,0,0,0));
