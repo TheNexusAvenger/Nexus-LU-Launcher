@@ -235,6 +235,15 @@ namespace NLUL.Core.Client
             bootConfig["AUTHSERVERIP"] = host;
             File.WriteAllText(bootConfigLocation,bootConfig.ToString("\n"));
             
+            // Apply any pre-launch patches.
+            foreach (var patch in clientPatcher.patches)
+            {
+                if (patch.Value is IPreLaunchPatch preLaunchPatch)
+                {
+                    preLaunchPatch.OnClientRequestLaunch();
+                }
+            }
+            
             // Launch the client.
             Console.WriteLine("Launching the client.");
             var clientProcess = this.runtime.RunApplication(Path.Combine(this.SystemInfo.ClientLocation,"legouniverse.exe"), this.SystemInfo.ClientLocation);

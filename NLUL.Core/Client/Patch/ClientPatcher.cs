@@ -17,6 +17,7 @@ namespace NLUL.Core.Client.Patch
     {
         ModLoader,
         TcpUdp,
+        AutoTcpUdp,
     }
     
     /*
@@ -26,7 +27,7 @@ namespace NLUL.Core.Client.Patch
     {
         private SystemInfo systemInfo;
         private GitHubManifest manifest;
-        private Dictionary<ClientPatchName,IPatch> patches;
+        public readonly Dictionary<ClientPatchName,IPatch> patches;
         
         /*
          * Creates the client patcher.
@@ -39,6 +40,7 @@ namespace NLUL.Core.Client.Patch
             {
                 {ClientPatchName.ModLoader,new ModLoader(systemInfo,this.manifest)},
                 {ClientPatchName.TcpUdp,new TcpUdp(systemInfo,this.manifest)},
+                {ClientPatchName.AutoTcpUdp,new AutoTcpUdp(systemInfo,this.manifest)},
             };
         }
         
