@@ -244,7 +244,7 @@ namespace NLUL.GUI.Component.Play
                 this.playButton.Color = ButtonDisabledColor;
                 this.playButton.Active = false;
                 this.loadingText.Text = "Launching...";
-                this.SetLoadingBar(1);
+                this.DisplayLoadingBarAnimation(PlayState.Launching);
             }
             else if (state == PlayState.ManualRuntimeNotInstalled)
             {
@@ -300,18 +300,24 @@ namespace NLUL.GUI.Component.Play
                 // Launch the client.
                 Client.SetState(PlayState.Launching);
                 
-                // Get the window.
-                IControl currentWindow = this;
-                while (currentWindow != null && !(currentWindow is Window))
-                {
-                    currentWindow = currentWindow.Parent;
-                }
-                
-                // Close the window.
-                ((Window) currentWindow)?.Close();
-
                 // Launch the client.
-                Client.Launch();
+                new Thread(() =>
+                {
+                    Client.Launch();
+                
+                    // Close the window after the launch is complete.
+                    // The launch may get delayed by pre-launch patches.
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        IControl currentWindow = this;
+                        while (currentWindow != null && !(currentWindow is Window))
+                        {
+                            currentWindow = currentWindow.Parent;
+                        }
+                        ((Window) currentWindow)?.Close();
+                        Client.SetState(PlayState.Launched);
+                    });
+                }).Start();
             }
         }
     }

@@ -40,6 +40,7 @@ namespace NLUL.GUI.State
         public static readonly PlayState NoSelectedServer = new PlayState(false);
         public static readonly PlayState Ready = new PlayState(false);
         public static readonly PlayState Launching = new PlayState(true);
+        public static readonly PlayState Launched = new PlayState(true);
         
         // External setup.
         public static readonly PlayState ManualRuntimeNotInstalled = new PlayState(false);
