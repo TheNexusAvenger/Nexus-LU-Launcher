@@ -60,10 +60,16 @@ for project in PROJECTS:
 
         # Rename the GUI executables.
         if project == "GUI":
+            linuxOutputFile = outputDirectory + "/Nexus-LU-Launcher"
+            windowsOutputFile = outputDirectory + "/Nexus-LU-Launcher.exe"
+            if os.path.exists(linuxOutputFile):
+                os.remove(linuxOutputFile)
+            elif os.path.exists(windowsOutputFile):
+                os.remove(windowsOutputFile)
             if os.path.exists(outputDirectory + "/NLUL.GUI"):
-                os.rename(outputDirectory + "/NLUL.GUI",outputDirectory + "/Nexus-LU-Launcher")
+                os.rename(outputDirectory + "/NLUL.GUI",linuxOutputFile)
             elif os.path.exists(outputDirectory + "/NLUL.GUI.exe"):
-                os.rename(outputDirectory + "/NLUL.GUI.exe",outputDirectory + "/Nexus-LU-Launcher.exe")
+                os.rename(outputDirectory + "/NLUL.GUI.exe",windowsOutputFile)
 
         # Create the archive.
         shutil.make_archive("bin/NLUL-" + project + "-" + platform[0],"zip","NLUL." + project + "/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish")
