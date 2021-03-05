@@ -28,9 +28,35 @@ namespace NLUL.Core
          */
         public static SystemInfo GetDefault()
         {
-            var nlulHome = Environment.GetEnvironmentVariable("NLULHome") ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            var programData = Path.Combine(nlulHome,".nlul");
-            return new SystemInfo(programData,Path.Combine(programData,"Client"));
+            // Get the custom home if it is defined.
+            var nlulHome = Environment.GetEnvironmentVariable("NLULHome");
+            if (nlulHome != null)
+            {
+                // Move the .nlul folder if it exists.
+                // In V.0.2.1, a custom home would still have a .nlul directory created in a custom home.
+                var nlulDirectoryInHome = Path.Combine(nlulHome, ".nlul");
+                if (Directory.Exists(nlulDirectoryInHome))
+                {
+                    foreach (var filePath in Directory.GetFiles(nlulDirectoryInHome))
+                    {
+                        var fileName = filePath.Substring(nlulDirectoryInHome.Length + 1);
+                        File.Move(filePath, Path.Combine(nlulHome, fileName));
+                    }
+                    foreach (var directoryPath in Directory.GetDirectories(nlulDirectoryInHome))
+                    {
+                        var directoryName = directoryPath.Substring(nlulDirectoryInHome.Length + 1);
+                        Directory.Move(directoryPath, Path.Combine(nlulHome, directoryName));
+                    }
+                    Directory.Delete(nlulDirectoryInHome, true);
+                }
+
+                // Return the custom home.
+                return new SystemInfo(nlulHome,Path.Combine(nlulHome, "Client"));
+            }
+            
+            // Return the default home.
+            nlulHome = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nlul");
+            return new SystemInfo(nlulHome,Path.Combine(nlulHome, "Client"));
         }
     }
 }
