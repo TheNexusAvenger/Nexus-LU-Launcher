@@ -18,6 +18,7 @@ namespace NLUL.Core.Client.Patch
         ModLoader,
         TcpUdp,
         AutoTcpUdp,
+        RemoveDLUAd,
     }
     
     /*
@@ -41,6 +42,7 @@ namespace NLUL.Core.Client.Patch
                 {ClientPatchName.ModLoader,new ModLoader(systemInfo,this.manifest)},
                 {ClientPatchName.TcpUdp,new TcpUdp(systemInfo,this.manifest)},
                 {ClientPatchName.AutoTcpUdp,new AutoTcpUdp(systemInfo,this.manifest)},
+                {ClientPatchName.RemoveDLUAd,new RemoveDLUAd(systemInfo)},
             };
         }
         

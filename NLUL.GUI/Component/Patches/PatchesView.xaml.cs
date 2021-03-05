@@ -35,6 +35,11 @@ namespace NLUL.GUI.Component.Patches
                 PatchDescription = "Enables connecting to community-run LEGO Universe servers that may or may not use TCP/UDP. This is automatically managed for the requested server. Requires the Mod Loader to be installed. Do not install with TCP/UDP Shim.",
                 PatchEnum = ClientPatchName.AutoTcpUdp,
             },
+            new PatchData() {
+                PatchName = "Remove DLU Ad",
+                PatchDescription = "Removes the advertisement for DLU from the zone loading screen.",
+                PatchEnum = ClientPatchName.RemoveDLUAd,
+            },
         };
     }
     

@@ -147,6 +147,7 @@ namespace NLUL.Core.Client
         {
             this.clientPatcher.Install(ClientPatchName.ModLoader);
             this.clientPatcher.Install(ClientPatchName.AutoTcpUdp);
+            this.clientPatcher.Install(ClientPatchName.RemoveDLUAd);
         }
         
         /*
