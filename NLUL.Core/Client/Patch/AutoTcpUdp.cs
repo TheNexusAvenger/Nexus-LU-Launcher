@@ -90,7 +90,14 @@ namespace NLUL.Core.Client.Patch
         public void Uninstall()
         {
             // Remove the mod directory.
-            Directory.Delete(Path.Combine(this.systemInfo.ClientLocation, "mods", "auto_raknet_replacer"), true);
+            if (Directory.Exists(this.modFolderLocation))
+            {
+                Directory.Delete(this.modFolderLocation, true);
+            }
+            if (Directory.Exists(this.disableModFolderLocation))
+            {
+                Directory.Delete(this.disableModFolderLocation, true);
+            }
         }
         
         /*
