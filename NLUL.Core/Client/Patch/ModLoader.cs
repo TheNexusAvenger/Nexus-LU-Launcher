@@ -4,6 +4,7 @@
  * Patch for the mod loader.
  */
 
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -59,9 +60,10 @@ namespace NLUL.Core.Client.Patch
             
             // Download the mod loader ZIP.
             var client = new WebClient();
-            var modDownloadDirectory = Path.Combine(this.systemInfo.SystemFileLocation,"modloader.zip");
-            var modUncompressDirectory = Path.Combine(this.systemInfo.SystemFileLocation,"modloader");
+            var modDownloadDirectory = Path.Combine(this.systemInfo.SystemFileLocation, "modloader.zip"); 
+            var modUncompressDirectory = Path.Combine(this.systemInfo.SystemFileLocation, "modloader");
             client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.zip",modDownloadDirectory);
+            
             if (Directory.Exists(modUncompressDirectory))
             {
                 Directory.Delete(modUncompressDirectory, true);
@@ -76,7 +78,8 @@ namespace NLUL.Core.Client.Patch
             }
 
             // Replace the dinput8.dll file.
-            File.Move(Path.Combine(modUncompressDirectory,"dinput8.dll"),dinput8Location);
+            var dinput8DownloadLocation = Directory.GetFiles(modUncompressDirectory, "dinput8.dll", SearchOption.AllDirectories)[0];
+            File.Move(dinput8DownloadLocation, dinput8Location);
 
             // Create the mods directory if it doesn't exist.
             var modsDirectory = Path.Join(this.systemInfo.ClientLocation,"mods");
