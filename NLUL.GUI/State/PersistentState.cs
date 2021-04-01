@@ -60,8 +60,9 @@ namespace NLUL.GUI.State
                     }
                     catch (JsonException)
                     {
-                    
+                        
                     }
+                    State ??= new PersistentSettings();
                 }
             }
         }
