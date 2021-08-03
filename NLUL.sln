@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLUL.CLI", "NLUL.CLI\NLUL.CLI.csproj", "{6CE21EBD-98A2-4832-BB51-DF47761DC109}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLUL.Core", "NLUL.Core\NLUL.Core.csproj", "{4E910BC3-DA7D-4497-9153-9B37915C1427}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLUL.Core.Test", "NLUL.Core.Test\NLUL.Core.Test.csproj", "{756056EE-304F-403B-927F-E45C8DEF707A}"
@@ -18,10 +16,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{6CE21EBD-98A2-4832-BB51-DF47761DC109}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6CE21EBD-98A2-4832-BB51-DF47761DC109}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6CE21EBD-98A2-4832-BB51-DF47761DC109}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6CE21EBD-98A2-4832-BB51-DF47761DC109}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4E910BC3-DA7D-4497-9153-9B37915C1427}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4E910BC3-DA7D-4497-9153-9B37915C1427}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E910BC3-DA7D-4497-9153-9B37915C1427}.Release|Any CPU.ActiveCfg = Release|Any CPU

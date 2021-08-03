@@ -8,7 +8,6 @@ on x86.
 """
 
 PROJECTS = [
-    "CLI",
     "GUI",
 ]
 PLATFORMS = [

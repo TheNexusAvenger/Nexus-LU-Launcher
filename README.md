@@ -13,10 +13,6 @@ The goals of the launcher is the following:
   and launching LEGO Universe.
 * Be able to select from a list of servers to connect to.
 * Enable the installation of optional patches.
-* Automate the process of basic setup for servers.
-  * Note: This will be implemented later for the user interface.
-    This functionally is present for the CLI build, but only supports
-    Uchu right now, and still requires manually setting up databases.
 
 ## Non-Goals
 The following aren't current goals of the launcher, but could
@@ -24,9 +20,7 @@ be made at some point:
 * Provide a method to change the locale.
   * This feature could be worked on but requires work on the client to enable
     localization. The primary blocker for this is translations for the client.
-* Automate installing WINE for non-Windows installs.
-* Enable management of hosted servers, such as player permissions.
-* Enable advanced, configurable patches, such as modifying the client database.
+* Automate installing WINE for non-Windows and non-macOS installs.
 
 ## Custom Download Location
 By default, Nexus LU Launcher will download files to a directory named
@@ -65,11 +59,7 @@ features on the client, like guilds, or components that allow the client
 to work, like alternative communication mods.
 
 ## Servers (Coming Soon)
-Servers *will* rely mostly on the community to manage due to the implementation
-requirements. It *will be* recommended to focus on servers that have a high
-level of functionality, like Uchu and Operation Crux. At this point, pull
-requests may not be accepted as the implementation is incomplete and may
-change.
+Creating servers has been removed from the project as of release 0.3.0.
 
 # Disclaimer
 LEGO<sup>Ⓡ</sup> is a trademark of the LEGO Group. The LEGO Group is not
