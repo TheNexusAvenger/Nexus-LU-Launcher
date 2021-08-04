@@ -9,6 +9,5 @@
             </ScrollViewer>
         </Border>
         <NLUL.GUI.Component.Play:PlayPanel/>
-        <NLUL.GUI.Component.Play:PlayButtons Margin="60,12,0,0"/>
     </StackPanel>
 </StackPanel>

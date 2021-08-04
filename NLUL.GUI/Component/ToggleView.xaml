@@ -1,12 +1,17 @@
-<Canvas xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:NLUL.GUI.Component.Play="clr-namespace:NLUL.GUI.Component.Play"
-        xmlns:NLUL.GUI.Component.Host="clr-namespace:NLUL.GUI.Component.Host"
-        xmlns:NLUL.GUI.Component.Patches="clr-namespace:NLUL.GUI.Component.Patches"
-        x:Class="NLUL.GUI.Component.ToggleView">
+<StackPanel xmlns="https://github.com/avaloniaui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:NLUL.GUI.Component.Base="clr-namespace:NLUL.GUI.Component.Base"
+            xmlns:NLUL.GUI.Component.Play="clr-namespace:NLUL.GUI.Component.Play"
+            xmlns:NLUL.GUI.Component.Patches="clr-namespace:NLUL.GUI.Component.Patches"
+            x:Class="NLUL.GUI.Component.ToggleView">
     <Canvas>
        <NLUL.GUI.Component.Play:PlayView Name="PlayView"/>
-       <NLUL.GUI.Component.Host:HostView Name="HostView"/>
        <NLUL.GUI.Component.Patches:PatchesView Name="PatchesView"/>
     </Canvas>
-</Canvas>
+    <DockPanel HorizontalAlignment="Left" Margin="60,317">
+        <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GitHubLogo.png" Name="GitHubButton" Text="GitHub" Width="120" Height="24"/>
+        <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/WhiteLogo.png" Name="PlayButton" Text="Play" Width="120" Height="24"/>
+        <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GearIcon.png" Name="PatchesButton" Text="Patches" Width="120" Height="24"/>
+        <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GearIcon.png" Name="SettingsButton" Text="Settings" Width="120" Height="24"/>
+    </DockPanel>
+</StackPanel>

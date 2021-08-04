@@ -1,8 +1,0 @@
-<DockPanel xmlns="https://github.com/avaloniaui"
-           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-           xmlns:NLUL.GUI.Component.Base="clr-namespace:NLUL.GUI.Component.Base"
-           x:Class="NLUL.GUI.Component.Patches.PatchesButtons"
-           HorizontalAlignment="Left">
-    <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GitHubLogo.png" Name="GitHubButton" Text="GitHub" Width="120" Height="24"/>
-    <NLUL.GUI.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/WhiteLogo.png" Name="PlayButton" Text="Play" Width="120" Height="24"/>
-</DockPanel>

@@ -24,4 +24,8 @@
     <ItemGroup>
       <ProjectReference Include="..\NLUL.Core\NLUL.Core.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Component\Host\HostButtons.xaml" />
+      <UpToDateCheckInput Remove="Component\Host\HostView.xaml" />
+    </ItemGroup>
 </Project>
