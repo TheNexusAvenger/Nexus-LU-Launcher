@@ -1,18 +1,12 @@
-/*
- * TheNexusAvenger
- *
- * Manages installing and uninstalling patches.
- */
-
 using System.Collections.Generic;
 using System.IO;
 using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
 {
-    /*
-     * Enums for the patch names.
-     */
+    /// <summary>
+    /// Enums for the patch names.
+    /// </summary>
     public enum ClientPatchName
     {
         ModLoader,
@@ -22,56 +16,62 @@ namespace NLUL.Core.Client.Patch
         RemoveDLUAd,
     }
     
-    /*
-     * Class for the patcher.
-     */
+    /// <summary>
+    /// Class for the patcher.
+    /// </summary>
     public class ClientPatcher
     {
-        private SystemInfo systemInfo;
-        private GitHubManifest manifest;
+        /// <summary>
+        /// Patches that can be applied to the client.
+        /// </summary>
         public readonly Dictionary<ClientPatchName,IPatch> patches;
         
-        /*
-         * Creates the client patcher.
-         */
+        /// <summary>
+        /// Creates the client patcher.
+        /// </summary>
+        /// <param name="systemInfo">System info of the client.</param>
         public ClientPatcher(SystemInfo systemInfo)
         {
-            this.systemInfo = systemInfo;
-            this.manifest = new GitHubManifest(Path.Combine(systemInfo.ClientLocation,"GitHubPatches.json"));
+            var manifest = new GitHubManifest(Path.Combine(systemInfo.ClientLocation, "GitHubPatches.json"));
             this.patches = new Dictionary<ClientPatchName,IPatch>()
             {
-                {ClientPatchName.ModLoader,new ModLoader(systemInfo,this.manifest)},
-                {ClientPatchName.TcpUdp,new TcpUdp(systemInfo,this.manifest)},
-                {ClientPatchName.AutoTcpUdp,new AutoTcpUdp(systemInfo,this.manifest)},
-                {ClientPatchName.FixAssemblyVendorHologram,new FixAssemblyVendorHologram(systemInfo)},
+                {ClientPatchName.ModLoader,new ModLoader(systemInfo, manifest)},
+                {ClientPatchName.TcpUdp,new TcpUdp(systemInfo, manifest)},
+                {ClientPatchName.AutoTcpUdp,new AutoTcpUdp(systemInfo, manifest)},
+                {ClientPatchName.FixAssemblyVendorHologram, new FixAssemblyVendorHologram(systemInfo)},
                 {ClientPatchName.RemoveDLUAd,new RemoveDLUAd(systemInfo)},
             };
         }
         
-        /*
-         * Returns if an update is available for the patch.
-         */
+        /// <summary>
+        /// Returns if an update is available for the patch.
+        /// </summary>
+        /// <param name="patchName">Patch to check for.</param>
+        /// <returns>Whether an update is available for the patch.</returns>
         public bool IsUpdateAvailable(ClientPatchName patchName)
         {
-            return this.patches[patchName].IsUpdateAvailable();
+            return this.patches[patchName].UpdateAvailable;
         }
         
-        /*
-         * Returns if a patch is installed.
-         */
+        /// <summary>
+        /// Returns if a patch is installed
+        /// </summary>
+        /// <param name="patchName"></param>
+        /// <returns>Whether the patch is installed.</returns>
         public bool IsInstalled(ClientPatchName patchName)
         {
-            return this.patches[patchName].IsInstalled();
+            return this.patches[patchName].Installed;
         }
         
-        /*
-         * Installs a patch.
-         */
-        public void Install(ClientPatchName patchName,bool force = false)
+        /// <summary>
+        /// Installs a patch.
+        /// </summary>
+        /// <param name="patchName">Name of the patch.</param>
+        public void Install(ClientPatchName patchName)
         {
             // Return if the patch is installed and up to date.
             var patch = this.patches[patchName];
-            if (!force && patch.IsInstalled() && !patch.IsUpdateAvailable())
+            if (patch.Installed && !patch.UpdateAvailable)
             {
                 return;
             }
@@ -80,14 +80,15 @@ namespace NLUL.Core.Client.Patch
             patch.Install();
         }
         
-        /*
-         * Uninstalls a patch.
-         */
+        /// <summary>
+        /// Uninstalls a patch.
+        /// </summary>
+        /// <param name="patchName">Name of the patch.</param>
         public void Uninstall(ClientPatchName patchName)
         {
             // Return if the patch is not installed.
             var patch = this.patches[patchName];
-            if (!patch.IsInstalled())
+            if (!patch.Installed)
             {
                 return;
             }

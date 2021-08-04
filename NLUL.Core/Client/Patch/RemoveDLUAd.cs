@@ -12,35 +12,33 @@ namespace NLUL.Core.Client.Patch
 {
     public class RemoveDLUAd : IPatch
     {
-        private string localeFileLocation;
+        /// <summary>
+        /// Location of the locale file.
+        /// </summary>
+        private readonly string localeFileLocation;
      
-        /*
-         * Creates the patch.
-         */
+        /// <summary>
+        /// Whether an update is available.
+        /// </summary>
+        public bool UpdateAvailable => false;
+
+        /// <summary>
+        /// Whether the patch is installed
+        /// </summary>
+        public bool Installed => !File.Exists(this.localeFileLocation) || !File.ReadAllText(this.localeFileLocation).Contains("DLU is coming!");
+     
+        /// <summary>
+        /// Creates the patch.
+        /// </summary>
+        /// <param name="systemInfo">System info of the client.</param>
         public RemoveDLUAd(SystemInfo systemInfo)
         {
             this.localeFileLocation = Path.Combine(systemInfo.ClientLocation, "locale", "locale.xml");
         }
         
-        /*
-         * Returns if an update is available.
-         */
-        public bool IsUpdateAvailable()
-        {
-            return false;
-        }
-        
-        /*
-         * Returns if the patch is installed.
-         */
-        public bool IsInstalled()
-        {
-            return !File.Exists(this.localeFileLocation) || !File.ReadAllText(this.localeFileLocation).Contains("DLU is coming!");
-        }
-        
-        /*
-         * Installs the patch.
-         */
+        /// <summary>
+        /// Installs the patch.
+        /// </summary>
         public void Install()
         {
             if (!File.Exists(this.localeFileLocation)) return;
@@ -51,9 +49,9 @@ namespace NLUL.Core.Client.Patch
                     .Replace("@darkflameuniv", "Look for the launch pad by the water&apos;s edge in Brick Annexe!"));
         }
         
-        /*
-         * Uninstalls the patch.
-         */
+        /// <summary>
+        /// Uninstalls the patch.
+        /// </summary>
         public void Uninstall()
         {
             if (!File.Exists(this.localeFileLocation)) return;

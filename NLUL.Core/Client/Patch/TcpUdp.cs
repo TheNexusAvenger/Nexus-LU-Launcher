@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Patch for TCP/UDP.
- */
-
 using System.IO;
 using System.Net;
 using NLUL.Core.Util;
@@ -12,46 +6,53 @@ namespace NLUL.Core.Client.Patch
 {
     public class TcpUdp : IPatch
     {
-        private SystemInfo systemInfo;
-        private GitHubManifest manifest;
-        private GitHubManifestEntry repositoryEntry;
+        /// <summary>
+        /// System info of the client.
+        /// </summary>
+        private readonly SystemInfo systemInfo;
+        
+        /// <summary>
+        /// GitHub manifest of the client.
+        /// </summary>
+        private readonly GitHubManifest manifest;
+        
+        /// <summary>
+        /// GitHub manifest entry for the patch.
+        /// </summary>
+        private readonly GitHubManifestEntry repositoryEntry;
      
-        /*
-         * Creates the patch.
-         */
-        public TcpUdp(SystemInfo systemInfo,GitHubManifest manifest)
+        /// <summary>
+        /// Whether an update is available.
+        /// </summary>
+        public bool UpdateAvailable => !this.repositoryEntry.IsTagUpToDate();
+
+        /// <summary>
+        /// Whether the patch is installed
+        /// </summary>
+        public bool Installed => File.Exists(Path.Join(this.systemInfo.ClientLocation,"mods", "raknet_replacer", "mod.dll"));
+        
+        /// <summary>
+        /// Creates the patch.
+        /// </summary>
+        /// <param name="systemInfo">System info of the client.</param>
+        /// <param name="manifest">GitHub manifest of the client.</param>
+        public TcpUdp(SystemInfo systemInfo, GitHubManifest manifest)
         {
             this.systemInfo = systemInfo;
             this.manifest = manifest;
-            this.repositoryEntry = manifest.GetEntry("lcdr/raknet_shim_dll",Path.Combine(systemInfo.SystemFileLocation,"tcpudp"));
+            this.repositoryEntry = manifest.GetEntry("lcdr/raknet_shim_dll", Path.Combine(systemInfo.SystemFileLocation, "tcpudp"));
         }
         
-        /*
-         * Returns if an update is available.
-         */
-        public bool IsUpdateAvailable()
-        {
-            return !this.repositoryEntry.IsTagUpToDate();
-        }
-        
-        /*
-         * Returns if the patch is installed.
-         */
-        public bool IsInstalled()
-        {
-            return File.Exists(Path.Join(this.systemInfo.ClientLocation,"mods","raknet_replacer","mod.dll"));
-        }
-        
-        /*
-         * Installs the patch.
-         */
+        /// <summary>
+        /// Installs the patch.
+        /// </summary>
         public void Install()
         {
             // Get the tag information.
             var tag = this.repositoryEntry.GetLatestTag();
             
             // Create the mod directory.
-            var modDirectory = Path.Combine(this.systemInfo.ClientLocation,"mods","raknet_replacer");
+            var modDirectory = Path.Combine(this.systemInfo.ClientLocation, "mods", "raknet_replacer");
             if (!Directory.Exists(modDirectory))
             {
                 Directory.CreateDirectory(modDirectory);
@@ -72,9 +73,9 @@ namespace NLUL.Core.Client.Patch
             this.manifest.Save();
         }
         
-        /*
-         * Uninstalls the patch.
-         */
+        /// <summary>
+        /// Uninstalls the patch.
+        /// </summary>
         public void Uninstall()
         {
             // Remove the mod directory.

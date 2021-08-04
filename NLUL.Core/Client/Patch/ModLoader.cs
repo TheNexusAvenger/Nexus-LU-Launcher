@@ -1,10 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Patch for the mod loader.
- */
-
-using System;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -14,39 +7,46 @@ namespace NLUL.Core.Client.Patch
 {
     public class ModLoader : IPatch
     {
-        private SystemInfo systemInfo;
-        private GitHubManifest manifest;
-        private GitHubManifestEntry repositoryEntry;
+        /// <summary>
+        /// System info of the client.
+        /// </summary>
+        private readonly SystemInfo systemInfo;
+        
+        /// <summary>
+        /// GitHub manifest of the client.
+        /// </summary>
+        private readonly GitHubManifest manifest;
+        
+        /// <summary>
+        /// GitHub manifest entry for the patch.
+        /// </summary>
+        private readonly GitHubManifestEntry repositoryEntry;
      
-        /*
-         * Creates the patch.
-         */
-        public ModLoader(SystemInfo systemInfo,GitHubManifest manifest)
+        /// <summary>
+        /// Whether an update is available.
+        /// </summary>
+        public bool UpdateAvailable => !this.repositoryEntry.IsTagUpToDate();
+
+        /// <summary>
+        /// Whether the patch is installed
+        /// </summary>
+        public bool Installed => File.Exists(Path.Join(this.systemInfo.ClientLocation, "dinput8.dll"));
+        
+        /// <summary>
+        /// Creates the patch.
+        /// </summary>
+        /// <param name="systemInfo">System info of the client.</param>
+        /// <param name="manifest">GitHub manifest of the client.</param>
+        public ModLoader(SystemInfo systemInfo, GitHubManifest manifest)
         {
             this.systemInfo = systemInfo;
             this.manifest = manifest;
-            this.repositoryEntry = manifest.GetEntry("lcdr/raknet_shim_dll",Path.Combine(systemInfo.SystemFileLocation,"raknet_modloader"));
+            this.repositoryEntry = manifest.GetEntry("lcdr/raknet_shim_dll", Path.Combine(systemInfo.SystemFileLocation, "raknet_modloader"));
         }
-        
-        /*
-         * Returns if an update is available.
-         */
-        public bool IsUpdateAvailable()
-        {
-            return !this.repositoryEntry.IsTagUpToDate();
-        }
-        
-        /*
-         * Returns if the patch is installed.
-         */
-        public bool IsInstalled()
-        {
-            return File.Exists(Path.Join(this.systemInfo.ClientLocation,"dinput8.dll"));
-        }
-        
-        /*
-         * Installs the patch.
-         */
+
+        /// <summary>
+        /// Installs the patch.
+        /// </summary>
         public void Install()
         {
             // Get the tag information.
@@ -62,7 +62,7 @@ namespace NLUL.Core.Client.Patch
             var client = new WebClient();
             var modDownloadDirectory = Path.Combine(this.systemInfo.SystemFileLocation, "modloader.zip"); 
             var modUncompressDirectory = Path.Combine(this.systemInfo.SystemFileLocation, "modloader");
-            client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.zip",modDownloadDirectory);
+            client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.zip", modDownloadDirectory);
             
             if (Directory.Exists(modUncompressDirectory))
             {
@@ -71,7 +71,7 @@ namespace NLUL.Core.Client.Patch
             ZipFile.ExtractToDirectory(modDownloadDirectory,modUncompressDirectory);
             
             // Remove the existing dinput8.dll.
-            var dinput8Location = Path.Join(this.systemInfo.ClientLocation,"dinput8.dll");
+            var dinput8Location = Path.Join(this.systemInfo.ClientLocation, "dinput8.dll");
             if (File.Exists(dinput8Location))
             {
                 File.Delete(dinput8Location);
@@ -82,7 +82,7 @@ namespace NLUL.Core.Client.Patch
             File.Move(dinput8DownloadLocation, dinput8Location);
 
             // Create the mods directory if it doesn't exist.
-            var modsDirectory = Path.Join(this.systemInfo.ClientLocation,"mods");
+            var modsDirectory = Path.Join(this.systemInfo.ClientLocation, "mods");
             if (!Directory.Exists(modsDirectory))
             {
                 Directory.CreateDirectory(modsDirectory);
@@ -97,16 +97,16 @@ namespace NLUL.Core.Client.Patch
             Directory.Delete(modUncompressDirectory,true);
         }
         
-        /*
-         * Uninstalls the patch.
-         */
+        /// <summary>
+        /// Uninstalls the patch.
+        /// </summary>
         public void Uninstall()
         {
             // Remove the mod loader DLL.
-            File.Delete(Path.Combine(this.systemInfo.ClientLocation,"dinput8.dll"));
+            File.Delete(Path.Combine(this.systemInfo.ClientLocation, "dinput8.dll"));
             
             // Remove the mods directory if it is empty.
-            var modsDirectory = Path.Join(this.systemInfo.ClientLocation,"mods");
+            var modsDirectory = Path.Join(this.systemInfo.ClientLocation, "mods");
             if (Directory.GetDirectories(modsDirectory).Length == 0 && Directory.GetFiles(modsDirectory).Length == 0)
             {
                 Directory.Delete(modsDirectory);

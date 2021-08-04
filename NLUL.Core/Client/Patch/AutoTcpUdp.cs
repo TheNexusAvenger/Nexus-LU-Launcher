@@ -1,11 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Patch for TCP/UDP that attempts to
- * apply or disable depending on if the
- * port of the server is open.
- */
-
 using System;
 using System.IO;
 using System.Net;
@@ -17,17 +9,56 @@ namespace NLUL.Core.Client.Patch
 {
     public class AutoTcpUdp : IPreLaunchPatch
     {
-        private SystemInfo systemInfo;
-        private GitHubManifest manifest;
-        private GitHubManifestEntry repositoryEntry;
-        private string modFolderLocation;
-        private string disableModFolderLocation;
-        private string modLocation;
-        private string disabledModLocation;
+        /// <summary>
+        /// System info of the client.
+        /// </summary>
+        private readonly SystemInfo systemInfo;
+        
+        /// <summary>
+        /// GitHub manifest of the client.
+        /// </summary>
+        private readonly GitHubManifest manifest;
+        
+        /// <summary>
+        /// GitHub manifest entry for the patch.
+        /// </summary>
+        private readonly GitHubManifestEntry repositoryEntry;
+        
+        /// <summary>
+        /// Location of the mod folder.
+        /// </summary>
+        private readonly string modFolderLocation;
+        
+        /// <summary>
+        /// Location of the disabled mod folder.
+        /// </summary>
+        private readonly string disableModFolderLocation;
+        
+        /// <summary>
+        /// Location of the mod executable.
+        /// </summary>
+        private readonly string modLocation;
+        
+        /// <summary>
+        /// Location of the disabled mod executable.
+        /// </summary>
+        private readonly string disabledModLocation;
+        
+        /// <summary>
+        /// Whether an update is available.
+        /// </summary>
+        public bool UpdateAvailable => !this.repositoryEntry.IsTagUpToDate();
 
-        /*
-         * Creates the patch.
-         */
+        /// <summary>
+        /// Whether the patch is installed
+        /// </summary>
+        public bool Installed => File.Exists(this.modLocation) || File.Exists(this.disabledModLocation);
+
+        /// <summary>
+        /// Creates the patch.
+        /// </summary>
+        /// <param name="systemInfo">System info of the client.</param>
+        /// <param name="manifest">GitHub manifest of the client.</param>
         public AutoTcpUdp(SystemInfo systemInfo,GitHubManifest manifest)
         {
             this.systemInfo = systemInfo;
@@ -38,26 +69,10 @@ namespace NLUL.Core.Client.Patch
             this.modLocation = Path.Combine(this.modFolderLocation, "mod.dll");
             this.disabledModLocation = Path.Combine(this.disableModFolderLocation, "mod.dll");
         }
-        
-        /*
-         * Returns if an update is available.
-         */
-        public bool IsUpdateAvailable()
-        {
-            return !this.repositoryEntry.IsTagUpToDate();
-        }
-        
-        /*
-         * Returns if the patch is installed.
-         */
-        public bool IsInstalled()
-        {
-            return File.Exists(this.modLocation) || File.Exists(this.disabledModLocation);
-        }
-        
-        /*
-         * Installs the patch.
-         */
+
+        /// <summary>
+        /// Installs the patch.
+        /// </summary>
         public void Install()
         {
             // Get the tag information.
@@ -84,9 +99,9 @@ namespace NLUL.Core.Client.Patch
             this.manifest.Save();
         }
         
-        /*
-         * Uninstalls the patch.
-         */
+        /// <summary>
+        /// Uninstalls the patch.
+        /// </summary>
         public void Uninstall()
         {
             // Remove the mod directory.
@@ -100,11 +115,11 @@ namespace NLUL.Core.Client.Patch
             }
         }
         
-        /*
-         * Performs and operations between setting the
-         * boot.cfg and launching the client. This will
-         * yield launching the client.
-         */
+        /// <summary>
+        /// Performs and operations between setting the
+        /// boot.cfg and launching the client. This will
+        /// yield launching the client.
+        /// </summary>
         public void OnClientRequestLaunch()
         {
             // Determine the host to check.
@@ -143,25 +158,27 @@ namespace NLUL.Core.Client.Patch
             }
         }
         
-        /*
-         * Enables the TCP/UDP mod.
-         */
+        /// <summary>
+        /// Enables the TCP/UDP mod.
+        /// </summary>
         private void Enable()
         {
             this.SwitchModDirectory(this.disableModFolderLocation, this.modFolderLocation);
         }
         
-        /*
-         * Disables the TCP/UDP mod.
-         */
+        /// <summary>
+        /// Disables the TCP/UDP mod.
+        /// </summary>
         private void Disable()
         {
             this.SwitchModDirectory(this.modFolderLocation, this.disableModFolderLocation);
         }
         
-        /*
-         * Switches the directories of the mod.
-         */
+        /// <summary>
+        /// Switches the directories of the mod.
+        /// </summary>
+        /// <param name="source">Source of the mod file.</param>
+        /// <param name="target">New target of the mod file.</param>
         private void SwitchModDirectory(string source, string target)
         {
             var sourceMod = Path.Combine(source, "mod.dll");

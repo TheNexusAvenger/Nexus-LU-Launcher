@@ -1,31 +1,25 @@
-/*
- * TheNexusAvenger
- *
- * Interface for a client patch.
- */
-
 namespace NLUL.Core.Client.Patch
 {
     public interface IPatch
     {
-        /*
-         * Returns if an update is available.
-         */
-        public bool IsUpdateAvailable();
+        /// <summary>
+        /// Whether an update is available.
+        /// </summary>
+        public bool UpdateAvailable { get; }
         
-        /*
-         * Returns if the patch is installed.
-         */
-        public bool IsInstalled();
+        /// <summary>
+        /// Whether the patch is installed
+        /// </summary>
+        public bool Installed { get; }
         
-        /*
-         * Installs the patch.
-         */
+        /// <summary>
+        /// Installs the patch.
+        /// </summary>
         public void Install();
         
-        /*
-         * Uninstalls the patch.
-         */
+        /// <summary>
+        /// Uninstalls the patch.
+        /// </summary>
         public void Uninstall();
     }
 }

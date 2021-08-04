@@ -1,11 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Patch for fixing the Assembly vendor hologram.
- * For some reason, the path is set incorrectly, and
- * it only is a problem in unpacked clients.
- */
-
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -15,55 +7,63 @@ namespace NLUL.Core.Client.Patch
 {
     public class FixAssemblyVendorHologram : IPatch
     {
+        /// <summary>
+        /// Data of the invalid path.
+        /// </summary>
         private static readonly byte[] InvalidAnimPath = Encoding.ASCII.GetBytes("\x01" + "9\x00\x00\x00Z:\\lwo\\4_game\\client\\res\\mesh\\3DUI\\Assembly_Logo_Sign.nif"); // Has to be split since \x019 becomes 0b25 instead of 0b01 + '9'.
+        
+        /// <summary>
+        /// Data of the valid path.
+        /// </summary>
         private static readonly byte[] ValidAnimPath = Encoding.ASCII.GetBytes("\x01(\x00\x00\x00.\\..\\..\\mesh\\3DUI\\Assembly_Logo_Sign.nif");
         
-        private string assemblySignFileLocation;
+        /// <summary>
+        /// Location of the Assembly sign in Nimbus Station.
+        /// </summary>
+        private readonly string assemblySignFileLocation;
      
-        /*
-         * Creates the patch.
-         */
+        /// <summary>
+        /// Whether an update is available.
+        /// </summary>
+        public bool UpdateAvailable => false;
+
+        /// <summary>
+        /// Whether the patch is installed
+        /// </summary>
+        public bool Installed => !File.Exists(this.assemblySignFileLocation) || !((IList) File.ReadAllBytes(this.assemblySignFileLocation)).Contains((byte) ':');
+        
+        /// <summary>
+        /// Creates the patch.
+        /// </summary>
+        /// <param name="systemInfo">System info of the client.</param>
         public FixAssemblyVendorHologram(SystemInfo systemInfo)
         {
             this.assemblySignFileLocation = Path.Combine(systemInfo.ClientLocation, "res", "animations", "3dui", "assembly_sign_anim_sm.kfm");
         }
         
-        /*
-         * Returns if an update is available.
-         */
-        public bool IsUpdateAvailable()
-        {
-            return false;
-        }
-        
-        /*
-         * Returns if the patch is installed.
-         */
-        public bool IsInstalled()
-        {
-            return !File.Exists(this.assemblySignFileLocation) || !((IList) File.ReadAllBytes(this.assemblySignFileLocation)).Contains((byte) ':');
-        }
-        
-        /*
-         * Installs the patch.
-         */
+        /// <summary>
+        /// Installs the patch.
+        /// </summary>
         public void Install()
         {
             ReplaceByteContents(this.assemblySignFileLocation, InvalidAnimPath, ValidAnimPath);
         }
         
-        /*
-         * Uninstalls the patch.
-         */
+        /// <summary>
+        /// Uninstalls the patch.
+        /// </summary>
         public void Uninstall()
         {
             ReplaceByteContents(this.assemblySignFileLocation, ValidAnimPath, InvalidAnimPath);
         }
         
-        /*
-         * Replaces the byte contents of the given file.
-         * Only replaces 1 occurence.
-         */
+        /// <summary>
+        /// Replaces the byte contents of the given file.
+        /// Only replaces 1 occurence.
+        /// </summary>
+        /// <param name="filePath">File path to change.</param>
+        /// <param name="find">Bytes to find.</param>
+        /// <param name="replace">Bytes to replace.</param>
         private static void ReplaceByteContents(string filePath, byte[] find, byte[] replace)
         {
             // Return if the file doesn't exist.
