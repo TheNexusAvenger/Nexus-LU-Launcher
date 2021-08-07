@@ -1,49 +1,47 @@
-/*
- * TheNexusAvenger
- *
- * Base runtime for the client.
- */
-
 using System.Diagnostics;
 
 namespace NLUL.Core.Client.Runtime
 {
     public interface IRuntime
     {
-        /*
-         * Returns the name of the runtime.
-         */
-        public string GetName();
+        /// <summary>
+        /// Name of the runtime.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Whether the emulator is supported on the current platform.
+        /// </summary>
+        public bool IsSupported { get; }
         
-        /*
-         * Returns if the emulator is supported on the current platform.
-         */
-        public bool IsSupported();
+        /// <summary>
+        /// Whether the emulator can be automatically installed.
+        /// </summary>
+        public bool CanInstall { get; }
         
-        /*
-         * Returns if the emulator can be automatically installed.
-         */
-        public bool CanInstall();
+        /// <summary>
+        /// Whether the emulator is installed.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInstalled { get; }
         
-        /*
-         * Returns if the emulator is installed.
-         */
-        public bool IsInstalled();
+        /// <summary>
+        /// The message to display to the user if the runtime
+        /// isn't installed and can't be automatically installed.
+        /// </summary>
+        public string ManualRuntimeInstallMessage { get; }
         
-        /*
-         * Returns the message to display to the user if the runtime
-         * isn't installed and can't be automatically installed.
-         */
-        public string GetManualRuntimeInstallMessage();
-        
-        /*
-         * Attempts to install the emulator.
-         */
+        /// <summary>
+        /// Attempts to install the emulator.
+        /// </summary>
         public void Install();
         
-        /*
-         * Runs an application in the emulator.
-         */
+        /// <summary>
+        /// Runs an application in the emulator.
+        /// </summary>
+        /// <param name="executablePath">Path of the executable to run.</param>
+        /// <param name="workingDirectory">Working directory to run the executable in.</param>
+        /// <returns>The process of the runtime.</returns>
         public Process RunApplication(string executablePath, string workingDirectory);
     }
 }

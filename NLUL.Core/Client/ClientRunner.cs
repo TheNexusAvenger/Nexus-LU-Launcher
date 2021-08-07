@@ -207,9 +207,9 @@ namespace NLUL.Core.Client
         public void Launch(string host,bool waitForFinish = true)
         {
             // Set up the runtime if it isn't installed.
-            if (!this.runtime.IsInstalled())
+            if (!this.runtime.IsInstalled)
             {
-                if (this.runtime.CanInstall())
+                if (this.runtime.CanInstall)
                 {
                     // Install the runtime.
                     this.runtime.Install();
@@ -217,7 +217,7 @@ namespace NLUL.Core.Client
                 else
                 {
                     // Stop the launch if a valid runtime isn't set up.
-                    Console.WriteLine("Failed to launch: " + this.runtime.GetManualRuntimeInstallMessage());
+                    Console.WriteLine("Failed to launch: " + this.runtime.ManualRuntimeInstallMessage);
                     return;
                 }
             }

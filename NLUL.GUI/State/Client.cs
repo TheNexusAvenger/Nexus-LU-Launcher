@@ -74,7 +74,7 @@ namespace NLUL.GUI.State
          */
         public static string GetManualRuntimeInstallMessage()
         {
-            return clientRunner.GetRuntime().GetManualRuntimeInstallMessage() ?? "(No runtime install message)";
+            return clientRunner.GetRuntime().ManualRuntimeInstallMessage ?? "(No runtime install message)";
         }
         
         /*
@@ -82,7 +82,7 @@ namespace NLUL.GUI.State
          */
         public static string GetRuntimeName()
         {
-            return clientRunner.GetRuntime().GetName() ?? "(No runtime name)";
+            return clientRunner.GetRuntime().Name ?? "(No runtime name)";
         }
         
         /*
@@ -99,7 +99,7 @@ namespace NLUL.GUI.State
         public static void UpdateState()
         {
             // Check for the runtime to be installed.
-            if (!clientRunner.GetRuntime().IsInstalled() && !clientRunner.GetRuntime().CanInstall())
+            if (!clientRunner.GetRuntime().IsInstalled && !clientRunner.GetRuntime().CanInstall)
             {
                 SetState(PlayState.ManualRuntimeNotInstalled);
                 return;
@@ -110,7 +110,7 @@ namespace NLUL.GUI.State
             {
                 if (!state.ManualChangeOnly)
                 {
-                    if (clientRunner.GetRuntime().IsInstalled())
+                    if (clientRunner.GetRuntime().IsInstalled)
                     {
                         SetState(PlayState.DownloadClient);
                         return;
@@ -124,7 +124,7 @@ namespace NLUL.GUI.State
             }
             else
             {
-                if (!state.ManualChangeOnly && !clientRunner.GetRuntime().IsInstalled())
+                if (!state.ManualChangeOnly && !clientRunner.GetRuntime().IsInstalled)
                 {
                     SetState(PlayState.DownloadRuntime);
                     return;

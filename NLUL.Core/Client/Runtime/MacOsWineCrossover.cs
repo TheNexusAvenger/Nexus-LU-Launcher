@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Automatic installer of WINE CrossOver on macOS.
- */
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -17,60 +11,50 @@ namespace NLUL.Core.Client.Runtime
 {
     public class MacOsWineCrossover : IRuntime
     {
-        private SystemInfo systemInfo;
+        /// <summary>
+        /// Info of the system.
+        /// </summary>
+        private readonly SystemInfo systemInfo;
         
-        /*
-         * Returns the name of the runtime.
-         */
-        public string GetName()
-        {
-            return "WINE Crossover";
-        }
+        /// <summary>
+        /// Name of the runtime.
+        /// </summary>
+        public string Name => "WINE Crossover";
+
+        /// <summary>
+        /// Whether the emulator is supported on the current platform.
+        /// </summary>
+        public bool IsSupported => RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+
+        /// <summary>
+        /// Whether the emulator can be automatically installed.
+        /// </summary>
+        public bool CanInstall => true;
         
-        /*
-         * Creates the runtime.
-         */
+        /// <summary>
+        /// Whether the emulator is installed.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInstalled => File.Exists(Path.Combine(this.systemInfo.SystemFileLocation,"Wine","bin","wine32on64"));
+
+        /// <summary>
+        /// The message to display to the user if the runtime
+        /// isn't installed and can't be automatically installed.
+        /// </summary>
+        public string ManualRuntimeInstallMessage => null;
+        
+        /// <summary>
+        /// Creates the runtime.
+        /// </summary>
+        /// <param name="systemInfo">Information of the system.</param>
         public MacOsWineCrossover(SystemInfo systemInfo)
         {
             this.systemInfo = systemInfo;
         }
         
-        /*
-         * Returns if the emulator is supported on the current platform.
-         */
-        public bool IsSupported()
-        {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-        }
-        
-        /*
-         * Returns if the emulator can be automatically installed.
-         */
-        public bool CanInstall()
-        {
-            return true;
-        }
-        
-        /*
-         * Returns if the emulator is installed.
-         */
-        public bool IsInstalled()
-        {
-            return File.Exists(Path.Combine(this.systemInfo.SystemFileLocation,"Wine","bin","wine32on64"));
-        }
-        
-        /*
-         * Returns the message to display to the user if the runtime
-         * isn't installed and can't be automatically installed.
-         */
-        public string GetManualRuntimeInstallMessage()
-        {
-            return null;
-        }
-        
-        /*
-         * Attempts to install the emulator.
-         */
+        /// <summary>
+        /// Attempts to install the emulator.
+        /// </summary>
         public void Install()
         {
             // Download the WINE Crossover app.
@@ -136,9 +120,12 @@ namespace NLUL.Core.Client.Runtime
             Directory.Delete(wineDirectoryExtractedLocation, true);
         }
         
-        /*
-         * Runs an application in the emulator.
-         */
+        /// <summary>
+        /// Runs an application in the emulator.
+        /// </summary>
+        /// <param name="executablePath">Path of the executable to run.</param>
+        /// <param name="workingDirectory">Working directory to run the executable in.</param>
+        /// <returns>The process of the runtime.</returns>
         public Process RunApplication(string executablePath, string workingDirectory)
         {
             var clientProcess = new Process

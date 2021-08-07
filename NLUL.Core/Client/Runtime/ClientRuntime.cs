@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Collection of the runtimes for the client.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,11 +7,15 @@ namespace NLUL.Core.Client.Runtime
 {
     public class ClientRuntime : IRuntime
     {
-        private List<IRuntime> runtimes;
+        /// <summary>
+        /// 
+        /// </summary>
+        private readonly List<IRuntime> runtimes;
         
-        /*
-         * Creates the client runtime.
-         */
+        /// <summary>
+        /// Creates the client runtime.
+        /// </summary>
+        /// <param name="systemInfo">Information about the system.</param>
         public ClientRuntime(SystemInfo systemInfo)
         {
             // Create the runtimes.
@@ -35,82 +33,63 @@ namespace NLUL.Core.Client.Runtime
             };
         }
         
-        /*
-         * Returns the name of the runtime.
-         */
-        public string GetName()
-        {
-            foreach (var runtime in this.GetSupportedRuntimes())
-            {
-                if (!runtime.CanInstall() || runtime.IsInstalled()) continue;
-                return runtime.GetName();
-            }
+        /// <summary>
+        /// Name of the runtime.
+        /// </summary>
+        public string Name => (from runtime in this.GetSupportedRuntimes() where runtime.CanInstall && !runtime.IsInstalled select runtime.Name).FirstOrDefault();
 
-            return null;
-        }
+        /// <summary>
+        /// Whether the emulator is supported on the current platform.
+        /// </summary>
+        public bool IsSupported => this.GetSupportedRuntimes().Count > 0;
         
-        /*
-         * Returns the runtimes supported for the current platform.
-         */
+        /// <summary>
+        /// Whether the emulator can be automatically installed.
+        /// </summary>
+        public bool CanInstall => this.GetSupportedRuntimes().Any(runtime => runtime.CanInstall);
+        
+        /// <summary>
+        /// Whether the emulator is installed.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsInstalled => this.GetSupportedRuntimes().Any(runtime => runtime.IsInstalled);
+        
+        /// <summary>
+        /// The message to display to the user if the runtime
+        /// isn't installed and can't be automatically installed.
+        /// </summary>
+        public string ManualRuntimeInstallMessage => (from runtime in this.GetSupportedRuntimes() where runtime.ManualRuntimeInstallMessage != null select runtime.ManualRuntimeInstallMessage).FirstOrDefault();
+
+        /// <summary>
+        /// Returns the runtimes supported for the current platform.
+        /// </summary>
         private List<IRuntime> GetSupportedRuntimes()
         {
-            return this.runtimes.Where(runtime => runtime.IsSupported()).ToList();
+            return this.runtimes.Where(runtime => runtime.IsSupported).ToList();
         }
         
-        /*
-         * Returns if the emulator is supported on the current platform.
-         */
-        public bool IsSupported()
-        {
-            return this.GetSupportedRuntimes().Count > 0;
-        }
-        
-        /*
-         * Returns if the emulator can be automatically installed.
-         */
-        public bool CanInstall()
-        {
-            return this.GetSupportedRuntimes().Any(runtime => runtime.CanInstall());
-        }
-        
-        /*
-         * Returns if the emulator is installed.
-         */
-        public bool IsInstalled()
-        {
-            return this.GetSupportedRuntimes().Any(runtime => runtime.IsInstalled());
-        }
-        
-        /*
-         * Returns the message to display to the user if the runtime
-         * isn't installed and can't be automatically installed.
-         */
-        public string GetManualRuntimeInstallMessage()
-        {
-            return (from runtime in this.GetSupportedRuntimes() where runtime.GetManualRuntimeInstallMessage() != null select runtime.GetManualRuntimeInstallMessage()).FirstOrDefault();
-        }
-        
-        /*
-         * Attempts to install the emulator.
-         */
+        /// <summary>
+        /// Attempts to install the emulator.
+        /// </summary>
         public void Install()
         {
-            foreach (var runtime in this.GetSupportedRuntimes())
+            foreach (var runtime in this.GetSupportedRuntimes().Where(runtime => runtime.CanInstall && !runtime.IsInstalled))
             {
-                if (!runtime.CanInstall() || runtime.IsInstalled()) continue;
                 runtime.Install();
                 break;
             }
         }
         
-        /*
-         * Runs an application in the emulator.
-         */
+        /// <summary>
+        /// Runs an application in the emulator.
+        /// </summary>
+        /// <param name="executablePath">Path of the executable to run.</param>
+        /// <param name="workingDirectory">Working directory to run the executable in.</param>
+        /// <returns>The process of the runtime.</returns>
         public Process RunApplication(string executablePath, string workingDirectory)
         {
-            foreach (var runtime in this.GetSupportedRuntimes())
+            foreach (var runtime in this.GetSupportedRuntimes().Where(runtime => runtime.IsInstalled))
             {
-                if (!runtime.IsInstalled()) continue;
                 return runtime.RunApplication(executablePath, workingDirectory);
             }
 
