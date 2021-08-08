@@ -74,7 +74,7 @@ namespace NLUL.GUI.State
          */
         public static string GetManualRuntimeInstallMessage()
         {
-            return clientRunner.GetRuntime().ManualRuntimeInstallMessage ?? "(No runtime install message)";
+            return clientRunner.Runtime.ManualRuntimeInstallMessage ?? "(No runtime install message)";
         }
         
         /*
@@ -82,7 +82,7 @@ namespace NLUL.GUI.State
          */
         public static string GetRuntimeName()
         {
-            return clientRunner.GetRuntime().Name ?? "(No runtime name)";
+            return clientRunner.Runtime.Name ?? "(No runtime name)";
         }
         
         /*
@@ -90,7 +90,7 @@ namespace NLUL.GUI.State
          */
         public static ClientPatcher GetPatcher()
         {
-            return clientRunner.GetPatcher();
+            return clientRunner.Patcher;
         }
         
         /*
@@ -99,7 +99,7 @@ namespace NLUL.GUI.State
         public static void UpdateState()
         {
             // Check for the runtime to be installed.
-            if (!clientRunner.GetRuntime().IsInstalled && !clientRunner.GetRuntime().CanInstall)
+            if (!clientRunner.Runtime.IsInstalled && !clientRunner.Runtime.CanInstall)
             {
                 SetState(PlayState.ManualRuntimeNotInstalled);
                 return;
@@ -110,7 +110,7 @@ namespace NLUL.GUI.State
             {
                 if (!state.ManualChangeOnly)
                 {
-                    if (clientRunner.GetRuntime().IsInstalled)
+                    if (clientRunner.Runtime.IsInstalled)
                     {
                         SetState(PlayState.DownloadClient);
                         return;
@@ -124,7 +124,7 @@ namespace NLUL.GUI.State
             }
             else
             {
-                if (!state.ManualChangeOnly && !clientRunner.GetRuntime().IsInstalled)
+                if (!state.ManualChangeOnly && !clientRunner.Runtime.IsInstalled)
                 {
                     SetState(PlayState.DownloadRuntime);
                     return;
@@ -135,7 +135,7 @@ namespace NLUL.GUI.State
             if (!state.ManualChangeOnly)
             {
                 // Verify the client.
-                if (clientRunner.CanVerifyExtractedClient())
+                if (clientRunner.CanVerifyExtractedClient)
                 {
                     try
                     {
@@ -184,7 +184,7 @@ namespace NLUL.GUI.State
         public static void DownloadRuntime(Action callback)
         {
             // Download the runtime.
-            clientRunner.GetRuntime().Install();
+            clientRunner.Runtime.Install();
             
             // Update the state and invoke the callback.
             Dispatcher.UIThread.InvokeAsync(() =>
