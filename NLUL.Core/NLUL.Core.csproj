@@ -14,4 +14,9 @@
       <ProjectReference Include="..\InfectedRose\InfectedRose.Lvl\InfectedRose.Lvl.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Client\Sources.json" />
+      <EmbeddedResource Include="Client\Sources.json" />
+    </ItemGroup>
+
 </Project>

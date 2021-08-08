@@ -1,0 +1,30 @@
+[
+  {
+    "Name": "Local Test 1",
+    "Type": "Unpacked",
+    "Url": "http://localhost:8000/luclient.zip",
+    "Method": "zip",
+    "Patches": [
+      {
+        "Name": "ModLoader",
+        "Default": true
+      },
+      {
+        "Name": "AutoTcpUdp",
+        "Default": true
+      },
+      {
+        "Name": "TcpUdp",
+        "Default": false
+      },
+      {
+        "Name": "FixAssemblyVendorHologram",
+        "Default": true
+      },
+      {
+        "Name": "RemoveDLUAd",
+        "Default": true
+      }
+    ]
+  }
+]
