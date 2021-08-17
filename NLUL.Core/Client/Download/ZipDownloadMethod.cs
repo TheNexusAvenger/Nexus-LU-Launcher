@@ -8,10 +8,15 @@ namespace NLUL.Core.Client.Download
     public class ZipDownloadMethod : FileDownloadMethod
     {
         /// <summary>
+        /// Whether the extracted client can be verified.
+        /// </summary>
+        public override bool CanVerifyExtractedClient => File.Exists(this.DownloadLocation);
+        
+        /// <summary>
         /// Creates the download method.
         /// </summary>
         /// <param name="systemInfo">Information about the system.</param>
-        public ZipDownloadMethod(SystemInfo systemInfo) : base(systemInfo)
+        public ZipDownloadMethod(SystemInfo systemInfo, ClientSourceEntry source) : base(systemInfo, source)
         {
             
         }
@@ -19,8 +24,7 @@ namespace NLUL.Core.Client.Download
         /// <summary>
         /// Extracts the downloaded client.
         /// </summary>
-        /// <param name="source">Source of the client.</param>
-        public override void Extract(ClientSourceEntry source)
+        public override void Extract()
         {
             // Clean the client.
             if (Directory.Exists(this.ExtractLocation))
@@ -35,7 +39,7 @@ namespace NLUL.Core.Client.Download
             // Extract the files.
             if (!Directory.Exists(this.ExtractLocation))
             {
-                ZipFile.ExtractToDirectory(this.GetDownloadLocation(source), this.ExtractLocation);
+                ZipFile.ExtractToDirectory(this.DownloadLocation, this.ExtractLocation);
             }
             
             // Move the files.
@@ -46,22 +50,21 @@ namespace NLUL.Core.Client.Download
             }
             Directory.Move(extractedDirectory, this.SystemInfo.ClientLocation);
         }
-
+        
         /// <summary>
         /// Verifies the extracted client.
         /// </summary>
-        /// <param name="source">Source of the client.</param>
-        public override void Verify(ClientSourceEntry source)
+        /// <returns>Whether the client was verified.</returns>
+        public override bool Verify()
         {
             // Return if the client can't be verified.
-            var downloadLocation = this.GetDownloadLocation(source);
-            if (!File.Exists(downloadLocation))
+            if (!File.Exists(this.DownloadLocation))
             {
-                return;
+                return true;
             }
             
             // Verify the files exist and throw an exception if a file is missing.
-            using (var zipFile = ZipFile.OpenRead(downloadLocation))
+            using (var zipFile = ZipFile.OpenRead(this.DownloadLocation))
             {
                 var entries = zipFile.Entries;
                 foreach (var entry in entries)
@@ -80,16 +83,16 @@ namespace NLUL.Core.Client.Download
                     // Throw an exception if the file is missing.
                     var filePath = Path.Combine(this.SystemInfo.ClientLocation, fileName);
                     if (entry.Length == 0 || File.Exists(filePath)) continue;
-                    this.OnDownloadStateChanged("VerifyFailed");
-                    return;
+                    return false;
                 }
             }
             
             // Delete the client archive.
-            if (File.Exists(downloadLocation))
+            if (File.Exists(this.DownloadLocation))
             {
-                File.Delete(downloadLocation);
+                File.Delete(this.DownloadLocation);
             }
+            return true;
         }
     }
 }

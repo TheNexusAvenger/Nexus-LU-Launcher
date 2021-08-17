@@ -11,93 +11,83 @@ namespace NLUL.Core.Client.Download
         /// Creates the download method.
         /// </summary>
         /// <param name="systemInfo">Information about the system.</param>
-        public FileDownloadMethod(SystemInfo systemInfo) : base(systemInfo)
+        /// <param name="source">Source of the client.</param>
+        public FileDownloadMethod(SystemInfo systemInfo, ClientSourceEntry source) : base(systemInfo, source)
         {
             
         }
 
         /// <summary>
+        /// Download location of the client.
+        /// </summary>
+        public string DownloadLocation => Path.Combine(this.SystemInfo.SystemFileLocation, "client." + this.Source.Method.ToLower());
+        
+        /// <summary>
         /// Extract location of the client.
         /// </summary>
         public string ExtractLocation => Path.Combine(this.SystemInfo.SystemFileLocation, "ClientExtract");
-        
-        /// <summary>
-        /// Returns the download location.
-        /// </summary>
-        /// <param name="source">Source of the client.</param>
-        /// <returns>Returns the download location.</returns>
-        public string GetDownloadLocation(ClientSourceEntry source)
-        {
-            return Path.Combine(this.SystemInfo.SystemFileLocation, "client." + source.Method.ToLower());
-        }
-        
+
         /// <summary>
         /// Downloads the client.
         /// </summary>
-        /// <param name="source">Source of the client.</param>
         /// <param name="force">Whether to force download.</param>
-        private void DownloadClient(ClientSourceEntry source, bool force)
+        private void DownloadClient(bool force)
         {
             // Return if the client exists and isn't forced.
-            var downloadLocation = this.GetDownloadLocation(source);
-            if (!force && File.Exists(downloadLocation))
+            if (!force && File.Exists(this.DownloadLocation))
             {
                 return;
             }
             
             // Delete the existing download if it exists.
-            if (File.Exists(downloadLocation))
+            if (File.Exists(this.DownloadLocation))
             {
-                File.Delete(downloadLocation);
+                File.Delete(this.DownloadLocation);
             }
             
             // Download the client.
             Directory.CreateDirectory(Path.GetDirectoryName(this.SystemInfo.ClientLocation));
             var client = new WebClient();
-            client.DownloadFile(source.Url, downloadLocation);
+            client.DownloadFile(this.Source.Url, this.DownloadLocation);
         }
         
         /// <summary>
         /// Downloads and extracts the client.
         /// </summary>
-        /// <param name="source">Source of the client.</param>
-        public override void Download(ClientSourceEntry source)
+        public override void Download()
         {
             // Download the client if not done already.
             this.OnDownloadStateChanged("Download");
-            this.DownloadClient(source, false);
+            this.DownloadClient(false);
             
             try
             {
                 // Try to extract the existing file.
                 this.OnDownloadStateChanged("Extract");
-                this.Extract(source);
+                this.Extract();
             }
             catch (InvalidOperationException)
             {
                 // Re-download the client.
                 this.OnDownloadStateChanged("Download");
-                this.DownloadClient(source, true);
+                this.DownloadClient(true);
                 this.OnDownloadStateChanged("Extract");
-                this.Extract(source);
+                this.Extract();
             }
             
             // Verify the client.
             this.OnDownloadStateChanged("Verify");
-            this.Verify(source);
-            File.Delete(this.GetDownloadLocation(source));
+            if (!this.Verify())
+            {
+                this.OnDownloadStateChanged("VerifyFailed");
+                return;
+            }
+            File.Delete(this.DownloadLocation);
         }
 
         /// <summary>
         /// Extracts the downloaded client.
         /// </summary>
-        /// <param name="source">Source of the client.</param>
-        public abstract void Extract(ClientSourceEntry source);
-
-        /// <summary>
-        /// Verifies the extracted client.
-        /// </summary>
-        /// <param name="source">Source of the client.</param>
-        public abstract void Verify(ClientSourceEntry source);
+        public abstract void Extract();
     }
 }

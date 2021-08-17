@@ -14,14 +14,26 @@ namespace NLUL.Core.Client.Download
         /// Information about the system.
         /// </summary>
         public SystemInfo SystemInfo { get; }
+        
+        /// <summary>
+        /// Source of the client.
+        /// </summary>
+        public ClientSourceEntry Source { get; }
+        
+        /// <summary>
+        /// Whether the extracted client can be verified.
+        /// </summary>
+        public abstract bool CanVerifyExtractedClient { get; }
 
         /// <summary>
         /// Creates the download method.
         /// </summary>
         /// <param name="systemInfo">Information about the system.</param>
-        public DownloadMethod(SystemInfo systemInfo)
+        /// <param name="source">Source of the client.</param>
+        public DownloadMethod(SystemInfo systemInfo, ClientSourceEntry source)
         {
             this.SystemInfo = systemInfo;
+            this.Source = source;
         }
         
         /// <summary>
@@ -36,7 +48,12 @@ namespace NLUL.Core.Client.Download
         /// <summary>
         /// Downloads and extracts the client.
         /// </summary>
-        /// <param name="source">Source of the client.</param>
-        public abstract void Download(ClientSourceEntry source);
+        public abstract void Download();
+
+        /// <summary>
+        /// Verifies the extracted client.
+        /// </summary>
+        /// <returns>Whether the client was verified.</returns>
+        public abstract bool Verify();
     }
 }

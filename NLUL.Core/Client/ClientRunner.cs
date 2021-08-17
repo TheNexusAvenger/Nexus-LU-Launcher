@@ -114,7 +114,7 @@ namespace NLUL.Core.Client
             // Set the download source.
             if (source.Method == "zip")
             {
-                this.downloadMethod = new ZipDownloadMethod(this.systemInfo);
+                this.downloadMethod = new ZipDownloadMethod(this.systemInfo, source);
             }
             else
             {
@@ -135,7 +135,7 @@ namespace NLUL.Core.Client
         /// </summary>
         public void Download(Action<string> statusCallback = null)
         {
-            this.downloadMethod.Download(this.clientSource);
+            this.downloadMethod.Download();
         }
         
         /// <summary>
@@ -150,22 +150,12 @@ namespace NLUL.Core.Client
         }
         
         /// <summary>
-        /// Verifies if the extracting of the client
-        /// is valid. Throws an exception if the
-        /// verification failed.
+        /// Verifies the extracted client.
         /// </summary>
-        public void VerifyExtractedClient()
+        /// <returns>Whether the client was verified.</returns>
+        public bool VerifyExtractedClient()
         {
-            var errorFound = false;
-            this.downloadMethod.DownloadStateChanged += (sender, s) =>
-            {
-                if (s != "VerifyFailed") return;
-                errorFound = true;
-            };
-            downloadMethod.Download(testSourceEntry);
-
-            if (!errorFound) return; 
-            throw new FileNotFoundException("File not found in extracted client");
+            return this.downloadMethod.Verify();
         }
         
         /// <summary>

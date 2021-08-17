@@ -137,13 +137,9 @@ namespace NLUL.GUI.State
                 // Verify the client.
                 if (clientRunner.CanVerifyExtractedClient)
                 {
-                    try
+                    // Set the state as the verified failed.
+                    if (!clientRunner.VerifyExtractedClient())
                     {
-                        clientRunner.VerifyExtractedClient();
-                    }
-                    catch (FileNotFoundException)
-                    {
-                        // Set the state as the verified failed.
                         SetState(PlayState.VerifyFailed);
                         return;
                     }
