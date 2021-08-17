@@ -35,7 +35,7 @@ namespace NLUL.Core.Client.Runtime
         /// Whether the emulator is installed.
         /// </summary>
         /// <returns></returns>
-        public bool IsInstalled => File.Exists(Path.Combine(this.systemInfo.SystemFileLocation,"Wine","bin","wine32on64"));
+        public bool IsInstalled => File.Exists(Path.Combine(this.systemInfo.SystemFileLocation, "Wine", "bin", "wine32on64"));
 
         /// <summary>
         /// The message to display to the user if the runtime
@@ -58,20 +58,20 @@ namespace NLUL.Core.Client.Runtime
         public void Install()
         {
             // Download the WINE Crossover app.
-            var wineDownloadLocation = Path.Combine(this.systemInfo.SystemFileLocation,"wine-crossover.tar.7z");
+            var wineDownloadLocation = Path.Combine(this.systemInfo.SystemFileLocation, "wine-crossover.tar.xz");
             if (!File.Exists(wineDownloadLocation))
             {
                 var client = new WebClient();
-                client.DownloadFile("https://github.com/Gcenx/homebrew-wine/releases/download/20.0.2/wine-crossover-20.0.2-osx64.tar.7z",wineDownloadLocation);
+                client.DownloadFile("https://github.com/Gcenx/homebrew-wine/releases/download/20.0.2/wine-crossover-20.0.2-osx64.tar.xz",wineDownloadLocation);
             }
             
-            var wineDirectoryTarParentLocation = Path.Combine(this.systemInfo.SystemFileLocation,"wine-crossover-tar");
-            var wineDirectoryTarLocation = Path.Combine(this.systemInfo.SystemFileLocation,"wine-crossover-tar","wine-crossover-20.0.2-osx64.tar");
-            var wineDirectoryExtractedLocation = Path.Combine(this.systemInfo.SystemFileLocation,"wine-crossover-extracted");
-            var wineInitialDirectoryLocation = Path.Combine(wineDirectoryExtractedLocation,"Wine Crossover.app","Contents","Resources","wine");
-            var wineTargetDirectoryLocation = Path.Combine(this.systemInfo.SystemFileLocation,"Wine");
+            var wineDirectoryTarParentLocation = Path.Combine(this.systemInfo.SystemFileLocation, "wine-crossover-tar");
+            var wineDirectoryTarLocation = Path.Combine(this.systemInfo.SystemFileLocation, "wine-crossover-tar", "wine-crossover-20.0.2-osx64.tar");
+            var wineDirectoryExtractedLocation = Path.Combine(this.systemInfo.SystemFileLocation, "wine-crossover-extracted");
+            var wineInitialDirectoryLocation = Path.Combine(wineDirectoryExtractedLocation, "Wine Crossover.app", "Contents", "Resources", "wine");
+            var wineTargetDirectoryLocation = Path.Combine(this.systemInfo.SystemFileLocation, "Wine");
             
-            // Extract the WINE .tar.7z to a .tar.
+            // Extract the WINE .tar.xz to a .tar.
             try
             {
                 ExtractArchive(wineDownloadLocation, wineDirectoryTarParentLocation);
@@ -132,13 +132,13 @@ namespace NLUL.Core.Client.Runtime
             {
                 StartInfo =
                 {
-                    FileName = Path.Combine(this.systemInfo.SystemFileLocation,"Wine","bin","wine32on64"),
+                    FileName = Path.Combine(this.systemInfo.SystemFileLocation, "Wine", "bin", "wine32on64"),
                     Arguments = executablePath,
                     WorkingDirectory = workingDirectory,
                     CreateNoWindow = true,
                 }
             };
-            clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES","dinput8.dll=n,b");
+            clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "dinput8.dll=n,b");
             return clientProcess;
         }
         
