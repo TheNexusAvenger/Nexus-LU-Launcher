@@ -202,55 +202,59 @@ namespace NLUL.GUI.State
          */
         public static void RunDownload(Action<string,double> callback)
         {
-            // Run the download.
+            // Start the download.
             SetStateThreadSafe(PlayState.DownloadingClient);
             var errorOccured = false;
-            try {
-                clientRunner.TryExtractClient( (downloadState) =>
+            EventHandler<string> eventHandler = (_, downloadState) =>
+            {
+                if (downloadState.Equals("Download"))
                 {
-                    if (downloadState.Equals("Download"))
+                    // Set the state as downloading.
+                    SetStateThreadSafe(PlayState.DownloadingClient);
+                    
+                    // Start updating the size.
+                    var clientZip = Path.Combine(SystemInfo.GetDefault().SystemFileLocation,"client.zip");
+                    new Thread(() =>
                     {
-                        // Set the state as downloading.
-                        SetStateThreadSafe(PlayState.DownloadingClient);
-                        
-                        // Start updating the size.
-                        var clientZip = Path.Combine(SystemInfo.GetDefault().SystemFileLocation,"client.zip");
-                        new Thread(() =>
+                        while (state == PlayState.DownloadingClient)
                         {
-                            while (state == PlayState.DownloadingClient)
+                            // Get the current size.
+                            double clientSize = 0;
+                            if (File.Exists(clientZip))
                             {
-                                // Get the current size.
-                                double clientSize = 0;
-                                if (File.Exists(clientZip))
-                                {
-                                    clientSize = new FileInfo(clientZip).Length;
-                                }
-
-                                // Update the text.
-                                callback("Downloading client (" + (clientSize/ByteToGigabyte).ToString("F") + " GB / " + (ExpectedClientZipSize/ByteToGigabyte).ToString("F") + " GB)",clientSize/ExpectedClientZipSize);
-                                
-                                // Wait to update again.
-                                Thread.Sleep(100);
+                                clientSize = new FileInfo(clientZip).Length;
                             }
-                        }).Start();
-                    }
-                    else if (downloadState.Equals("Extract"))
-                    {
-                        // Set the state as extracting.
-                        SetStateThreadSafe(PlayState.ExtractingClient);
-                    }
-                    else if (downloadState.Equals("Verify"))
-                    {
-                        // Set the state as verifying.
-                        SetStateThreadSafe(PlayState.VerifyingClient);
-                    }
-                    else if (downloadState.Equals("VerifyFailed"))
-                    {
-                        // Set the state as the verified failed.
-                        SetStateThreadSafe(PlayState.VerifyFailed);
-                        errorOccured = true;
-                    }
-                });
+
+                            // Update the text.
+                            callback("Downloading client (" + (clientSize/ByteToGigabyte).ToString("F") + " GB / " + (ExpectedClientZipSize/ByteToGigabyte).ToString("F") + " GB)",clientSize/ExpectedClientZipSize);
+                            
+                            // Wait to update again.
+                            Thread.Sleep(100);
+                        }
+                    }).Start();
+                }
+                else if (downloadState.Equals("Extract"))
+                {
+                    // Set the state as extracting.
+                    SetStateThreadSafe(PlayState.ExtractingClient);
+                }
+                else if (downloadState.Equals("Verify"))
+                {
+                    // Set the state as verifying.
+                    SetStateThreadSafe(PlayState.VerifyingClient);
+                }
+                else if (downloadState.Equals("VerifyFailed"))
+                {
+                    // Set the state as the verified failed.
+                    SetStateThreadSafe(PlayState.VerifyFailed);
+                    errorOccured = true;
+                }
+            };
+            clientRunner.DownloadStateChanged += eventHandler;
+            
+            try {
+                // Run the download.
+                clientRunner.Download();
             }
             catch (WebException)
             {
@@ -258,6 +262,7 @@ namespace NLUL.GUI.State
                 SetStateThreadSafe(PlayState.DownloadFailed);
                 return; 
             }
+            clientRunner.DownloadStateChanged -= eventHandler;
             
             // Run the patch.
             if (errorOccured) return;

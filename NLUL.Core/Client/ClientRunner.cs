@@ -22,6 +22,16 @@ namespace NLUL.Core.Client
         /// Download location of the client.
         /// </summary>
         private string DownloadLocation => Path.Combine(systemInfo.SystemFileLocation, "client.zip");
+
+        /// <summary>
+        /// Download method for the client.
+        /// </summary>
+        private DownloadMethod downloadMethod;
+
+        /// <summary>
+        /// Source of the client to download.
+        /// </summary>
+        private ClientSourceEntry clientSource;
         
         /// <summary>
         /// Whether the client extract can be verified.
@@ -37,6 +47,11 @@ namespace NLUL.Core.Client
         /// Patcher for the client runner.
         /// </summary>
         public ClientPatcher Patcher { get; }
+
+        /// <summary>
+        /// Event for the state changing.
+        /// </summary>
+        public event EventHandler<string> DownloadStateChanged;
 
         /// <summary>
         /// Test source entry.
@@ -87,21 +102,40 @@ namespace NLUL.Core.Client
             this.systemInfo = systemInfo;
             this.Patcher = new ClientPatcher(systemInfo);
             this.Runtime = new ClientRuntime(systemInfo);
+            this.SetSource(this.testSourceEntry);
+        }
+
+        /// <summary>
+        /// Sets the download source.
+        /// </summary>
+        /// <param name="source">Source to use.</param>
+        public void SetSource(ClientSourceEntry source)
+        {
+            // Set the download source.
+            if (source.Method == "zip")
+            {
+                this.downloadMethod = new ZipDownloadMethod(this.systemInfo);
+            }
+            else
+            {
+                throw new InvalidOperationException("Unsupported method: " + source.Method);
+            }
+            
+            // Set up the source and events.
+            this.clientSource = source;
+            this.downloadMethod.DownloadStateChanged += (_, state) =>
+            {
+                this.DownloadStateChanged?.Invoke(null, state);
+            };
         }
         
         /// <summary>
-        /// Tries to extract the client files. If it fails,
+        /// Tries to download and extract the client files. If it fails,
         /// the client is re-downloaded.
         /// </summary>
-        /// <param name="statusCallback">Callback for the status of extracting.</param>
-        public void TryExtractClient(Action<string> statusCallback = null)
+        public void Download(Action<string> statusCallback = null)
         {
-            var downloadMethod = new ZipDownloadMethod(this.systemInfo);
-            downloadMethod.DownloadStateChanged += (sender, s) =>
-            {
-                statusCallback?.Invoke(s);
-            };
-            downloadMethod.Download(testSourceEntry);
+            this.downloadMethod.Download(this.clientSource);
         }
         
         /// <summary>
@@ -122,9 +156,8 @@ namespace NLUL.Core.Client
         /// </summary>
         public void VerifyExtractedClient()
         {
-            var downloadMethod = new ZipDownloadMethod(this.systemInfo);
             var errorFound = false;
-            downloadMethod.DownloadStateChanged += (sender, s) =>
+            this.downloadMethod.DownloadStateChanged += (sender, s) =>
             {
                 if (s != "VerifyFailed") return;
                 errorFound = true;
