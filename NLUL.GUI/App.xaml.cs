@@ -20,9 +20,6 @@ namespace NLUL.GUI
         {
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
-            
-            // Load the launcher state.
-            PersistentState.LoadState();
         }
         
         /*

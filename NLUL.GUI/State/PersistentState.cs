@@ -15,24 +15,6 @@ using NLUL.Core;
 namespace NLUL.GUI.State
 {
     /*
-     * Data class for a server entry.
-     */
-    public class ServerEntry
-    {
-        public string serverName;
-        public string serverAddress;
-    }
-    
-    /*
-     * Data class for the settings.
-     */
-    public class PersistentSettings
-    {
-        public List<ServerEntry> servers = new List<ServerEntry>();
-        public string selectedServer;
-    }
-    
-    /*
      * Manages the persistent state.
      */
     public class PersistentState
@@ -40,47 +22,16 @@ namespace NLUL.GUI.State
         public delegate void EmptyEventHandler();
         public static event EmptyEventHandler ServerListChanged;
         public static event EmptyEventHandler SelectedServerChanged;
-        
-        public static readonly string SaveLocation = Path.Combine(SystemInfo.GetDefault().SystemFileLocation,"launcher.json");
-        public static PersistentSettings State = new PersistentSettings();
-        
-        /*
-         * Loads the state from the file.
-         */
-        public static void LoadState()
-        {
-            if (File.Exists(SaveLocation))
-            {
-                // Try to parse the file.
-                if (File.Exists(SaveLocation))
-                {
-                    try
-                    {
-                        State = JsonConvert.DeserializeObject<PersistentSettings>(File.ReadAllText(SaveLocation));
-                    }
-                    catch (JsonException)
-                    {
-                        
-                    }
-                    State ??= new PersistentSettings();
-                }
-            }
-        }
-        
+
+        private static readonly SystemInfo SystemInfo = SystemInfo.GetDefault();
+        public static LauncherSettings State => SystemInfo.Settings;
+
         /*
          * Saves the state.
          */
         public static void Save()
         {
-            // Create the directories.
-            var systemInfo = SystemInfo.GetDefault();
-            if (!Directory.Exists(systemInfo.SystemFileLocation))
-            {
-                Directory.CreateDirectory(systemInfo.SystemFileLocation);
-            }
-            
-            // Write the state as JSON.
-            File.WriteAllText(SaveLocation,JsonConvert.SerializeObject(State,Formatting.Indented));
+            SystemInfo.SaveSettings();
         }
         
         /*
