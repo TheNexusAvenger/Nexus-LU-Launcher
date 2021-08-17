@@ -1,11 +1,7 @@
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
-using SharpCompress.Archives;
-using SharpCompress.Common;
 
 namespace NLUL.Core.Client.Runtime
 {
@@ -65,27 +61,11 @@ namespace NLUL.Core.Client.Runtime
                 client.DownloadFile("https://github.com/Gcenx/homebrew-wine/releases/download/20.0.2/wine-crossover-20.0.2-osx64.tar.xz",wineDownloadLocation);
             }
             
-            var wineDirectoryTarParentLocation = Path.Combine(this.systemInfo.SystemFileLocation, "wine-crossover-tar");
-            var wineDirectoryTarLocation = Path.Combine(this.systemInfo.SystemFileLocation, "wine-crossover-tar", "wine-crossover-20.0.2-osx64.tar");
             var wineDirectoryExtractedLocation = Path.Combine(this.systemInfo.SystemFileLocation, "wine-crossover-extracted");
             var wineInitialDirectoryLocation = Path.Combine(wineDirectoryExtractedLocation, "Wine Crossover.app", "Contents", "Resources", "wine");
             var wineTargetDirectoryLocation = Path.Combine(this.systemInfo.SystemFileLocation, "Wine");
-            
-            // Extract the WINE .tar.xz to a .tar.
-            try
-            {
-                ExtractArchive(wineDownloadLocation, wineDirectoryTarParentLocation);
-            }
-            catch (Exception exception)
-            {
-                // Delete the download and restart.
-                if (!(exception is NotImplementedException) && !(exception is InvalidOperationException)) throw;
-                File.Delete(wineDownloadLocation);
-                Install();
-                return;
-            }
-            
-            // Extract the WINE .tar using the tar command.
+
+            // Extract the WINE .tar.xz using the tar command.
             // This is done with the system tar command to preserve symbolic links.
             if (Directory.Exists(wineDirectoryExtractedLocation))
             {
@@ -101,7 +81,7 @@ namespace NLUL.Core.Client.Runtime
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
                     FileName = "tar",
-                    Arguments = "-xf \"" + wineDirectoryTarLocation.Replace("\"","\\\"") + "\" -C \"" + wineDirectoryExtractedLocation.Replace("\"","\\\"") + "\"",
+                    Arguments = "xJf \"" + wineDownloadLocation.Replace("\"","\\\"") + "\" -C \"" + wineDirectoryExtractedLocation.Replace("\"","\\\"") + "\"",
                 }
             };
             process.Start();
@@ -116,7 +96,6 @@ namespace NLUL.Core.Client.Runtime
             
             // Clear the files.
             File.Delete(wineDownloadLocation);
-            Directory.Delete(wineDirectoryTarParentLocation, true);
             Directory.Delete(wineDirectoryExtractedLocation, true);
         }
         
@@ -140,23 +119,6 @@ namespace NLUL.Core.Client.Runtime
             };
             clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "dinput8.dll=n,b");
             return clientProcess;
-        }
-        
-        /*
-         * Extracts from 1 directory to another.
-         */
-        private void ExtractArchive(string source, string target)
-        {
-            using var archive = ArchiveFactory.Open(source);
-            foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
-            {
-                entry.WriteToDirectory(target,
-                    new ExtractionOptions()
-                    {
-                        ExtractFullPath = true,
-                        Overwrite = true,
-                    });
-            }
         }
     }
 }
