@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using InfectedRose.Lvl;
+using NLUL.Core.Client.Download;
 using NLUL.Core.Client.Patch;
 using NLUL.Core.Client.Runtime;
+using NLUL.Core.Client.Source;
 
 namespace NLUL.Core.Client
 {
@@ -21,11 +24,6 @@ namespace NLUL.Core.Client
         private string DownloadLocation => Path.Combine(systemInfo.SystemFileLocation, "client.zip");
         
         /// <summary>
-        /// Extract location of the client.
-        /// </summary>
-        private string ExtractLocation => Path.Combine(systemInfo.SystemFileLocation, "ClientExtract");
-        
-        /// <summary>
         /// Whether the client extract can be verified.
         /// </summary>
         public bool CanVerifyExtractedClient => File.Exists(this.DownloadLocation);
@@ -39,6 +37,46 @@ namespace NLUL.Core.Client
         /// Patcher for the client runner.
         /// </summary>
         public ClientPatcher Patcher { get; }
+
+        /// <summary>
+        /// Test source entry.
+        /// TODO: Remove
+        /// </summary>
+        private ClientSourceEntry testSourceEntry { get; } = new ClientSourceEntry()
+        {
+            Name = "LCDR Unpacked",
+            Type = "Unpacked",
+            Url = "http://localhost:8000/luclient.zip",
+            Method = "zip",
+            Patches = new List<ClientPatchEntry>()
+            {
+                new ClientPatchEntry()
+                {
+                    Name = "ModLoader",
+                    Default = true,
+                },
+                new ClientPatchEntry()
+                {
+                    Name = "AutoTcpUdp",
+                    Default = true,
+                },
+                new ClientPatchEntry()
+                {
+                    Name = "TcpUdp",
+                    Default = false,
+                },
+                new ClientPatchEntry()
+                {
+                    Name = "FixAssemblyVendorHologram",
+                    Default = true,
+                },
+                new ClientPatchEntry()
+                {
+                    Name = "RemoveDLUAd",
+                    Default = true,
+                },
+            }
+        };
         
         /// <summary>
         /// Creates a Client instance.
@@ -52,97 +90,18 @@ namespace NLUL.Core.Client
         }
         
         /// <summary>
-        /// Downloads the client.
-        /// </summary>
-        /// <param name="force">Whether to force download.</param>
-        public void DownloadClient(bool force)
-        {
-            // Return if the client exists and isn't forced.
-            if (!force && File.Exists(this.DownloadLocation))
-            {
-                Console.WriteLine("Client was already downloaded.");
-                return;
-            }
-            
-            // Delete the existing download if it exists.
-            if (File.Exists(this.DownloadLocation))
-            {
-                File.Delete(this.DownloadLocation);
-            }
-            
-            // Download the client.
-            Console.WriteLine("Downloading the Lego Universe client.");
-            Directory.CreateDirectory(Path.GetDirectoryName(this.systemInfo.ClientLocation));
-            var client = new WebClient();
-            client.DownloadFile("https://s3.amazonaws.com/luclient/luclient.zip",this.DownloadLocation);
-        }
-        
-        /// <summary>
-        /// Extracts the client files.
-        /// </summary>
-        /// <param name="force">Whether to force extract.</param>
-        private void ExtractClient(bool force)
-        {
-            // Clean the client if forced.
-            if (force && Directory.Exists(this.ExtractLocation))
-            {
-                Directory.Delete(this.ExtractLocation, true);
-            }
-            if (force && Directory.Exists(this.systemInfo.ClientLocation))
-            {
-                Directory.Delete(this.systemInfo.ClientLocation, true);
-            }
-            
-            // Extract the files.
-            Console.WriteLine("Extracting the client files.");
-            if (!Directory.Exists(this.ExtractLocation))
-            {
-                ZipFile.ExtractToDirectory(this.DownloadLocation, this.ExtractLocation);
-            }
-            
-            // Move the files.
-            Directory.Move(Path.Combine(this.ExtractLocation,"LCDR Unpacked"), this.systemInfo.ClientLocation);
-            Directory.Delete(this.ExtractLocation);
-        }
-        
-        /// <summary>
         /// Tries to extract the client files. If it fails,
         /// the client is re-downloaded.
         /// </summary>
-        /// <param name="force">Whether to force extract.</param>
         /// <param name="statusCallback">Callback for the status of extracting.</param>
-        public void TryExtractClient(bool force, Action<string> statusCallback = null)
+        public void TryExtractClient(Action<string> statusCallback = null)
         {
-            // Return if the client was already extracted.
-            if (!force && Directory.Exists(this.systemInfo.ClientLocation))
+            var downloadMethod = new ZipDownloadMethod(this.systemInfo);
+            downloadMethod.DownloadStateChanged += (sender, s) =>
             {
-                Console.WriteLine("Client was already extracted.");
-                return;
-            }
-            
-            // Download the client if not done already.
-            statusCallback?.Invoke("Download");
-            this.DownloadClient(false);
-            
-            // Extract the files.
-            try
-            {
-                Console.WriteLine("Trying to extract client files.");
-                statusCallback?.Invoke("Extract");
-                this.ExtractClient(force);
-            }
-            catch (InvalidDataException)
-            {
-                Console.WriteLine("Failed to extract the files (download corrupted); retrying download.");
-                statusCallback?.Invoke("Download");
-                this.DownloadClient(true);
-                statusCallback?.Invoke("Extract");
-                this.ExtractClient(force);
-            }
-            
-            // Verify the client was extracted.
-            statusCallback?.Invoke("Verify");
-            this.VerifyExtractedClient();
+                statusCallback?.Invoke(s);
+            };
+            downloadMethod.Download(testSourceEntry);
         }
         
         /// <summary>
@@ -163,39 +122,17 @@ namespace NLUL.Core.Client
         /// </summary>
         public void VerifyExtractedClient()
         {
-            // Return if the client can't be verified.
-            if (!this.CanVerifyExtractedClient)
+            var downloadMethod = new ZipDownloadMethod(this.systemInfo);
+            var errorFound = false;
+            downloadMethod.DownloadStateChanged += (sender, s) =>
             {
-                return;
-            }
-            
-            // Verify the files exist and throw an exception if a file is missing.
-            using (var zipFile = ZipFile.OpenRead(this.DownloadLocation))
-            {
-                var entries = zipFile.Entries;
-                foreach (var entry in entries)
-                {
-                    // Remove "LCDR Unpacked" from the file name.
-                    var fileName = entry.FullName;
-                    if (fileName.ToLower().StartsWith("lcdr unpacked"))
-                    {
-                        fileName = fileName.Substring(fileName.IndexOf("/", StringComparison.Ordinal) + 1);
-                    }
-                    
-                    // Throw an exception if the file is missing.
-                    var filePath = Path.Combine(this.systemInfo.ClientLocation, fileName);
-                    if (entry.Length != 0 &&  !File.Exists(filePath))
-                    {
-                        throw new FileNotFoundException("File not found in extracted client: " + filePath);
-                    }
-                }
-            }
-            
-            // Delete the client archive.
-            if (File.Exists(this.DownloadLocation))
-            {
-                File.Delete(this.DownloadLocation);
-            }
+                if (s != "VerifyFailed") return;
+                errorFound = true;
+            };
+            downloadMethod.Download(testSourceEntry);
+
+            if (!errorFound) return; 
+            throw new FileNotFoundException("File not found in extracted client");
         }
         
         /// <summary>

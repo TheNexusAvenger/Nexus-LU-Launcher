@@ -204,8 +204,9 @@ namespace NLUL.GUI.State
         {
             // Run the download.
             SetStateThreadSafe(PlayState.DownloadingClient);
+            var errorOccured = false;
             try {
-                clientRunner.TryExtractClient(true, (downloadState) =>
+                clientRunner.TryExtractClient( (downloadState) =>
                 {
                     if (downloadState.Equals("Download"))
                     {
@@ -243,6 +244,12 @@ namespace NLUL.GUI.State
                         // Set the state as verifying.
                         SetStateThreadSafe(PlayState.VerifyingClient);
                     }
+                    else if (downloadState.Equals("VerifyFailed"))
+                    {
+                        // Set the state as the verified failed.
+                        SetStateThreadSafe(PlayState.VerifyFailed);
+                        errorOccured = true;
+                    }
                 });
             }
             catch (WebException)
@@ -251,14 +258,9 @@ namespace NLUL.GUI.State
                 SetStateThreadSafe(PlayState.DownloadFailed);
                 return; 
             }
-            catch (FileNotFoundException)
-            {
-                // Set the state as the verified failed.
-                SetStateThreadSafe(PlayState.VerifyFailed);
-                return;
-            }
             
             // Run the patch.
+            if (errorOccured) return;
             SetStateThreadSafe(PlayState.PatchingClient);
             clientRunner.PatchClient();
             Dispatcher.UIThread.InvokeAsync(() =>
