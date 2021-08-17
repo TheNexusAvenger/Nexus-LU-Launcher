@@ -15,11 +15,6 @@ namespace NLUL.Core.Client
         /// Information of the system.
         /// </summary>
         private readonly SystemInfo systemInfo;
-        
-        /// <summary>
-        /// Download location of the client.
-        /// </summary>
-        private string DownloadLocation => Path.Combine(systemInfo.SystemFileLocation, "client.zip");
 
         /// <summary>
         /// Download method for the client.
@@ -34,7 +29,7 @@ namespace NLUL.Core.Client
         /// <summary>
         /// Whether the client extract can be verified.
         /// </summary>
-        public bool CanVerifyExtractedClient => File.Exists(this.DownloadLocation);
+        public bool CanVerifyExtractedClient => this.downloadMethod != null && this.downloadMethod.CanVerifyExtractedClient;
         
         /// <summary>
         /// Patcher for the client runner.
