@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using InfectedRose.Lvl;
 using NLUL.Core.Client.Download;
@@ -15,6 +14,11 @@ namespace NLUL.Core.Client
         /// Information of the system.
         /// </summary>
         private readonly SystemInfo systemInfo;
+        
+        /// <summary>
+        /// Cached sources list.
+        /// </summary>
+        private SourceList cachedSourceList;
 
         /// <summary>
         /// Download method for the client.
@@ -57,47 +61,19 @@ namespace NLUL.Core.Client
         /// Event for the state changing.
         /// </summary>
         public event EventHandler<string> DownloadStateChanged;
-
-        /// <summary>
-        /// Test source entry.
-        /// TODO: Remove
-        /// </summary>
-        private ClientSourceEntry testSourceEntry { get; } = new ClientSourceEntry()
-        {
-            Name = "LCDR Unpacked",
-            Type = "Unpacked",
-            Url = "http://localhost:8000/luclient.zip",
-            Method = "zip",
-            Patches = new List<ClientPatchEntry>()
-            {
-                new ClientPatchEntry()
-                {
-                    Name = ClientPatchName.ModLoader,
-                    Default = true,
-                },
-                new ClientPatchEntry()
-                {
-                    Name = ClientPatchName.AutoTcpUdp,
-                    Default = true,
-                },
-                new ClientPatchEntry()
-                {
-                    Name = ClientPatchName.TcpUdp,
-                    Default = false,
-                },
-                new ClientPatchEntry()
-                {
-                    Name = ClientPatchName.FixAssemblyVendorHologram,
-                    Default = true,
-                },
-                new ClientPatchEntry()
-                {
-                    Name = ClientPatchName.RemoveDLUAd,
-                    Default = true,
-                },
-            }
-        };
         
+        /// <summary>
+        /// Sources list for clients.
+        /// </summary>
+        public SourceList ClientSourcesList
+        {
+            get
+            {
+                this.cachedSourceList ??= SourceList.GetSources();
+                return cachedSourceList;
+            }
+        }
+
         /// <summary>
         /// Creates a Client instance.
         /// </summary>
@@ -107,7 +83,7 @@ namespace NLUL.Core.Client
             this.systemInfo = systemInfo;
             this.Patcher = new ClientPatcher(systemInfo);
             this.Runtime = new ClientRuntime(systemInfo);
-            this.SetSource(this.testSourceEntry);
+            this.SetSource(this.ClientSourcesList[0]);
         }
 
         /// <summary>
