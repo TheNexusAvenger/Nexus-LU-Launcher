@@ -10,12 +10,12 @@ namespace NLUL.Core
         /// <summary>
         /// Display name of the server in the launcher.
         /// </summary>
-        public string serverName;
+        public string ServerName;
             
         /// <summary>
         /// Server address of the server in the launcher.
         /// </summary>
-        public string serverAddress;
+        public string ServerAddress;
     }
     
     public class LauncherSettings
@@ -23,12 +23,17 @@ namespace NLUL.Core
         /// <summary>
         /// Servers stored in the launcher.
         /// </summary>
-        public List<ServerEntry> servers = new List<ServerEntry>();
+        public List<ServerEntry> Servers { get; set; } = new List<ServerEntry>();
             
         /// <summary>
         /// Selected server for the launcher.
         /// </summary>
-        public string selectedServer;
+        public string SelectedServer { get; set; }
+        
+        /// <summary>
+        /// Parent location of the clients.
+        /// </summary>
+        public string ClientParentLocation { get; set; }
     }
     
     public class SystemInfo
@@ -37,16 +42,16 @@ namespace NLUL.Core
         /// Location of configuration file.
         /// </summary>
         private readonly string configurationFileLocation;
-        
+
         /// <summary>
         /// Location of where clients are stored.
         /// </summary>
-        public readonly string SystemFileLocation;
+        public string SystemFileLocation => this.Settings.ClientParentLocation;
         
         /// <summary>
-        /// Location of the client.
+        /// Location of the common client that doesn't use a patch server.
         /// </summary>
-        public readonly string ClientLocation;
+        public string ClientLocation => Path.Combine(SystemFileLocation, "Client");
 
         /// <summary>
         /// Settings for the launcher.
@@ -57,13 +62,9 @@ namespace NLUL.Core
         /// Creates a Server Info object.
         /// </summary>
         /// <param name="configurationFileLocation">Location of configuration file.</param>
-        /// <param name="systemFileLocation">Location of where clients are stored.</param>
-        /// <param name="clientLocation">Location of the client.</param>
-        public SystemInfo(string configurationFileLocation, string systemFileLocation, string clientLocation)
+        public SystemInfo(string configurationFileLocation)
         {
             this.configurationFileLocation = configurationFileLocation;
-            this.SystemFileLocation = systemFileLocation;
-            this.ClientLocation = clientLocation;
             
             // Load the settings.
             if (File.Exists(this.configurationFileLocation))
@@ -86,10 +87,9 @@ namespace NLUL.Core
         public void SaveSettings()
         {
             // Create the directories.
-            var systemInfo = SystemInfo.GetDefault();
-            if (!Directory.Exists(systemInfo.SystemFileLocation))
+            if (!Directory.Exists(this.SystemFileLocation))
             {
-                Directory.CreateDirectory(systemInfo.SystemFileLocation);
+                Directory.CreateDirectory(this.SystemFileLocation);
             }
             
             // Write the state as JSON.
@@ -101,36 +101,33 @@ namespace NLUL.Core
         /// </summary>
         public static SystemInfo GetDefault()
         {
-            // Get the custom home if it is defined.
+            // Get the base system info.
             var baseNlulHome = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nlul");
             var launcherFileLocation = Path.Combine(baseNlulHome, "launcher.json");
-            var nlulHome = Environment.GetEnvironmentVariable("NLULHome");
-            if (nlulHome != null)
-            {
-                // Move the .nlul folder if it exists.
-                // In V.0.2.1, a custom home would still have a .nlul directory created in a custom home.
-                var nlulDirectoryInHome = Path.Combine(nlulHome, ".nlul");
-                if (Directory.Exists(nlulDirectoryInHome))
-                {
-                    foreach (var filePath in Directory.GetFiles(nlulDirectoryInHome))
-                    {
-                        var fileName = filePath.Substring(nlulDirectoryInHome.Length + 1);
-                        File.Move(filePath, Path.Combine(nlulHome, fileName));
-                    }
-                    foreach (var directoryPath in Directory.GetDirectories(nlulDirectoryInHome))
-                    {
-                        var directoryName = directoryPath.Substring(nlulDirectoryInHome.Length + 1);
-                        Directory.Move(directoryPath, Path.Combine(nlulHome, directoryName));
-                    }
-                    Directory.Delete(nlulDirectoryInHome, true);
-                }
-
-                // Return the custom home.
-                return new SystemInfo(launcherFileLocation, nlulHome,Path.Combine(nlulHome, "Client"));
-            }
+            var systemInfo = new SystemInfo(launcherFileLocation);
             
-            // Return the default home.
-            return new SystemInfo(launcherFileLocation, baseNlulHome,Path.Combine(baseNlulHome, "Client"));
+            // Set the default parent directory if none exists.
+            if (systemInfo.Settings.ClientParentLocation == null)
+            {
+                // NLULHome was added in V.0.2.1 and deprecated in V.0.3.0.
+                var nlulHome = Environment.GetEnvironmentVariable("NLULHome");
+                if (nlulHome != null)
+                {
+                    systemInfo.Settings.ClientParentLocation = nlulHome;
+                    if (!Directory.Exists(nlulHome))
+                    {
+                        Directory.CreateDirectory(nlulHome);
+                    }
+                }
+                else
+                {
+                    systemInfo.Settings.ClientParentLocation = baseNlulHome;
+                }
+                systemInfo.SaveSettings();
+            }
+
+            // Return the system info.
+            return systemInfo;
         }
     }
 }

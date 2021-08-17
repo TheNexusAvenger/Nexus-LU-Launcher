@@ -236,7 +236,7 @@ namespace NLUL.GUI.Component.Play
                 var selectedServer = PersistentState.GetSelectedServer();
                 this.playButton.Color = ButtonNormalColor;
                 this.playButton.Active = true;
-                this.loadingText.Text = "Ready to launch: " + selectedServer.serverName + " (" + selectedServer.serverAddress + ")";
+                this.loadingText.Text = "Ready to launch: " + selectedServer.ServerName + " (" + selectedServer.ServerAddress + ")";
                 this.SetLoadingBar(0);
             }
             else if (state == PlayState.Launching)

@@ -43,7 +43,7 @@ namespace NLUL.GUI.Component.Play
         {
             // Create new server entries and update the values.
             var selectedServer = PersistentState.GetSelectedServer();
-            for (var i = 0; i < PersistentState.State.servers.Count; i++)
+            for (var i = 0; i < PersistentState.State.Servers.Count; i++)
             {
                 // Create the entry.
                 if (this.serverEntries.Count <= i)
@@ -55,16 +55,16 @@ namespace NLUL.GUI.Component.Play
                 
                 // Set the entry.
                 var entryDisplay = this.serverEntries[i];
-                entryDisplay.UpdateWidth((PersistentState.State.servers.Count + 1) >= 4);
-                var entry = PersistentState.State.servers[i];
-                entryDisplay.ServerName = entry.serverName;
-                entryDisplay.ServerAddress = entry.serverAddress;
+                entryDisplay.UpdateWidth((PersistentState.State.Servers.Count + 1) >= 4);
+                var entry = PersistentState.State.Servers[i];
+                entryDisplay.ServerName = entry.ServerName;
+                entryDisplay.ServerAddress = entry.ServerAddress;
                 entryDisplay.Selected = (selectedServer == entry);
             }
-            this.newServerEntry.UpdateWidth((PersistentState.State.servers.Count + 1) >= 4);
+            this.newServerEntry.UpdateWidth((PersistentState.State.Servers.Count + 1) >= 4);
             
             // Remove the old entries.
-            for (var i = PersistentState.State.servers.Count; i < this.serverEntries.Count; i++)
+            for (var i = PersistentState.State.Servers.Count; i < this.serverEntries.Count; i++)
             {
                 var oldEntry = this.serverEntries[i];
                 this.serverEntries.Remove(oldEntry);

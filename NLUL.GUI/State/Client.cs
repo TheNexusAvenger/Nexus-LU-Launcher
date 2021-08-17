@@ -271,7 +271,7 @@ namespace NLUL.GUI.State
             var selectedServer = PersistentState.GetSelectedServer();
             if (selectedServer != null)
             {
-                clientRunner.Launch(selectedServer.serverAddress,false);
+                clientRunner.Launch(selectedServer.ServerAddress,false);
             }
         }
     }

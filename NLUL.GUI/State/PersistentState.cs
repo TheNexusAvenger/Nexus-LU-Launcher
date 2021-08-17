@@ -49,9 +49,9 @@ namespace NLUL.GUI.State
         public static ServerEntry GetServerEntry(string serverName)
         {
             // Iterate over the servers and return if the name matches.
-            foreach (var server in State.servers)
+            foreach (var server in State.Servers)
             {
-                if (server.serverName == serverName)
+                if (server.ServerName == serverName)
                 {
                     return server;
                 }
@@ -66,7 +66,7 @@ namespace NLUL.GUI.State
          */
         public static ServerEntry GetSelectedServer()
         {
-            return GetServerEntry(State.selectedServer);
+            return GetServerEntry(State.SelectedServer);
         }
         
         /*
@@ -75,19 +75,19 @@ namespace NLUL.GUI.State
         public static void SetSelectedServer(string serverName)
         {
             // Set the selected server if the entry exists.
-            var lastSelectedServer = State.selectedServer;
+            var lastSelectedServer = State.SelectedServer;
             if (GetServerEntry(serverName) != null)
             {
-                State.selectedServer = serverName;
+                State.SelectedServer = serverName;
             }
             else
             {
-                State.selectedServer = null;
+                State.SelectedServer = null;
             }
             SaveBackground();
             
             // Fire the event if the selected server changed.
-            if (lastSelectedServer != State.selectedServer)
+            if (lastSelectedServer != State.SelectedServer)
             {
                 SelectedServerChanged?.Invoke();
                 Client.UpdateState();
@@ -106,10 +106,10 @@ namespace NLUL.GUI.State
             }
             
             // Add the entry.
-            State.servers.Add(new ServerEntry()
+            State.Servers.Add(new ServerEntry()
             {
-                serverName = serverName,
-                serverAddress = serverAddress,
+                ServerName = serverName,
+                ServerAddress = serverAddress,
             });
             SaveBackground();
             ServerListChanged?.Invoke();
@@ -128,11 +128,11 @@ namespace NLUL.GUI.State
             }
             
             // Remove the entry.
-            State.servers.Remove(serverEntry);
+            State.Servers.Remove(serverEntry);
             ServerListChanged?.Invoke();
             
             // Update the selected server. Updating also invokes saving.
-            SetSelectedServer(State.selectedServer);
+            SetSelectedServer(State.SelectedServer);
         }
     }
 }
