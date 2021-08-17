@@ -60,27 +60,27 @@ namespace NLUL.Core.Client
             {
                 new ClientPatchEntry()
                 {
-                    Name = "ModLoader",
+                    Name = ClientPatchName.ModLoader,
                     Default = true,
                 },
                 new ClientPatchEntry()
                 {
-                    Name = "AutoTcpUdp",
+                    Name = ClientPatchName.AutoTcpUdp,
                     Default = true,
                 },
                 new ClientPatchEntry()
                 {
-                    Name = "TcpUdp",
+                    Name = ClientPatchName.TcpUdp,
                     Default = false,
                 },
                 new ClientPatchEntry()
                 {
-                    Name = "FixAssemblyVendorHologram",
+                    Name = ClientPatchName.FixAssemblyVendorHologram,
                     Default = true,
                 },
                 new ClientPatchEntry()
                 {
-                    Name = "RemoveDLUAd",
+                    Name = ClientPatchName.RemoveDLUAd,
                     Default = true,
                 },
             }
@@ -136,10 +136,11 @@ namespace NLUL.Core.Client
         /// </summary>
         public void PatchClient()
         {
-            this.Patcher.Install(ClientPatchName.ModLoader);
-            this.Patcher.Install(ClientPatchName.AutoTcpUdp);
-            this.Patcher.Install(ClientPatchName.FixAssemblyVendorHologram);
-            this.Patcher.Install(ClientPatchName.RemoveDLUAd);
+            foreach (var patchEntry in this.clientSource.Patches)
+            {
+                if (!patchEntry.Default) continue;
+                this.Patcher.Install(patchEntry.Name);
+            }
         }
         
         /// <summary>

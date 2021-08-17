@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using NLUL.Core.Client.Patch;
 
 namespace NLUL.Core.Client.Source
 {
@@ -12,7 +13,7 @@ namespace NLUL.Core.Client.Source
         /// <summary>
         /// Name of the patch that can be applied.
         /// </summary>
-        public string Name { get; set; }
+        public ClientPatchName Name { get; set; }
         
         /// <summary>
         /// Whether to set up the patch by default.
@@ -51,6 +52,27 @@ namespace NLUL.Core.Client.Source
     public class SourceList : List<ClientSourceEntry>
     {
         /// <summary>
+        /// Returns the local sources to use if the HTTP fetch failed.
+        /// </summary>
+        /// <returns>The local sources to use</returns>
+        public static string GetLocalSources()
+        {
+            var sourcesStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("NLUL.Core.Client.Sources.json");
+            if (sourcesStream == null) return null;
+            var reader = new StreamReader(sourcesStream);
+            return reader.ReadToEnd();
+        }
+        
+        /// <summary>
+        /// Returns the list of client sources to use.
+        /// </summary>
+        /// <param name="json">JSON data to use.</param>
+        public static SourceList GetSources(string json)
+        {
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<SourceList>(json);
+        }
+        
+        /// <summary>
         /// Returns the list of client sources to use.
         /// </summary>
         public static SourceList GetSources()
@@ -72,19 +94,10 @@ namespace NLUL.Core.Client.Source
             {
                 // Ignore exceptions.
             }
-            
-            // Load the sources from the executable as a backup.
-            if (sourcesJson == null)
-            {
-                var sourcesStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("NLUL.Core.Client.Sources.json");
-                if (sourcesStream == null) return null;
-                var reader = new StreamReader(sourcesStream);
-                sourcesJson = reader.ReadToEnd();
-            }
-            
+
             // Return the list.
-            Console.Write(sourcesJson);
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<SourceList>(sourcesJson);
+            sourcesJson ??= GetLocalSources();
+            return GetSources(sourcesJson);
         }
     }
 }

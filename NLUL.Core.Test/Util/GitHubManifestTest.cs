@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Tests the GitHub Manifest.
- */
-
 using System;
 using System.IO;
 using NLUL.Core.Util;
@@ -17,9 +11,9 @@ namespace NLUL.Core.Test.Util
         public string testDirectory;
         public GitHubManifest testManifest;
         
-        /*
-         * Sets up the test.
-         */
+        /// <summary>
+        /// Sets up the test.
+        /// </summary>
         [SetUp]
         public void SetUp()
         {
@@ -32,9 +26,9 @@ namespace NLUL.Core.Test.Util
             this.testManifest = new GitHubManifest(Path.Combine(this.testDirectory,"testManifest.json"));
         }
         
-        /*
-         * Tests getting and using entries.
-         */
+        /// <summary>
+        /// Tests getting and using entries.
+        /// </summary>
         [Test]
         public void TestGetEntry()
         {
