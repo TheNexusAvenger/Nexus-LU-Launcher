@@ -1,12 +1,4 @@
-/*
- * TheNexusAvenger
- *
- * Patch for removing "DLU is coming!" ad from the zone loading tips.
- */
-
 using System.IO;
-using System.Net;
-using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
 {
