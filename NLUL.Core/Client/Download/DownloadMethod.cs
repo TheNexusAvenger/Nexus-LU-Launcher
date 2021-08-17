@@ -26,6 +26,17 @@ namespace NLUL.Core.Client.Download
         public abstract bool CanVerifyExtractedClient { get; }
 
         /// <summary>
+        /// Size of the client to download. Intended to be set after
+        /// a download starts.
+        /// </summary>
+        public abstract long ClientDownloadSize { get; protected set; }
+
+        /// <summary>
+        /// Size of the client that has been downloaded.
+        /// </summary>
+        public abstract long DownloadedClientSize { get; }
+
+        /// <summary>
         /// Creates the download method.
         /// </summary>
         /// <param name="systemInfo">Information about the system.</param>

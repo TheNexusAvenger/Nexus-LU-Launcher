@@ -28,6 +28,17 @@ namespace NLUL.Core.Client.Download
         public string ExtractLocation => Path.Combine(this.SystemInfo.SystemFileLocation, "ClientExtract");
 
         /// <summary>
+        /// Size of the client to download. Intended to be set after
+        /// a download starts.
+        /// </summary>
+        public override long ClientDownloadSize { get; protected set; }
+
+        /// <summary>
+        /// Size of the client that has been downloaded.
+        /// </summary>
+        public override long DownloadedClientSize => File.Exists(this.DownloadLocation) ? new FileInfo(this.DownloadLocation).Length : 0;
+
+        /// <summary>
         /// Downloads the client.
         /// </summary>
         /// <param name="force">Whether to force download.</param>
@@ -48,7 +59,10 @@ namespace NLUL.Core.Client.Download
             // Download the client.
             Directory.CreateDirectory(Path.GetDirectoryName(this.SystemInfo.ClientLocation));
             var client = new WebClient();
-            client.DownloadFile(this.Source.Url, this.DownloadLocation);
+            var fileStream = client.OpenRead(this.Source.Url);
+            this.ClientDownloadSize = long.Parse(client.ResponseHeaders["Content-Length"]);
+            using var targetFileStream = File.Create(this.DownloadLocation);
+            fileStream?.CopyTo(targetFileStream);
         }
         
         /// <summary>
@@ -66,7 +80,7 @@ namespace NLUL.Core.Client.Download
                 this.OnDownloadStateChanged("Extract");
                 this.Extract();
             }
-            catch (InvalidOperationException)
+            catch (Exception)
             {
                 // Re-download the client.
                 this.OnDownloadStateChanged("Download");

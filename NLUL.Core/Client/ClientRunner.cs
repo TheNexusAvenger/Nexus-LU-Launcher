@@ -42,6 +42,18 @@ namespace NLUL.Core.Client
         public ClientPatcher Patcher { get; }
 
         /// <summary>
+        /// Size of the client to download. Initially set to the rough size of the
+        /// unpacked client so that it has a non-zero fallback. It is set when a
+        /// download starts.
+        /// </summary>
+        public long ClientDownloadSize => this.downloadMethod != null && this.downloadMethod.ClientDownloadSize != default ? this.downloadMethod.ClientDownloadSize : 4513866950;
+        
+        /// <summary>
+        /// Size of the client that has been downloaded.
+        /// </summary>
+        public long DownloadedClientSize => this.downloadMethod?.DownloadedClientSize ?? 0;
+
+        /// <summary>
         /// Event for the state changing.
         /// </summary>
         public event EventHandler<string> DownloadStateChanged;

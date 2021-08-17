@@ -58,7 +58,6 @@ namespace NLUL.GUI.State
      */
     public class Client
     {
-        public const long ExpectedClientZipSize = 4513866950; // May not be correct at any given point. Only used for the visuals.
         public const double ByteToGigabyte = 1000000000;
 
         private static ClientRunner clientRunner = new ClientRunner(SystemInfo.GetDefault());
@@ -209,20 +208,13 @@ namespace NLUL.GUI.State
                     SetStateThreadSafe(PlayState.DownloadingClient);
                     
                     // Start updating the size.
-                    var clientZip = Path.Combine(SystemInfo.GetDefault().SystemFileLocation,"client.zip");
                     new Thread(() =>
                     {
                         while (state == PlayState.DownloadingClient)
                         {
-                            // Get the current size.
-                            double clientSize = 0;
-                            if (File.Exists(clientZip))
-                            {
-                                clientSize = new FileInfo(clientZip).Length;
-                            }
-
                             // Update the text.
-                            callback("Downloading client (" + (clientSize/ByteToGigabyte).ToString("F") + " GB / " + (ExpectedClientZipSize/ByteToGigabyte).ToString("F") + " GB)",clientSize/ExpectedClientZipSize);
+                            var downloadedClientSize = (double) clientRunner.DownloadedClientSize;
+                            callback("Downloading client (" + (downloadedClientSize/ByteToGigabyte).ToString("F") + " GB / " + (clientRunner.ClientDownloadSize/ByteToGigabyte).ToString("F") + " GB)",downloadedClientSize/clientRunner.ClientDownloadSize);
                             
                             // Wait to update again.
                             Thread.Sleep(100);
