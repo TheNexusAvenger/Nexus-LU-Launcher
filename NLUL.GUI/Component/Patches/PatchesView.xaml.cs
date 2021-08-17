@@ -5,6 +5,7 @@
  */
 
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using NLUL.Core.Client.Patch;
@@ -64,6 +65,7 @@ namespace NLUL.GUI.Component.Patches
             var patchesList = this.Get<StackPanel>("PatchesList");
             foreach (var patch in PatchData.Patches)
             {
+                if (Client.clientRunner.ClientSource.Patches.FirstOrDefault(o => o.Name == patch.PatchEnum) == null) continue;
                 var patchPanel = new PatchEntry();
                 patchPanel.Patcher = patcher;
                 patchPanel.PatchData = patch;

@@ -60,7 +60,7 @@ namespace NLUL.GUI.State
     {
         public const double ByteToGigabyte = 1000000000;
 
-        private static ClientRunner clientRunner = new ClientRunner(SystemInfo.GetDefault());
+        public static ClientRunner clientRunner = new ClientRunner(SystemInfo.GetDefault());
         
         public delegate void EmptyEventHandler();
         public static event EmptyEventHandler StateChanged;

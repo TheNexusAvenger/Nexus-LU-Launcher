@@ -20,11 +20,6 @@ namespace NLUL.Core.Client
         /// Download method for the client.
         /// </summary>
         private DownloadMethod downloadMethod;
-
-        /// <summary>
-        /// Source of the client to download.
-        /// </summary>
-        private ClientSourceEntry clientSource;
         
         /// <summary>
         /// Whether the client extract can be verified.
@@ -52,6 +47,11 @@ namespace NLUL.Core.Client
         /// Size of the client that has been downloaded.
         /// </summary>
         public long DownloadedClientSize => this.downloadMethod?.DownloadedClientSize ?? 0;
+
+        /// <summary>
+        /// Source of the client to download.
+        /// </summary>
+        public ClientSourceEntry ClientSource { get; private set; }
 
         /// <summary>
         /// Event for the state changing.
@@ -127,7 +127,7 @@ namespace NLUL.Core.Client
             }
             
             // Set up the source and events.
-            this.clientSource = source;
+            this.ClientSource = source;
             this.downloadMethod.DownloadStateChanged += (_, state) =>
             {
                 this.DownloadStateChanged?.Invoke(null, state);
@@ -148,7 +148,7 @@ namespace NLUL.Core.Client
         /// </summary>
         public void PatchClient()
         {
-            foreach (var patchEntry in this.clientSource.Patches)
+            foreach (var patchEntry in this.ClientSource.Patches)
             {
                 if (!patchEntry.Default) continue;
                 this.Patcher.Install(patchEntry.Name);
