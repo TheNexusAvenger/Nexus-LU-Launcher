@@ -39,6 +39,11 @@ namespace NLUL.Core
     public class SystemInfo
     {
         /// <summary>
+        /// Static SystemInfo used by different components.
+        /// </summary>
+        private static SystemInfo staticSystemInfo;
+        
+        /// <summary>
         /// Location of configuration file.
         /// </summary>
         private readonly string configurationFileLocation;
@@ -62,7 +67,7 @@ namespace NLUL.Core
         /// Creates a Server Info object.
         /// </summary>
         /// <param name="configurationFileLocation">Location of configuration file.</param>
-        public SystemInfo(string configurationFileLocation)
+        private SystemInfo(string configurationFileLocation)
         {
             this.configurationFileLocation = configurationFileLocation;
             
@@ -99,7 +104,7 @@ namespace NLUL.Core
         /// <summary>
         /// Returns the default server info.
         /// </summary>
-        public static SystemInfo GetDefault()
+        private static SystemInfo GetDefaultInstance()
         {
             // Get the base system info.
             var baseNlulHome = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nlul");
@@ -128,6 +133,14 @@ namespace NLUL.Core
 
             // Return the system info.
             return systemInfo;
+        }
+
+        /// <summary>
+        /// Returns the default server info.
+        /// </summary>
+        public static SystemInfo GetDefault()
+        {
+            return staticSystemInfo ??= GetDefaultInstance();
         }
     }
 }
