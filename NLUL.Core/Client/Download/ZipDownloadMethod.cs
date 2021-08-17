@@ -49,6 +49,10 @@ namespace NLUL.Core.Client.Download
                 extractedDirectory = Path.Combine(extractedDirectory, Directory.GetDirectories(this.ExtractLocation)[0]);
             }
             Directory.Move(extractedDirectory, this.SystemInfo.ClientLocation);
+            if (Directory.Exists(this.ExtractLocation))
+            {
+                Directory.Delete(this.ExtractLocation, true);
+            }
         }
         
         /// <summary>
