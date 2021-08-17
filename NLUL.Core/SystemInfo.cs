@@ -34,6 +34,11 @@ namespace NLUL.Core
         /// Parent location of the clients.
         /// </summary>
         public string ClientParentLocation { get; set; }
+        
+        /// <summary>
+        /// Whether to display logs after launching.
+        /// </summary>
+        public bool LogsEnabled { get; set; }
     }
     
     public class SystemInfo

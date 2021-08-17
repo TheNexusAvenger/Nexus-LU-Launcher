@@ -10,6 +10,7 @@ using Avalonia.Markup.Xaml;
 using NLUL.GUI.Component.Base;
 using NLUL.GUI.Component.Patches;
 using NLUL.GUI.Component.Play;
+using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component
 {
@@ -24,6 +25,9 @@ namespace NLUL.GUI.Component
     {
         private PlayView playView;
         private PatchesView patchesView;
+        private ImageTextButton playButton;
+        private ImageTextButton patchesButton;
+        private ImageTextButton settingsButton;
         
         /*
          * Creates a toggle view panel.
@@ -34,6 +38,9 @@ namespace NLUL.GUI.Component
             AvaloniaXamlLoader.Load(this);
             this.playView = this.Get<PlayView>("PlayView");
             this.patchesView = this.Get<PatchesView>("PatchesView");
+            this.playButton = this.Get<ImageTextButton>("PlayButton");
+            this.patchesButton = this.Get<ImageTextButton>("PatchesButton");
+            this.settingsButton = this.Get<ImageTextButton>("SettingsButton");
 
             // Set the active view.
             this.SetView(ActiveView.Play);
@@ -47,17 +54,23 @@ namespace NLUL.GUI.Component
                 webProcess.StartInfo.UseShellExecute = true;
                 webProcess.Start(); 
             };
-            this.Get<ImageTextButton>("PlayButton").ButtonPressed += (sender, args) =>
+            playButton.ButtonPressed += (sender, args) =>
             {
                 this.SetView(ActiveView.Play);
             };
-            this.Get<ImageTextButton>("PatchesButton").ButtonPressed += (sender, args) =>
+            patchesButton.ButtonPressed += (sender, args) =>
             {
                 this.SetView(ActiveView.Patches);
             };
-            this.Get<ImageTextButton>("SettingsButton").ButtonPressed += (sender, args) =>
+            settingsButton.ButtonPressed += (sender, args) =>
             {
                 this.SetView(ActiveView.Settings);
+            };
+            Client.StateChanged += () =>
+            {
+                playButton.IsVisible = (Client.state != PlayState.Launched);
+                patchesButton.IsVisible = (Client.state != PlayState.Launched);
+                settingsButton.IsVisible = (Client.state != PlayState.Launched);
             };
         }
         

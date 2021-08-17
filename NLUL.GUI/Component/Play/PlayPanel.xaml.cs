@@ -11,6 +11,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Threading;
+using NLUL.Core;
 using NLUL.GUI.Component.Base;
 using NLUL.GUI.State;
 
@@ -314,7 +315,11 @@ namespace NLUL.GUI.Component.Play
                         {
                             currentWindow = currentWindow.Parent;
                         }
-                        ((Window) currentWindow)?.Close();
+
+                        if (!SystemInfo.GetDefault().Settings.LogsEnabled)
+                        {
+                            ((Window) currentWindow)?.Close();
+                        }
                         Client.SetState(PlayState.Launched);
                     });
                 }).Start();
