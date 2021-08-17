@@ -69,7 +69,7 @@ namespace NLUL.Core.Client.Patch
             client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.dll",modLocation);
 
             // Save the manifest.
-            this.repositoryEntry.lastCommit = tag.commit;
+            this.repositoryEntry.LastCommit = tag.commit;
             this.manifest.Save();
         }
         

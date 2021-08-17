@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Manages fetching files from GitHub.
- */
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,95 +8,106 @@ using Newtonsoft.Json;
 
 namespace NLUL.Core.Util
 {
-    /*
-     * Data class for a GitHub tag.
-     */
     public class GitHubTag
     {
-        public string commit;
-        public string name;
+        /// <summary>
+        /// Commit id of the tag.
+        /// </summary>
+        public string commit { get; set; }
+        
+        /// <summary>
+        /// Name of the tag.
+        /// </summary>
+        public string name { get; set; }
     }
     
-    /*
-     * Class for a Git commit result.
-     */
     public class GitCommitResult
     {
+        /// <summary>
+        /// Hash of the commit.
+        /// </summary>
         public string sha;
     }
     
-    /*
-     * Class for a Git tag result.
-     */
     public class GitTagResult
     {
+        /// <summary>
+        /// Name of the tag.
+        /// </summary>
         public string name;
+        
+        /// <summary>
+        /// Commit of the tag.
+        /// </summary>
         public GitCommitResult commit;
     }
     
-    /*
-     * Exception for being rate limited.
-     */
     public class GitHubRateLimitException : HttpRequestException
     {
-        /*
-         * Creates the exception.
-         */
+        /// <summary>
+        /// Creates the rate limit exception.
+        /// </summary>
         public GitHubRateLimitException() : base("GitHub request was rate limited.")
         {
             
         }
     }
     
-    /*
-     * Class for a specific GitHub remote.
-     */
     public class GitHubManifestEntry
     {
-        public string repository;
-        public string directory;
-        public string lastCommit;
-        private GitHubManifest manifest;
+        /// <summary>
+        /// Repository of the entry.
+        /// </summary>
+        public string Repository { get; set; }
         
-        /*
-         * Creates the entry. 
-         */
-        protected internal GitHubManifestEntry(string repository,string directory,GitHubManifest manifest)
+        /// <summary>
+        /// Directory of the entry.
+        /// </summary>
+        public string EntryDirectory { get; set; }
+        
+        /// <summary>
+        /// Last commit of the entry.
+        /// </summary>
+        public string LastCommit { get; set; }
+        
+        /// <summary>
+        /// Manifest of the entry.
+        /// </summary>
+        public GitHubManifest Manifest { get; internal set; }
+        
+        /// <summary>
+        /// Creates the entry.
+        /// </summary>
+        /// <param name="repository">Repository of the entry.</param>
+        /// <param name="entryDirectory">Directory of the entry.</param>
+        /// <param name="manifest">Manifest of the entry.</param>
+        protected internal GitHubManifestEntry(string repository,string entryDirectory,GitHubManifest manifest)
         {
-            this.repository = repository;
-            this.directory = directory;
-            this.manifest = manifest;
-            this.lastCommit = null;
+            this.Repository = repository;
+            this.EntryDirectory = entryDirectory;
+            this.Manifest = manifest;
         }
         
-        /*
-         * Creates an entry.
-         * Intended only for JSON parsing.
-         */
+        /// <summary>
+        /// Creates the entry.
+        /// Intended only for JSON parsing.
+        /// </summary>
         public GitHubManifestEntry()
         {
-            this.repository = null;
-            this.directory = null;
-            this.manifest = null;
-            this.lastCommit = null;
+            
         }
         
-        /*
-         * Sets the manifest to use.
-         */
-        protected internal void SetManifest(GitHubManifest manifest)
-        {
-            this.manifest = manifest;
-        }
-        
-        /*
-         * Performs a GET request.
-         */
+        /// <summary>
+        /// Performs a GET request.
+        /// </summary>
+        /// <param name="url">URL to fetch.</param>
+        /// <returns>The result of the request.</returns>
+        /// <exception cref="GitHubRateLimitException">GitHub rate limit was reached.</exception>
         public string PerformRequest(string url)
         {
             // Send the HTTP request.
             var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("User-Agent","NLUL Commits Fetch");
+            client.DefaultRequestHeaders.Add("User-Agent", "NLUL Commits Fetch");
             var response = client.GetAsync(url).Result;
             var stringResponse = response.Content.ReadAsStringAsync().Result;
             
@@ -116,38 +121,43 @@ namespace NLUL.Core.Util
             return stringResponse;
         }
         
-        /*
-         * Returns the latest commit of a branch.
-         */
+        /// <summary>
+        /// Returns the latest commit of a branch.
+        /// </summary>
+        /// <param name="branch">Branch to fetch.</param>
+        /// <returns>The latest commit of a branch.</returns>
         public string GetLatestCommit(string branch)
         {
             // Send the HTTP request.
-            var commitsJson = this.PerformRequest("https://api.github.com/repos/" + this.repository + "/commits/" + branch);
+            var commitsJson = this.PerformRequest("https://api.github.com/repos/" + this.Repository + "/commits/" + branch);
             
             // Parse the JSON and return the last tag.
             var commits = JsonConvert.DeserializeObject<GitCommitResult>(commitsJson);
-            return commits.sha;
+            return commits?.sha;
         }
         
-        /*
-         * Returns if the fetched branch is the latest.
-         */
+        /// <summary>
+        /// Returns if the fetched branch is the latest.
+        /// </summary>
+        /// <param name="branch">Branch to check</param>
+        /// <returns>Whether the fetched branch is the latest.</returns>
         public bool IsBranchUpToDate(string branch)
         {
-            return this.lastCommit == this.GetLatestCommit(branch);
+            return this.LastCommit == this.GetLatestCommit(branch);
         }
         
-        /*
-         * Returns the latest tag.
-         */
+        /// <summary>
+        /// Returns the latest tag.
+        /// </summary>
+        /// <returns>The latest tag.</returns>
         public GitHubTag GetLatestTag()
         {
             // Send the HTTP request.
-            var tagsJson = this.PerformRequest("https://api.github.com/repos/" + this.repository + "/tags");
+            var tagsJson = this.PerformRequest("https://api.github.com/repos/" + this.Repository + "/tags");
             
             // Parse the JSON and return the last tag's commit.
             var tags = JsonConvert.DeserializeObject<List<GitTagResult>>(tagsJson);
-            if (tags.Count > 0)
+            if (tags?.Count > 0)
             {
                 return new GitHubTag()
                 {
@@ -158,128 +168,139 @@ namespace NLUL.Core.Util
             return null;
         }
         
-        /*
-         * Returns if the fetched tag is the latest.
-         */
+        /// <summary>
+        /// Returns if the fetched tag is the latest.
+        /// </summary>
+        /// <returns>Whether the fetched tag is the latest.</returns>
         public bool IsTagUpToDate()
         {
-            return this.lastCommit == this.GetLatestTag().commit;
+            return this.LastCommit == this.GetLatestTag().commit;
         }
         
-        /*
-         * Fetches a specified commit.
-         */
-        public void FetchCommit(string commit,bool force = false)
+        /// <summary>
+        /// Fetches a specified commit.
+        /// </summary>
+        /// <param name="commit">Commit to fetch.</param>
+        /// <param name="force">Whether to force download.</param>
+        public void FetchCommit(string commit, bool force = false)
         {
             // Return if the commit is the same as the latest fetch.
-            if (commit == this.lastCommit && force != true)
+            if (commit == this.LastCommit && force != true)
             {
                 return;
             }
             
             // Delete the existing files.
-            var parentDirectory = Directory.GetParent(this.directory).FullName;
-            var zipDirectory = Path.Combine(parentDirectory,commit + ".zip");
+            var parentDirectory = Directory.GetParent(this.EntryDirectory).FullName;
+            var zipDirectory = Path.Combine(parentDirectory, commit + ".zip");
             if (File.Exists(zipDirectory))
             {
                 File.Delete(zipDirectory);
             }
-            if (Directory.Exists(this.directory))
+            if (Directory.Exists(this.EntryDirectory))
             {
-                Directory.Delete(this.directory,true);
+                Directory.Delete(this.EntryDirectory, true);
             }
             
             // Download the ZIP of the commit.
             var client = new WebClient();
-            client.DownloadFile("https://github.com/" + this.repository + "/archive/" + commit + ".zip",zipDirectory);
+            client.DownloadFile("https://github.com/" + this.Repository + "/archive/" + commit + ".zip", zipDirectory);
             
-            // Uncompress the ZIP file to the temporary directory.
-            var temporaryDirectory = Path.Combine(parentDirectory,commit);
-            ZipFile.ExtractToDirectory(zipDirectory,temporaryDirectory);
+            // Un-compress the ZIP file to the temporary directory.
+            var temporaryDirectory = Path.Combine(parentDirectory, commit);
+            ZipFile.ExtractToDirectory(zipDirectory, temporaryDirectory);
             
             // Move the directory.
-            Directory.Move(Path.Combine(temporaryDirectory,Directory.GetDirectories(temporaryDirectory)[0]),this.directory);
+            Directory.Move(Path.Combine(temporaryDirectory, Directory.GetDirectories(temporaryDirectory)[0]), this.EntryDirectory);
             
             // Clear the files.
             File.Delete(zipDirectory);
-            Directory.Delete(temporaryDirectory,true);
+            Directory.Delete(temporaryDirectory, true);
             
             // Save the manifest.
-            this.lastCommit = commit;
-            this.manifest.Save();
+            this.LastCommit = commit;
+            this.Manifest.Save();
         }
         
-        /*
-         * Fetches the latest branch.
-         */
-        public void FetchLatestBranch(string branch,bool force = false)
+        /// <summary>
+        /// Fetches the latest branch.
+        /// </summary>
+        /// <param name="branch">Branch to download.</param>
+        /// <param name="force">Whether to force download.</param>
+        public void FetchLatestBranch(string branch, bool force = false)
         {
             this.FetchCommit(this.GetLatestCommit(branch),force);
         }
         
-        /*
-         * Fetches the latest tag.
-         */
+        /// <summary>
+        /// Fetches the latest tag.
+        /// </summary>
+        /// <param name="force">Whether to force download.</param>
         public void FetchLatestTag(bool force = false)
         {
             this.FetchCommit(this.GetLatestTag().commit,force);
         }
     }
     
-    /*
-     * Class for storing GitHub fetches.
-     */
     public class GitHubManifest
     {
-        private List<GitHubManifestEntry> manifest;
-        private string fileLocation;
+        /// <summary>
+        /// Entries in the manifest.
+        /// </summary>
+        private readonly List<GitHubManifestEntry> manifest = new List<GitHubManifestEntry>();
         
-        /*
-         * Creates the manifest.
-         */
+        /// <summary>
+        /// File location of the manifest.
+        /// </summary>
+        private readonly string fileLocation;
+        
+        /// <summary>
+        /// Creates the manifest.
+        /// </summary>
+        /// <param name="fileLocation">File location of the manifest.</param>
         public GitHubManifest(string fileLocation)
         {
             this.fileLocation = fileLocation;
-            this.manifest = new List<GitHubManifestEntry>();
             
             // Try to parse the file.
-            if (File.Exists(fileLocation))
+            if (!File.Exists(fileLocation)) return;
+            try
             {
-                try
-                {
-                    this.manifest = JsonConvert.DeserializeObject<List<GitHubManifestEntry>>(File.ReadAllText(fileLocation));
-                }
-                catch (JsonException)
-                {
+                this.manifest = JsonConvert.DeserializeObject<List<GitHubManifestEntry>>(File.ReadAllText(fileLocation));
+            }
+            catch (JsonException)
+            {
                     
-                }
             }
         }
         
-        /*
-         * Returns the entry for a remote and file location.
-         */
+        /// <summary>
+        /// Returns the entry for a remote and file location.
+        /// </summary>
+        /// <param name="repository">Repository to get.</param>
+        /// <param name="directory">Directory to manage.</param>
+        /// <returns>Whether the entry for a remote and file location.</returns>
         public GitHubManifestEntry GetEntry(string repository,string directory)
         {
             // Find and return the entry if it exists.
             foreach (var entry in this.manifest)
             {
-                if (string.Equals(entry.repository,repository,StringComparison.CurrentCultureIgnoreCase) && string.Equals(entry.directory,directory,StringComparison.CurrentCultureIgnoreCase))
+                if (string.Equals(entry.Repository, repository, StringComparison.CurrentCultureIgnoreCase) && string.Equals(entry.EntryDirectory, directory, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    entry.SetManifest(this);
+                    entry.Manifest = this;
                     return entry;
                 }
             }
             
             // Create and return a new entry.
-            var newEntry = new GitHubManifestEntry(repository,directory,this);
+            var newEntry = new GitHubManifestEntry(repository,directory, this);
             this.manifest.Add(newEntry);
             return newEntry;
         }
         
-        /*
-         * Saves the manifest.
-         */
+        /// <summary>
+        /// Saves the manifest.
+        /// </summary>
         protected internal void Save()
         {
             File.WriteAllText(this.fileLocation,JsonConvert.SerializeObject(this.manifest,Formatting.Indented));

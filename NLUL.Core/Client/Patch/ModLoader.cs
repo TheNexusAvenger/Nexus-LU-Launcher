@@ -89,7 +89,7 @@ namespace NLUL.Core.Client.Patch
             }
             
             // Save the manifest.
-            this.repositoryEntry.lastCommit = tag.commit;
+            this.repositoryEntry.LastCommit = tag.commit;
             this.manifest.Save();
             
             // Clear the downloaded files.
