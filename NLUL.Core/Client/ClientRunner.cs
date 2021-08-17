@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
-using System.Net;
 using InfectedRose.Lvl;
 using NLUL.Core.Client.Download;
 using NLUL.Core.Client.Patch;
@@ -176,13 +174,11 @@ namespace NLUL.Core.Client
                 else
                 {
                     // Stop the launch if a valid runtime isn't set up.
-                    Console.WriteLine("Failed to launch: " + this.Runtime.ManualRuntimeInstallMessage);
                     return;
                 }
             }
             
             // Modify the boot file.
-            Console.WriteLine("Setting to connect to \"" + host + "\"");
             var bootConfigLocation = Path.Combine(this.systemInfo.ClientLocation, "boot.cfg");
             LegoDataDictionary bootConfig = null;
             try
@@ -206,14 +202,12 @@ namespace NLUL.Core.Client
             }
             
             // Launch the client.
-            Console.WriteLine("Launching the client.");
             var clientProcess = this.Runtime.RunApplication(Path.Combine(this.systemInfo.ClientLocation, "legouniverse.exe"), this.systemInfo.ClientLocation);
             clientProcess.Start();
             
             // Wait for the client to close.
             if (!waitForFinish) return;
             clientProcess.WaitForExit();
-            Console.WriteLine("Client closed.");
         }
     }
 }
