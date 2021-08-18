@@ -103,7 +103,7 @@ namespace NLUL.Core.Client
             if (source.Method == "zip")
             {
                 this.downloadMethod = new ZipDownloadMethod(this.systemInfo, source);
-                this.systemInfo.Settings.RequestedClientSourceName = this.cachedSourceList[0].Name;
+                this.systemInfo.Settings.RequestedClientSourceName = source.Name;
                 this.systemInfo.SaveSettings();
             }
             else
@@ -127,6 +127,7 @@ namespace NLUL.Core.Client
         {
             this.downloadMethod.Download();
             this.systemInfo.Settings.InstalledClientSourceName = this.ClientSource.Name;
+            this.systemInfo.SaveSettings();
         }
         
         /// <summary>

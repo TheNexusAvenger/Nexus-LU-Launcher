@@ -106,7 +106,7 @@ namespace NLUL.GUI.State
             }
             
             // Check for the download to be complete.
-            if (!File.Exists(Path.Combine(SystemInfo.GetDefault().ClientLocation,"legouniverse.exe")))
+            if (!File.Exists(Path.Combine(SystemInfo.GetDefault().ClientLocation, "legouniverse.exe")) || (SystemInfo.GetDefault().Settings.RequestedClientSourceName != SystemInfo.GetDefault().Settings.InstalledClientSourceName && SystemInfo.GetDefault().Settings.InstalledClientSourceName != null))
             {
                 if (!state.ManualChangeOnly)
                 {
