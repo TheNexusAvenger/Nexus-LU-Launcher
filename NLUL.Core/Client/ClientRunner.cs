@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using InfectedRose.Lvl;
 using NLUL.Core.Client.Download;
 using NLUL.Core.Client.Patch;
@@ -84,7 +85,12 @@ namespace NLUL.Core.Client
             this.systemInfo = systemInfo;
             this.Patcher = new ClientPatcher(systemInfo);
             this.Runtime = new ClientRuntime(systemInfo);
-            this.SetSource(this.ClientSourcesList[0]);
+            
+            // Set the source.
+            var selectedSource = this.ClientSourcesList.FirstOrDefault(source => string.Equals(source.Name,
+                this.systemInfo.Settings.RequestedClientSourceName, StringComparison.CurrentCultureIgnoreCase));
+            selectedSource ??= this.ClientSourcesList[0];
+            this.SetSource(selectedSource);
         }
 
         /// <summary>
@@ -97,6 +103,8 @@ namespace NLUL.Core.Client
             if (source.Method == "zip")
             {
                 this.downloadMethod = new ZipDownloadMethod(this.systemInfo, source);
+                this.systemInfo.Settings.RequestedClientSourceName = this.cachedSourceList[0].Name;
+                this.systemInfo.SaveSettings();
             }
             else
             {
@@ -115,9 +123,10 @@ namespace NLUL.Core.Client
         /// Tries to download and extract the client files. If it fails,
         /// the client is re-downloaded.
         /// </summary>
-        public void Download(Action<string> statusCallback = null)
+        public void Download()
         {
             this.downloadMethod.Download();
+            this.systemInfo.Settings.InstalledClientSourceName = this.ClientSource.Name;
         }
         
         /// <summary>

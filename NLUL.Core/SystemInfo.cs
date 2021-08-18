@@ -39,6 +39,16 @@ namespace NLUL.Core
         /// Whether to display logs after launching.
         /// </summary>
         public bool LogsEnabled { get; set; }
+        
+        /// <summary>
+        /// Name of the source for the installed client.
+        /// </summary>
+        public string InstalledClientSourceName { get; set; }
+        
+        /// <summary>
+        /// Name of the source for the requested client.
+        /// </summary>
+        public string RequestedClientSourceName { get; set; }
     }
     
     public class SystemInfo
@@ -46,7 +56,7 @@ namespace NLUL.Core
         /// <summary>
         /// Static SystemInfo used by different components.
         /// </summary>
-        private static SystemInfo staticSystemInfo;
+        private static SystemInfo _staticSystemInfo;
         
         /// <summary>
         /// Location of configuration file.
@@ -145,7 +155,7 @@ namespace NLUL.Core
         /// </summary>
         public static SystemInfo GetDefault()
         {
-            return staticSystemInfo ??= GetDefaultInstance();
+            return _staticSystemInfo ??= GetDefaultInstance();
         }
     }
 }
