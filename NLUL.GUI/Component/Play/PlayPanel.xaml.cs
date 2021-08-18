@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -26,6 +27,8 @@ namespace NLUL.GUI.Component.Play
         private TextBlock loadingText;
         private RoundedButton playButton;
         private TextBlock playText;
+        public ScrollViewer clientOutputScroll;
+        public TextBox clientOutput;
         
         /*
          * Creates a play panel.
@@ -304,7 +307,7 @@ namespace NLUL.GUI.Component.Play
                 // Launch the client.
                 new Thread(() =>
                 {
-                    Client.Launch();
+                    var process = Client.Launch();
                 
                     // Close the window after the launch is complete.
                     // The launch may get delayed by pre-launch patches.
@@ -321,6 +324,26 @@ namespace NLUL.GUI.Component.Play
                             ((Window) currentWindow)?.Close();
                         }
                         Client.SetState(PlayState.Launched);
+
+                        this.clientOutputScroll.ScrollChanged += (sender, args) =>
+                        {
+                            if (args.ExtentDelta.Y == 0) return;
+                            this.clientOutputScroll.ScrollToEnd();
+                        };
+
+                        Task.Run(() =>
+                        {
+                            var output = "";
+                            while (!process.StandardOutput.EndOfStream)
+                            {
+                                var line = process.StandardOutput.ReadLine();
+                                output += (output == "" ? "" : "\n") + line;
+                                Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    this.clientOutput.Text = output;
+                                });
+                            }
+                        });
                     });
                 }).Start();
             }

@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using NLUL.Core;
 using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component.Play
@@ -27,10 +28,20 @@ namespace NLUL.GUI.Component.Play
             this.serverListContainer = this.Get<StackPanel>("ServerList");
             this.newServerEntry = new NewServerEntry();
             this.serverListContainer.Children.Add(this.newServerEntry);
+            this.Get<PlayPanel>("PlayPanel").clientOutput = this.Get<TextBox>("ClientOutput");
+            this.Get<PlayPanel>("PlayPanel").clientOutputScroll = this.Get<ScrollViewer>("ClientOutputScroll");
             
             // Connect the events.
+            var playContainer = this.Get<StackPanel>("PlayContainer");
+            var clientOutputScroll = this.Get<ScrollViewer>("ClientOutputScroll");
             PersistentState.ServerListChanged += this.UpdateServerList;
             PersistentState.SelectedServerChanged += this.UpdateServerList;
+            Client.StateChanged += () =>
+            {
+                var outputVisible = SystemInfo.GetDefault().Settings.LogsEnabled && Client.state == PlayState.Launched;
+                playContainer.IsVisible = !outputVisible;
+                clientOutputScroll.IsVisible = outputVisible;
+            };
             
             // Update the server list initially.
             this.UpdateServerList();

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using InfectedRose.Lvl;
 using NLUL.Core.Client.Download;
@@ -144,8 +145,8 @@ namespace NLUL.Core.Client
         /// Launches the client.
         /// </summary>
         /// <param name="host">Host to launch.</param>
-        /// <param name="waitForFinish">Whether to wait for the client to close.</param>
-        public void Launch(string host, bool waitForFinish = true)
+        /// <returns>Process that was started.</returns>
+        public Process Launch(string host)
         {
             // Set up the runtime if it isn't installed.
             if (!this.Runtime.IsInstalled)
@@ -158,7 +159,7 @@ namespace NLUL.Core.Client
                 else
                 {
                     // Stop the launch if a valid runtime isn't set up.
-                    return;
+                    return null;
                 }
             }
             
@@ -189,9 +190,8 @@ namespace NLUL.Core.Client
             var clientProcess = this.Runtime.RunApplication(Path.Combine(this.systemInfo.ClientLocation, "legouniverse.exe"), this.systemInfo.ClientLocation);
             clientProcess.Start();
             
-            // Wait for the client to close.
-            if (!waitForFinish) return;
-            clientProcess.WaitForExit();
+            // Return the output.
+            return clientProcess;
         }
     }
 }

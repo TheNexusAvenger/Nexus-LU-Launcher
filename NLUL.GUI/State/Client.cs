@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -266,13 +267,10 @@ namespace NLUL.GUI.State
         /*
          * Launches the client.
          */
-        public static void Launch()
+        public static Process Launch()
         {
             var selectedServer = PersistentState.GetSelectedServer();
-            if (selectedServer != null)
-            {
-                clientRunner.Launch(selectedServer.ServerAddress,false);
-            }
+            return selectedServer != null ? clientRunner.Launch(selectedServer.ServerAddress) : null;
         }
     }
 }

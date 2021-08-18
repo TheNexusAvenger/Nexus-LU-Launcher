@@ -56,6 +56,7 @@ namespace NLUL.Core.Client.Runtime
                     FileName = executablePath,
                     WorkingDirectory = workingDirectory,
                     CreateNoWindow = true,
+                    RedirectStandardOutput = true,
                 }
             };
         }

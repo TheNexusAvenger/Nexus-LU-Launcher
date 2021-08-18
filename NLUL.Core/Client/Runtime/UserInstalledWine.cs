@@ -58,6 +58,7 @@ namespace NLUL.Core.Client.Runtime
                     Arguments = executablePath,
                     WorkingDirectory = workingDirectory,
                     CreateNoWindow = true,
+                    RedirectStandardOutput = true,
                 }
             };
             clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES","dinput8.dll=n,b");
