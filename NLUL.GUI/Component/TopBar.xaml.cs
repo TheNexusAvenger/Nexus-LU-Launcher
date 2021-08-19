@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using NLUL.GUI.Component.Base;
+using NLUL.GUI.Component.Prompt;
+using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component
 {
@@ -27,8 +29,19 @@ namespace NLUL.GUI.Component
             };
             this.Get<ImageButton>("Close").ButtonPressed += (sender, args) =>
             {
-                this.GetWindow()?.Close();
-                Process.GetCurrentProcess().Kill();
+                if (Client.State.SafeToClose)
+                {
+                    this.GetWindow()?.Close();
+                    Process.GetCurrentProcess().Kill();
+                }
+                else
+                {
+                    ConfirmPrompt.OpenPrompt("Closing the launcher stops downloading the client. Confirm closing?", () =>
+                    {
+                        this.GetWindow()?.Close();
+                        Process.GetCurrentProcess().Kill();
+                    });   
+                }
             };
             
             // Set the background for accepting events.

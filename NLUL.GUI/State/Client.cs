@@ -14,28 +14,28 @@ namespace NLUL.GUI.State
     public class PlayState
     {
         // Uninitialized state.
-        public static readonly PlayState Uninitialized = new PlayState(false);
+        public static readonly PlayState Uninitialized = new PlayState(false, true);
         
         // Download client requirement.
-        public static readonly PlayState DownloadClient = new PlayState(false);
-        public static readonly PlayState DownloadRuntime = new PlayState(false);
-        public static readonly PlayState DownloadRuntimeAndClient = new PlayState(false);
-        public static readonly PlayState DownloadingRuntime = new PlayState(true);
-        public static readonly PlayState DownloadingClient = new PlayState(true);
-        public static readonly PlayState ExtractingClient = new PlayState(true);
-        public static readonly PlayState VerifyingClient = new PlayState(true);
-        public static readonly PlayState PatchingClient = new PlayState(true);
-        public static readonly PlayState DownloadFailed = new PlayState(false);
-        public static readonly PlayState VerifyFailed = new PlayState(false);
+        public static readonly PlayState DownloadClient = new PlayState(false, true);
+        public static readonly PlayState DownloadRuntime = new PlayState(false, true);
+        public static readonly PlayState DownloadRuntimeAndClient = new PlayState(false, true);
+        public static readonly PlayState DownloadingRuntime = new PlayState(true, false);
+        public static readonly PlayState DownloadingClient = new PlayState(true, false);
+        public static readonly PlayState ExtractingClient = new PlayState(true, false);
+        public static readonly PlayState VerifyingClient = new PlayState(true, false);
+        public static readonly PlayState PatchingClient = new PlayState(true, false);
+        public static readonly PlayState DownloadFailed = new PlayState(false, true);
+        public static readonly PlayState VerifyFailed = new PlayState(false, true);
         
         // Ready to play requirements.
-        public static readonly PlayState NoSelectedServer = new PlayState(false);
-        public static readonly PlayState Ready = new PlayState(false);
-        public static readonly PlayState Launching = new PlayState(true);
-        public static readonly PlayState Launched = new PlayState(true);
+        public static readonly PlayState NoSelectedServer = new PlayState(false, true);
+        public static readonly PlayState Ready = new PlayState(false, true);
+        public static readonly PlayState Launching = new PlayState(true, true);
+        public static readonly PlayState Launched = new PlayState(true, true);
         
         // External setup.
-        public static readonly PlayState ManualRuntimeNotInstalled = new PlayState(false);
+        public static readonly PlayState ManualRuntimeNotInstalled = new PlayState(false, true);
         
         /// <summary>
         /// Whether the state can only be manually set.
@@ -43,12 +43,19 @@ namespace NLUL.GUI.State
         public bool ManualChangeOnly { get; }
         
         /// <summary>
+        /// Whether the state is safe to close.
+        /// </summary>
+        public bool SafeToClose { get; }
+        
+        /// <summary>
         /// Creates the play state.
         /// </summary>
         /// <param name="manualChangeOnly">Whether the state can only be manually set.</param>
-        private PlayState(bool manualChangeOnly)
+        /// <param name="safeToClose">Whether the state is safe to close.</param>
+        private PlayState(bool manualChangeOnly, bool safeToClose)
         {
             this.ManualChangeOnly = manualChangeOnly;
+            this.SafeToClose = safeToClose;
         }
     }
     
