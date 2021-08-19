@@ -133,7 +133,7 @@ namespace NLUL.GUI.Component.Base
         /// <summary>
         /// Updates the button image.
         /// </summary>
-        private void UpdateSource()
+        public void UpdateSource()
         {
             // Determine the button image to use.
             var source = this.BaseSource;
@@ -158,7 +158,7 @@ namespace NLUL.GUI.Component.Base
         /// <summary>
         /// Updates the colors of the button.
         /// </summary>
-        private void UpdateColors()
+        public void UpdateColors()
         {
             // Return if the color is not a solid color brush.
             if (!(this.Color is ISolidColorBrush))

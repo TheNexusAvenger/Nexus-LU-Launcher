@@ -16,7 +16,7 @@
     <Border Background="#BB0000" BorderBrush="#EE0000" BorderThickness="3" CornerRadius="20" Width="400" Height="250">
         <Canvas>
             <TextBlock Name="Message" VerticalAlignment="Center" TextAlignment="Center" Foreground="#FFFFFF" TextWrapping="Wrap"
-                       FontSize="20" FontWeight="Bold" Width="380" Height="130" Canvas.Left="10" Canvas.Top="30"/>
+                       FontFamily="Arial" FontSize="20" FontWeight="Bold" Width="380" Height="130" Canvas.Left="10" Canvas.Top="30"/>
             <NLUL.GUI.Component.Base:RoundedImageButton Width="64" Height="64" Name="Confirm" Color="#1A1922"
                                                         BaseSource="/Assets/Images/Prompt/Confirm.png"
                                                         HoverSource="/Assets/Images/Prompt/Confirm.png"
