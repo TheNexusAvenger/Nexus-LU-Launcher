@@ -1,102 +1,85 @@
-/*
- * TheNexusAvenger
- *
- * Stores the persistent state of the launcher.
- */
-
-
-
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Threading.Tasks;
 using NLUL.Core;
 
 namespace NLUL.GUI.State
 {
-    /*
-     * Manages the persistent state.
-     */
     public class PersistentState
     {
+        /// <summary>
+        /// Delegate for an event handler with no parameters.
+        /// </summary>
         public delegate void EmptyEventHandler();
+        
+        /// <summary>
+        /// Event for the server list changing.
+        /// </summary>
         public static event EmptyEventHandler ServerListChanged;
+        
+        /// <summary>
+        /// Event for the selected server changing.
+        /// </summary>
         public static event EmptyEventHandler SelectedServerChanged;
 
-        private static readonly SystemInfo SystemInfo = SystemInfo.GetDefault();
-        public static LauncherSettings State => SystemInfo.Settings;
-
-        /*
-         * Saves the state.
-         */
+        /// <summary>
+        /// Information about the system.
+        /// </summary>
+        public static readonly SystemInfo SystemInfo = SystemInfo.GetDefault();
+        
+        /// <summary>
+        /// The current selected server. May be null.
+        /// </summary>
+        public static ServerEntry SelectedServer => GetServerEntry(SystemInfo.Settings.SelectedServer);
+        
+        /// <summary>
+        /// Saves the state.
+        /// </summary>
         public static void Save()
         {
             SystemInfo.SaveSettings();
         }
         
-        /*
-         * Saves the state in a background thread.
-         * Intended for save calls from the UI.
-         */
+        /// <summary>
+        /// Saves the state in a background thread.
+        /// Intended for save calls from the UI.
+        /// </summary>
         public static void SaveBackground()
         {
-            new Thread(Save).Start();
+            Task.Run(Save);
         }
         
-        /*
-         * Returns the server object for the given name.
-         */
+        /// <summary>
+        /// Gets the server entry for the given name.
+        /// </summary>
+        /// <param name="serverName">Server name to check for.</param>
+        /// <returns>The server object for the given name.</returns>
         public static ServerEntry GetServerEntry(string serverName)
         {
-            // Iterate over the servers and return if the name matches.
-            foreach (var server in State.Servers)
-            {
-                if (server.ServerName == serverName)
-                {
-                    return server;
-                }
-            }
-            
-            // Return null (not found).
-            return null;
+            return SystemInfo.Settings.Servers.FirstOrDefault(server => server.ServerName == serverName);
         }
-        
-        /*
-         * Returns the selected server.
-         */
-        public static ServerEntry GetSelectedServer()
-        {
-            return GetServerEntry(State.SelectedServer);
-        }
-        
-        /*
-         * Sets the selected server.
-         */
+
+        /// <summary>
+        /// Sets the selected server.
+        /// </summary>
+        /// <param name="serverName">Server name to select.</param>
         public static void SetSelectedServer(string serverName)
         {
             // Set the selected server if the entry exists.
-            var lastSelectedServer = State.SelectedServer;
-            if (GetServerEntry(serverName) != null)
-            {
-                State.SelectedServer = serverName;
-            }
-            else
-            {
-                State.SelectedServer = null;
-            }
+            var lastSelectedServer = SystemInfo.Settings.SelectedServer;
+            SystemInfo.Settings.SelectedServer = GetServerEntry(serverName) != null ? serverName : null;
             SaveBackground();
             
             // Fire the event if the selected server changed.
-            if (lastSelectedServer != State.SelectedServer)
-            {
-                SelectedServerChanged?.Invoke();
-                Client.UpdateState();
-            }
+            if (lastSelectedServer == SystemInfo.Settings.SelectedServer) return;
+            SelectedServerChanged?.Invoke();
+            Client.UpdateState();
         }
         
-        /*
-         * Adds a server entry.
-         */
+        /// <summary>
+        /// Adds a server entry.
+        /// </summary>
+        /// <param name="serverName">Display name of the server.</param>
+        /// <param name="serverAddress">Address of the server.</param>
         public static void AddServerEntry(string serverName, string serverAddress)
         {
             // Return if the entry exists.
@@ -106,7 +89,7 @@ namespace NLUL.GUI.State
             }
             
             // Add the entry.
-            State.Servers.Add(new ServerEntry()
+            SystemInfo.Settings.Servers.Add(new ServerEntry()
             {
                 ServerName = serverName,
                 ServerAddress = serverAddress,
@@ -115,9 +98,10 @@ namespace NLUL.GUI.State
             ServerListChanged?.Invoke();
         }
         
-        /*
-         * Removes a server entry.
-         */
+        /// <summary>
+        /// Removes a server entry.
+        /// </summary>
+        /// <param name="serverName">Display name of the server.</param>
         public static void RemoveServerEntry(string serverName)
         {
             // Get the server entry and return if it doesn't exist.
@@ -128,11 +112,11 @@ namespace NLUL.GUI.State
             }
             
             // Remove the entry.
-            State.Servers.Remove(serverEntry);
+            SystemInfo.Settings.Servers.Remove(serverEntry);
             ServerListChanged?.Invoke();
             
             // Update the selected server. Updating also invokes saving.
-            SetSelectedServer(State.SelectedServer);
+            SetSelectedServer(SystemInfo.Settings.SelectedServer);
         }
     }
 }

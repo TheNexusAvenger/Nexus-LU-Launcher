@@ -1,18 +1,13 @@
-﻿/*
- * TheNexusAvenger
- *
- * Runs the program.
- */
-
-using Avalonia;
+﻿using Avalonia;
 
 namespace NLUL.GUI
 {
     class Program
     {
-        /*
-         * Runs the program.
-         */
+        /// <summary>
+        /// Runs the program.
+        /// </summary>
+        /// <param name="args">Arguments from the command line.</param>
         public static void Main(string[] args)
         {
             AppBuilder.Configure<App>().UsePlatformDetect().StartWithClassicDesktopLifetime(args);

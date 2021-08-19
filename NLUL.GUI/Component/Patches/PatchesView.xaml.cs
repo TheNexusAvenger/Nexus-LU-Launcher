@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * View for the patches screen.
- */
-
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
@@ -15,10 +9,24 @@ namespace NLUL.GUI.Component.Patches
 {
     public class PatchData
     {
-        public string PatchName;
-        public string PatchDescription;
-        public ClientPatchName PatchEnum;
+        /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        public string PatchName { get; private init; }
         
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        public string PatchDescription { get; private init; }
+        
+        /// <summary>
+        /// Enum of the patch.
+        /// </summary>
+        public ClientPatchName PatchEnum { get; private init; }
+        
+        /// <summary>
+        /// List of patches with the display information.
+        /// </summary>
         public static readonly List<PatchData> Patches = new List<PatchData>()
         {
             new PatchData() {
@@ -52,20 +60,20 @@ namespace NLUL.GUI.Component.Patches
     
     public class PatchesView : StackPanel
     {
-        /*
-         * Creates a patches view.
-         */
+        /// <summary>
+        /// Creates a patches view.
+        /// </summary>
         public PatchesView()
         {
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
             
             // Add the patch frames.
-            var patcher = Client.GetPatcher();
+            var patcher = Client.Patcher;
             var patchesList = this.Get<StackPanel>("PatchesList");
             foreach (var patch in PatchData.Patches)
             {
-                if (Client.clientRunner.ClientSource.Patches.FirstOrDefault(o => o.Name == patch.PatchEnum) == null) continue;
+                if (Client.ClientSource.Patches.FirstOrDefault(o => o.Name == patch.PatchEnum) == null) continue;
                 var patchPanel = new PatchEntry();
                 patchPanel.Patcher = patcher;
                 patchPanel.PatchData = patch;

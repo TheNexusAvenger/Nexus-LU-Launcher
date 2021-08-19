@@ -1,25 +1,16 @@
-/*
- * TheNexusAvenger
- *
- * State for the play user interface.
- */
-
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Threading;
+using System.Threading.Tasks;
 using Avalonia.Threading;
 using NLUL.Core;
 using NLUL.Core.Client;
 using NLUL.Core.Client.Patch;
+using NLUL.Core.Client.Source;
 
 namespace NLUL.GUI.State
 {
-    
-    /*
-     * States the client can be in.
-     */
     public class PlayState
     {
         // Uninitialized state.
@@ -45,61 +36,78 @@ namespace NLUL.GUI.State
         
         // External setup.
         public static readonly PlayState ManualRuntimeNotInstalled = new PlayState(false);
-            
-        public bool ManualChangeOnly;
         
+        /// <summary>
+        /// Whether the state can only be manually set.
+        /// </summary>
+        public bool ManualChangeOnly { get; }
+        
+        /// <summary>
+        /// Creates the play state.
+        /// </summary>
+        /// <param name="manualChangeOnly">Whether the state can only be manually set.</param>
         private PlayState(bool manualChangeOnly)
         {
             this.ManualChangeOnly = manualChangeOnly;
         }
     }
     
-    /*
-     * Class for the storing the state.
-     */
     public class Client
     {
-        public const double ByteToGigabyte = 1000000000;
+        /// <summary>
+        /// Constant for converting bytes to gigabytes. Used for
+        /// the download progress bar.
+        /// </summary>
+        private const double ByteToGigabyte = 1000000000;
 
-        public static ClientRunner clientRunner = new ClientRunner(SystemInfo.GetDefault());
+        /// <summary>
+        /// Client runner for the launcher.
+        /// </summary>
+        private static readonly ClientRunner ClientRunner = new ClientRunner(SystemInfo.GetDefault());
         
+        /// <summary>
+        /// Delegate for an event with no parameters.
+        /// </summary>
         public delegate void EmptyEventHandler();
+        
+        /// <summary>
+        /// Event for the state changing.
+        /// </summary>
         public static event EmptyEventHandler StateChanged;
         
-        public static PlayState state = PlayState.Uninitialized;
+        /// <summary>
+        /// Runtime name for the client.
+        /// </summary>
+        public static string RuntimeName => ClientRunner.Runtime.Name ?? "(No runtime name)";
         
-        /*
-         * Returns the message to display to the user if the runtime
-         * isn't installed and can't be automatically installed.
-         */
-        public static string GetManualRuntimeInstallMessage()
-        {
-            return clientRunner.Runtime.ManualRuntimeInstallMessage ?? "(No runtime install message)";
-        }
+        /// <summary>
+        /// The message to display to the user if the runtime
+        /// isn't installed and can't be automatically installed.
+        /// </summary>
+        public static string RuntimeInstallMessage => ClientRunner.Runtime.ManualRuntimeInstallMessage ?? "(No runtime install message)";
+
+        /// <summary>
+        /// Patcher of the client.
+        /// </summary>
+        public static ClientPatcher Patcher => ClientRunner.Patcher;
+
+        /// <summary>
+        /// Selected client source.
+        /// </summary>
+        public static ClientSourceEntry ClientSource => ClientRunner.ClientSource;
         
-        /*
-         * Returns the name of the runtime to install.
-         */
-        public static string GetRuntimeName()
-        {
-            return clientRunner.Runtime.Name ?? "(No runtime name)";
-        }
-        
-        /*
-         * Returns the client patcher.
-         */
-        public static ClientPatcher GetPatcher()
-        {
-            return clientRunner.Patcher;
-        }
-        
-        /*
-         * Updates the state.
-         */
+        /// <summary>
+        /// Current state of the client.
+        /// </summary>
+        public static PlayState State { get; private set; } = PlayState.Uninitialized;
+
+        /// <summary>
+        /// Updates the state.
+        /// </summary>
         public static void UpdateState()
         {
             // Check for the runtime to be installed.
-            if (!clientRunner.Runtime.IsInstalled && !clientRunner.Runtime.CanInstall)
+            if (!ClientRunner.Runtime.IsInstalled && !ClientRunner.Runtime.CanInstall)
             {
                 SetState(PlayState.ManualRuntimeNotInstalled);
                 return;
@@ -108,9 +116,9 @@ namespace NLUL.GUI.State
             // Check for the download to be complete.
             if (!File.Exists(Path.Combine(SystemInfo.GetDefault().ClientLocation, "legouniverse.exe")) || (SystemInfo.GetDefault().Settings.RequestedClientSourceName != SystemInfo.GetDefault().Settings.InstalledClientSourceName && SystemInfo.GetDefault().Settings.InstalledClientSourceName != null))
             {
-                if (!state.ManualChangeOnly)
+                if (!State.ManualChangeOnly)
                 {
-                    if (clientRunner.Runtime.IsInstalled)
+                    if (ClientRunner.Runtime.IsInstalled)
                     {
                         SetState(PlayState.DownloadClient);
                         return;
@@ -124,7 +132,7 @@ namespace NLUL.GUI.State
             }
             else
             {
-                if (!state.ManualChangeOnly && !clientRunner.Runtime.IsInstalled)
+                if (!State.ManualChangeOnly && !ClientRunner.Runtime.IsInstalled)
                 {
                     SetState(PlayState.DownloadRuntime);
                     return;
@@ -132,13 +140,13 @@ namespace NLUL.GUI.State
             }
             
             // Set the game state.
-            if (!state.ManualChangeOnly)
+            if (!State.ManualChangeOnly)
             {
                 // Verify the client.
-                if (clientRunner.CanVerifyExtractedClient)
+                if (ClientRunner.CanVerifyExtractedClient)
                 {
                     // Set the state as the verified failed.
-                    if (!clientRunner.VerifyExtractedClient())
+                    if (!ClientRunner.VerifyExtractedClient())
                     {
                         SetState(PlayState.VerifyFailed);
                         return;
@@ -146,7 +154,7 @@ namespace NLUL.GUI.State
                 }
 
                 // Set the select state.
-                if (PersistentState.GetSelectedServer() == null)
+                if (PersistentState.SelectedServer == null)
                 {
                     SetState(PlayState.NoSelectedServer);
                 }
@@ -157,120 +165,113 @@ namespace NLUL.GUI.State
             }
         }
         
-        /*
-         * Sets the state.
-         */
+        /// <summary>
+        /// Sets the state.
+        /// </summary>
+        /// <param name="newState">New state to use.</param>
         public static void SetState(PlayState newState)
         {
-            state = newState;
-            StateChanged?.Invoke();
-        }
-        
-        /*
-         * Sets the state using a thread safe method.
-         */
-        public static void SetStateThreadSafe(PlayState newState)
-        {
-            Dispatcher.UIThread.InvokeAsync(() => { SetState(newState); });
+            State = newState;
+            Dispatcher.UIThread.InvokeAsync(() => { StateChanged?.Invoke(); });
         }
 
-        /*
-         * Runs the runtime download.
-         */
+        /// <summary>
+        /// Runs the runtime download.
+        /// </summary>
+        /// <param name="callback">Callback to run after the download completes.</param>
         public static void DownloadRuntime(Action callback)
         {
             // Download the runtime.
-            clientRunner.Runtime.Install();
+            ClientRunner.Runtime.Install();
             
             // Update the state and invoke the callback.
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                SetState(PlayState.Uninitialized);
-                UpdateState();
-                callback();
-            });
+            SetState(PlayState.Uninitialized);
+            UpdateState();
+            callback();
         }
         
-        /*
-         * Runs the client download.
-         * Calls back a method with the loading message
-         * and percent.
-         */
-        public static void RunDownload(Action<string,double> callback)
+        /// <summary>
+        /// Runs the client download.
+        /// Calls back a method with the loading message and percent.
+        /// </summary>
+        /// <param name="callback">Callback that is sent a message and percent.</param>
+        public static void RunDownload(Action<string, double> callback)
         {
             // Start the download.
-            SetStateThreadSafe(PlayState.DownloadingClient);
+            SetState(PlayState.DownloadingClient);
             var errorOccured = false;
-            EventHandler<string> eventHandler = (_, downloadState) =>
+
+            void EventHandler(object _, string downloadState)
             {
                 if (downloadState.Equals("Download"))
                 {
                     // Set the state as downloading.
-                    SetStateThreadSafe(PlayState.DownloadingClient);
-                    
+                    SetState(PlayState.DownloadingClient);
+
                     // Start updating the size.
-                    new Thread(() =>
+                    Task.Run(async () =>
                     {
-                        while (state == PlayState.DownloadingClient)
+                        while (State == PlayState.DownloadingClient)
                         {
                             // Update the text.
-                            var downloadedClientSize = (double) clientRunner.DownloadedClientSize;
-                            callback("Downloading client (" + (downloadedClientSize/ByteToGigabyte).ToString("F") + " GB / " + (clientRunner.ClientDownloadSize/ByteToGigabyte).ToString("F") + " GB)",downloadedClientSize/clientRunner.ClientDownloadSize);
-                            
+                            var downloadedClientSize = (double) ClientRunner.DownloadedClientSize;
+                            callback(
+                                "Downloading client (" + (downloadedClientSize / ByteToGigabyte).ToString("F") +
+                                " GB / " + (ClientRunner.ClientDownloadSize / ByteToGigabyte).ToString("F") + " GB)",
+                                downloadedClientSize / ClientRunner.ClientDownloadSize);
+
                             // Wait to update again.
-                            Thread.Sleep(100);
+                            await Task.Delay(100);
                         }
-                    }).Start();
+                    });
                 }
                 else if (downloadState.Equals("Extract"))
                 {
                     // Set the state as extracting.
-                    SetStateThreadSafe(PlayState.ExtractingClient);
+                    SetState(PlayState.ExtractingClient);
                 }
                 else if (downloadState.Equals("Verify"))
                 {
                     // Set the state as verifying.
-                    SetStateThreadSafe(PlayState.VerifyingClient);
+                    SetState(PlayState.VerifyingClient);
                 }
                 else if (downloadState.Equals("VerifyFailed"))
                 {
                     // Set the state as the verified failed.
-                    SetStateThreadSafe(PlayState.VerifyFailed);
+                    SetState(PlayState.VerifyFailed);
                     errorOccured = true;
                 }
-            };
-            clientRunner.DownloadStateChanged += eventHandler;
+            }
+            ClientRunner.DownloadStateChanged += EventHandler;
             
             try {
                 // Run the download.
-                clientRunner.Download();
+                ClientRunner.Download();
             }
             catch (WebException)
             {
                 // Set the state as the download failed.
-                SetStateThreadSafe(PlayState.DownloadFailed);
+                SetState(PlayState.DownloadFailed);
                 return; 
             }
-            clientRunner.DownloadStateChanged -= eventHandler;
+            ClientRunner.DownloadStateChanged -= EventHandler;
             
             // Run the patch.
             if (errorOccured) return;
-            SetStateThreadSafe(PlayState.PatchingClient);
-            clientRunner.PatchClient();
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                SetState(PlayState.Uninitialized);
-                UpdateState();
-            });
+            SetState(PlayState.PatchingClient);
+            ClientRunner.PatchClient();
+            SetState(PlayState.Uninitialized);
+            UpdateState();
         }
         
-        /*
-         * Launches the client.
-         */
+        /// <summary>
+        /// Launches the client.
+        /// </summary>
+        /// <returns>Process of the client.</returns>
         public static Process Launch()
         {
-            var selectedServer = PersistentState.GetSelectedServer();
-            return selectedServer != null ? clientRunner.Launch(selectedServer.ServerAddress) : null;
+            var selectedServer = PersistentState.SelectedServer;
+            return selectedServer != null ? ClientRunner.Launch(selectedServer.ServerAddress) : null;
         }
     }
 }

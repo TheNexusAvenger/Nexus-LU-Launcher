@@ -1,12 +1,7 @@
-/*
- * TheNexusAvenger
- *
- * Displays information about a patch.
- */
-
 using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -35,34 +30,70 @@ namespace NLUL.GUI.Component.Patches
     
     public class PatchEntry : Border
     {
+        /// <summary>
+        /// Color of the install button.
+        /// </summary>
+        private static readonly SolidColorBrush InstallColor = new SolidColorBrush(new Color(255,0,205,0));
+        
+        /// <summary>
+        /// Color of the uninstall button.
+        /// </summary>
+        private static readonly SolidColorBrush UninstallColor = new SolidColorBrush(new Color(255, 205, 0, 0));
+        
+        /// <summary>
+        /// Data of the patch.
+        /// </summary>
         public PatchData PatchData
         {
-            get { return GetValue(PatchDataProperty); }
-            set { SetValue(PatchDataProperty,value); }
+            get => GetValue(PatchDataProperty);
+            set => SetValue(PatchDataProperty, value);
         }
-        public static readonly StyledProperty<PatchData> PatchDataProperty = AvaloniaProperty.Register<Window,PatchData>(nameof(PatchData));
+        public static readonly StyledProperty<PatchData> PatchDataProperty = AvaloniaProperty.Register<Window, PatchData>(nameof(PatchData));
         
+        /// <summary>
+        /// Patcher of the client.
+        /// </summary>
         public ClientPatcher Patcher
         {
-            get { return GetValue(PatcherProperty); }
-            set { SetValue(PatcherProperty,value); }
+            get => GetValue(PatcherProperty);
+            set => SetValue(PatcherProperty, value);
         }
-        public static readonly StyledProperty<ClientPatcher> PatcherProperty = AvaloniaProperty.Register<Window,ClientPatcher>(nameof(Patcher));
+        public static readonly StyledProperty<ClientPatcher> PatcherProperty = AvaloniaProperty.Register<Window, ClientPatcher>(nameof(Patcher));
 
-        public static readonly SolidColorBrush InstallColor = new SolidColorBrush(new Color(255,0,205,0));
-        public static readonly SolidColorBrush UninstallColor = new SolidColorBrush(new Color(255,205,0,0));
-        
+        /// <summary>
+        /// State of the patch.
+        /// </summary>
         private PatchState patchState = PatchState.NotInstalled;
-        private TextBlock patchName;
-        private TextBlock patchDescription;
-        private RoundedButton installButton;
-        private TextBlock installText;
-        private RoundedButton updateButton;
-        private TextBlock statusText;
         
-        /*
-         * Creates a patch entry.
-         */
+        /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        private readonly TextBlock patchName;
+        
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        private readonly TextBlock patchDescription;
+        private readonly RoundedButton installButton;
+        
+        /// <summary>
+        /// Install text of the patch.
+        /// </summary>
+        private readonly TextBlock installText;
+        
+        /// <summary>
+        /// Update button of the patch.
+        /// </summary>
+        private readonly RoundedButton updateButton;
+        
+        /// <summary>
+        /// Status text of the patch.
+        /// </summary>
+        private readonly TextBlock statusText;
+        
+        /// <summary>
+        /// Creates a patch entry.
+        /// </summary>
         public PatchEntry()
         {
             // Load the XAML.
@@ -99,9 +130,9 @@ namespace NLUL.GUI.Component.Patches
             });
         }
         
-        /*
-         * Checks for updates.
-         */
+        /// <summary>
+        /// Checks for updates.
+        /// </summary>
         private void CheckForUpdates()
         {
             // Set the state as uninstalled if the mod isn't installed.
@@ -111,7 +142,7 @@ namespace NLUL.GUI.Component.Patches
                 var patchingStarted = false;
                 Client.StateChanged += () =>
                 {
-                    var state = Client.state;
+                    var state = Client.State;
                     if (state == PlayState.DownloadingClient || state == PlayState.PatchingClient)
                     {
                         // Prepare to update the state after the download/patching ends.
@@ -137,35 +168,35 @@ namespace NLUL.GUI.Component.Patches
             // Fetching is done outside the thread to prevent "Call from invalid thread" exceptions.
             var patcher = this.Patcher;
             var patchData = this.PatchData;
-            new Thread(() =>
+            Task.Run(() =>
             {
                 try
                 {
                     // Set the state based on if there is an update.
                     if (patcher.IsUpdateAvailable(patchData.PatchEnum))
                     {
-                        this.SetStateConditionally(PatchState.UpdateAvailable,PatchState.CheckingForUpdates);
+                        this.SetStateConditionally(PatchState.UpdateAvailable, PatchState.CheckingForUpdates);
                     }
                     else
                     {
-                        this.SetStateConditionally(PatchState.Installed,PatchState.CheckingForUpdates);
+                        this.SetStateConditionally(PatchState.Installed, PatchState.CheckingForUpdates);
                     }
                 }
                 catch (Exception e)
                 {
                     // Set as no updates (failed to fetch).
-                    this.SetStateConditionally(PatchState.UpdatesCheckFailed,PatchState.CheckingForUpdates);
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    this.SetStateConditionally(PatchState.UpdatesCheckFailed, PatchState.CheckingForUpdates);
+                    this.Run(() =>
                     {
                         Debug.WriteLine("Failed to fetch update for " + patchData.PatchName + " because: " + e);
                     });
                 }
-            }).Start();
+            });
         }
         
-        /*
-         * Attempts to install the mod.
-         */
+        /// <summary>
+        /// Attempts to install the mod.
+        /// </summary>
         private void Install()
         {
             // Set the initial state.
@@ -175,29 +206,29 @@ namespace NLUL.GUI.Component.Patches
             // Fetching is done outside the thread to prevent "Call from invalid thread" exceptions.
             var patcher = this.Patcher;
             var patchData = this.PatchData;
-            new Thread(() =>
+            Task.Run(() =>
             {
                 try
                 {
                     // Install the patch.
                     patcher.Install(patchData.PatchEnum);
-                    this.SetStateConditionally(PatchState.Installed,PatchState.Installing);
+                    this.SetStateConditionally(PatchState.Installed, PatchState.Installing);
                 }
                 catch (Exception e)
                 {
                     // Display the install failed.
-                    this.SetStateConditionally(PatchState.FailedToInstall,PatchState.Installing);
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    this.SetStateConditionally(PatchState.FailedToInstall, PatchState.Installing);
+                    this.Run(() =>
                     {
                         Debug.WriteLine("Failed to install for " + patchData.PatchName + " because: " + e);
                     });
                 }
-            }).Start();
+            });
         }
         
-        /*
-         * Attempts to uninstall the mod.
-         */
+        /// <summary>
+        /// Attempts to uninstall the mod.
+        /// </summary>
         private void Uninstall()
         {
             // Set the initial state.
@@ -207,29 +238,29 @@ namespace NLUL.GUI.Component.Patches
             // Fetching is done outside the thread to prevent "Call from invalid thread" exceptions.
             var patcher = this.Patcher;
             var patchData = this.PatchData;
-            new Thread(() =>
+            Task.Run(() =>
             {
                 try
                 {
                     // Uninstall the patch.
                     patcher.Uninstall(patchData.PatchEnum);
-                    this.SetStateConditionally(PatchState.NotInstalled,PatchState.Uninstalling);
+                    this.SetStateConditionally(PatchState.NotInstalled, PatchState.Uninstalling);
                 }
                 catch (Exception e)
                 {
                     // Display the uninstall failed.
-                    this.SetStateConditionally(PatchState.FailedToUninstall,PatchState.Uninstalling);
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    this.SetStateConditionally(PatchState.FailedToUninstall, PatchState.Uninstalling);
+                    this.Run(() =>
                     {
                         Debug.WriteLine("Failed to uninstall for " + patchData.PatchName + " because: " + e);
                     });
                 }
-            }).Start();
+            });
         }
         
-        /*
-         * Attempts to update the mod.
-         */
+        /// <summary>
+        /// Attempts to update the mod.
+        /// </summary>
         private void Update()
         {
             // Set the initial state.
@@ -239,41 +270,41 @@ namespace NLUL.GUI.Component.Patches
             // Fetching is done outside the thread to prevent "Call from invalid thread" exceptions.
             var patcher = this.Patcher;
             var patchData = this.PatchData;
-            new Thread(() =>
+            Task.Run(() =>
             {
                 try
                 {
                     // Install the patch.
                     patcher.Install(patchData.PatchEnum);
-                    this.SetStateConditionally(PatchState.Installed,PatchState.Updating);
+                    this.SetStateConditionally(PatchState.Installed, PatchState.Updating);
                 }
                 catch (Exception e)
                 {
                     // Display the install failed.
-                    this.SetStateConditionally(PatchState.FailedToUpdate,PatchState.Updating);
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    this.SetStateConditionally(PatchState.FailedToUpdate, PatchState.Updating);
+                    this.Run(() =>
                     {
                         Debug.WriteLine("Failed to update for " + patchData.PatchName + " because: " + e);
                     });
                 }
-            }).Start();
-        }
-        
-        /*
-         * Sets the state.
-         */
-        private void SetState(PatchState state)
-        {
-            this.patchState = state;
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                this.UpdatePatch();
             });
         }
         
-        /*
-         * Sets the state if the current state matches.
-         */
+        /// <summary>
+        /// Sets the state.
+        /// </summary>
+        /// <param name="state">State to set.</param>
+        private void SetState(PatchState state)
+        {
+            this.patchState = state;
+            this.Run(this.UpdatePatch);
+        }
+        
+        /// <summary>
+        /// Sets the state if the current state matches.
+        /// </summary>
+        /// <param name="state">State to set.</param>
+        /// <param name="currentState">State required in order to set.</param>
         private void SetStateConditionally(PatchState state,PatchState currentState)
         {
             if (this.patchState == currentState)
@@ -282,9 +313,9 @@ namespace NLUL.GUI.Component.Patches
             }
         }
 
-        /*
-         * Updates the patch entry.
-         */
+        /// <summary>
+        /// Updates the patch entry.
+        /// </summary>
         private void UpdatePatch()
         {
             // Return if the patch or patcher is not defined.

@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Dot used for a loading bar.
- */
-
 using System;
 using Avalonia;
 using Avalonia.Controls;
@@ -14,51 +8,69 @@ namespace NLUL.GUI.Component.Play
 {
     public class LoadingDot : Border
     {
+        /// <summary>
+        /// Color for the initial fill of the color.
+        /// </summary>
         public SolidColorBrush StartColor
         {
-            get { return GetValue(StartColorProperty); }
-            set { SetValue(StartColorProperty,value); }
+            get => GetValue(StartColorProperty);
+            set => SetValue(StartColorProperty, value);
         }
-        public static readonly StyledProperty<SolidColorBrush> StartColorProperty = AvaloniaProperty.Register<Window,SolidColorBrush>(nameof(StartColor),new SolidColorBrush(new Color(255,141,141,145)));
+        public static readonly StyledProperty<SolidColorBrush> StartColorProperty = AvaloniaProperty.Register<Window, SolidColorBrush>(nameof(StartColor), new SolidColorBrush(new Color(255, 141, 141, 145)));
         
+        /// <summary>
+        /// Color for the final fill of the color.
+        /// </summary>
         public SolidColorBrush EndColor
         {
-            get { return GetValue(EndColorProperty); }
-            set { SetValue(EndColorProperty,value); }
+            get => GetValue(EndColorProperty);
+            set => SetValue(EndColorProperty, value);
         }
-        public static readonly StyledProperty<SolidColorBrush> EndColorProperty = AvaloniaProperty.Register<Window,SolidColorBrush>(nameof(EndColor),new SolidColorBrush(new Color(255,255,255,255)));
+        public static readonly StyledProperty<SolidColorBrush> EndColorProperty = AvaloniaProperty.Register<Window, SolidColorBrush>(nameof(EndColor), new SolidColorBrush(new Color(255, 255, 255, 255)));
         
+        /// <summary>
+        /// Additional margin for the dot.
+        /// </summary>
         public Thickness AdditionalMargin
         {
-            get { return GetValue(AdditionalMarginProperty); }
-            set { SetValue(AdditionalMarginProperty,value); }
+            get => GetValue(AdditionalMarginProperty);
+            set => SetValue(AdditionalMarginProperty, value);
         }
-        public static readonly StyledProperty<Thickness> AdditionalMarginProperty = AvaloniaProperty.Register<Window,Thickness>(nameof(AdditionalMargin),new Thickness(3,0,2,0));
+        public static readonly StyledProperty<Thickness> AdditionalMarginProperty = AvaloniaProperty.Register<Window, Thickness>(nameof(AdditionalMargin), new Thickness(3, 0, 2, 0));
         
+        /// <summary>
+        /// Initial size of the dot.
+        /// </summary>
         public int StartSize
         {
-            get { return GetValue(StartSizeProperty); }
-            set { SetValue(StartSizeProperty,value); }
+            get => GetValue(StartSizeProperty);
+            set => SetValue(StartSizeProperty,value);
         }
-        public static readonly StyledProperty<int> StartSizeProperty = AvaloniaProperty.Register<Window,int>(nameof(StartSize),8);
+        public static readonly StyledProperty<int> StartSizeProperty = AvaloniaProperty.Register<Window, int>(nameof(StartSize), 8);
         
+        /// <summary>
+        /// Final size of the dot.
+        /// </summary>
         public int EndSize
         {
-            get { return GetValue(EndSizeProperty); }
-            set { SetValue(EndSizeProperty,value); }
+            get => GetValue(EndSizeProperty);
+            set => SetValue(EndSizeProperty,value);
         }
-        public static readonly StyledProperty<int> EndSizeProperty = AvaloniaProperty.Register<Window,int>(nameof(EndSize),20);
+        public static readonly StyledProperty<int> EndSizeProperty = AvaloniaProperty.Register<Window, int>(nameof(EndSize), 20);
         
+        /// <summary>
+        /// Percent that the dot is filled.
+        /// </summary>
         public double FillPercent
         {
-            get { return GetValue(FillPercentProperty); }
-            set { SetValue(FillPercentProperty,value); }
+            get => GetValue(FillPercentProperty);
+            set => SetValue(FillPercentProperty,value);
         }
-        public static readonly StyledProperty<double> FillPercentProperty = AvaloniaProperty.Register<Window,double>(nameof(FillPercent),0);
+        public static readonly StyledProperty<double> FillPercentProperty = AvaloniaProperty.Register<Window, double>(nameof(FillPercent), 0);
         
-        /*
-         * Creates a loading dot.
-         */
+        /// <summary>
+        /// Creates a loading dot.
+        /// </summary>
         public LoadingDot()
         {
             // Load the XAML.
@@ -77,9 +89,9 @@ namespace NLUL.GUI.Component.Play
             this.UpdateDot();
         }
         
-        /*
-         * Updates the dot.
-         */
+        /// <summary>
+        /// Updates the dot.
+        /// </summary>
         private void UpdateDot()
         {
             // Set the color.

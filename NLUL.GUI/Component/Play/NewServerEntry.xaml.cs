@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Adds entries to the server list.
- */
-
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -14,20 +8,49 @@ namespace NLUL.GUI.Component.Play
 {
     public class NewServerEntry : Border
     {
-        public static readonly Color ButtonEnabledColor = new Color(255,0,120,205);
-        public static readonly Color ButtonDisabledColor = new Color(255,44,44,50);
-            
-        private StackPanel inputs;
-        private TextBox serverNameInput;
-        private TextBox serverAddressInput;
-        private RoundedButton addButton;
-        private ImageButton cancelButton;
+        /// <summary>
+        /// Color for the button being enabled.
+        /// </summary>
+        private static readonly Color ButtonEnabledColor = new Color(255, 0, 120, 205);
+        
+        /// <summary>
+        /// Color for the button being disabled.
+        /// </summary>
+        private static readonly Color ButtonDisabledColor = new Color(255, 44, 44, 50);
+        
+        /// <summary>
+        /// Stack panel of the inputs.
+        /// </summary>
+        private readonly StackPanel inputs;
+        
+        /// <summary>
+        /// Input for the server name.
+        /// </summary>
+        private readonly TextBox serverNameInput;
+        
+        /// <summary>
+        /// Input for the server address.
+        /// </summary>
+        private readonly TextBox serverAddressInput;
+        
+        /// <summary>
+        /// Button for adding the entry.
+        /// </summary>
+        private readonly RoundedButton addButton;
+        
+        /// <summary>
+        /// Button for cancelling.
+        /// </summary>
+        private readonly ImageButton cancelButton;
 
+        /// <summary>
+        /// Whether adding is open.
+        /// </summary>
         private bool addingOpen = false;
         
-        /*
-        * Creates a server entry creator.
-        */
+        /// <summary>
+        /// Creates a server entry creator.
+        /// </summary>
         public NewServerEntry()
         {
             // Load the XAML.
@@ -78,12 +101,10 @@ namespace NLUL.GUI.Component.Play
             };
             this.serverNameInput.PropertyChanged += (sender, args) =>
             {
-                
                 this.Update();
             };
             this.serverAddressInput.PropertyChanged += (sender, args) =>
             {
-                
                 this.Update();
             };
 
@@ -91,9 +112,9 @@ namespace NLUL.GUI.Component.Play
             this.Update();
         }
         
-        /*
-         * Updates the display.
-         */
+        /// <summary>
+        /// Updates the display.
+        /// </summary>
         private void Update()
         {
             if (this.addingOpen)
@@ -126,9 +147,10 @@ namespace NLUL.GUI.Component.Play
             }
         }
         
-        /*
-         * Updates the width.
-         */
+        /// <summary>
+        /// Updates the width.
+        /// </summary>
+        /// <param name="hasScrollBar">Whether there is a scrollbar.</param>
         public void UpdateWidth(bool hasScrollBar)
         {
             this.MinWidth = hasScrollBar ? 626 : 654;

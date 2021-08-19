@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Rounded container for a button.
- */
-
 using System;
 using Avalonia;
 using Avalonia.Controls;
@@ -16,33 +10,49 @@ namespace NLUL.GUI.Component.Base
 {
     public class RoundedButton : Border
     {
-        public static readonly RoutedEvent<RoutedEventArgs> ButtonPressedEvent = RoutedEvent.Register<InputElement,RoutedEventArgs>(nameof(ButtonPressed),RoutingStrategies.Direct);
+        /// <summary>
+        /// Event for the button being pressed.
+        /// </summary>
         public event EventHandler<RoutedEventArgs> ButtonPressed
         {
-            add { AddHandler(ButtonPressedEvent,value); }
-            remove { RemoveHandler(ButtonPressedEvent,value); }
+            add => AddHandler(ButtonPressedEvent, value);
+            remove => RemoveHandler(ButtonPressedEvent, value);
         }
+        public static readonly RoutedEvent<RoutedEventArgs> ButtonPressedEvent = RoutedEvent.Register<InputElement, RoutedEventArgs>(nameof(ButtonPressed), RoutingStrategies.Direct);
         
+        /// <summary>
+        /// The color of the button.
+        /// </summary>
         public IBrush Color
         {
-            get { return GetValue(ColorProperty); }
-            set { SetValue(ColorProperty,value); }
+            get => GetValue(ColorProperty);
+            set => SetValue(ColorProperty, value);
         }
-        public static readonly StyledProperty<IBrush> ColorProperty = AvaloniaProperty.Register<Window,IBrush>(nameof(Color),new SolidColorBrush());
+        public static readonly StyledProperty<IBrush> ColorProperty = AvaloniaProperty.Register<Window, IBrush>(nameof(Color), new SolidColorBrush());
         
+        /// <summary>
+        /// Whether the button is enabled.
+        /// </summary>
         public bool Active
         {
-            get { return GetValue(ActiveProperty); }
-            set { SetValue(ActiveProperty,value); }
+            get => GetValue(ActiveProperty);
+            set => SetValue(ActiveProperty, value);
         }
-        public static readonly StyledProperty<bool> ActiveProperty = AvaloniaProperty.Register<Window,bool>(nameof(Active),true);
+        public static readonly StyledProperty<bool> ActiveProperty = AvaloniaProperty.Register<Window, bool>(nameof(Active), true);
         
+        /// <summary>
+        /// Whether the button is being hovered.
+        /// </summary>
         private bool hovering;
+        
+        /// <summary>
+        /// Whether the button is pressing.
+        /// </summary>
         private bool pressing;
         
-        /*
-         * Creates the rounded button.
-         */
+        /// <summary>
+        /// Creates the rounded button.
+        /// </summary>
         public RoundedButton()
         {
             // Load the XAML.
@@ -75,18 +85,16 @@ namespace NLUL.GUI.Component.Base
             };
             this.PointerReleased += (sender,args) =>
             {
-                if (this.pressing)
-                {
-                    this.pressing = false;
-                    this.UpdateColors();
-                    RaiseEvent(new RoutedEventArgs(ButtonPressedEvent));
-                }
+                if (!this.pressing) return;
+                this.pressing = false;
+                this.UpdateColors();
+                RaiseEvent(new RoutedEventArgs(ButtonPressedEvent));
             };
         }
         
-        /*
-         * Updates the colors of the button.
-         */
+        /// <summary>
+        /// Updates the colors of the button.
+        /// </summary>
         private void UpdateColors()
         {
             // Return if the color is not a solid color brush.
@@ -110,9 +118,9 @@ namespace NLUL.GUI.Component.Base
             
             // Set the color.
             var color = ((ISolidColorBrush) this.Color).Color;
-            var newColor = new Color(color.A, (byte) Math.Clamp(baseOffset + color.R,0,255),(byte) Math.Clamp(baseOffset + color.G,0,255),(byte) Math.Clamp(baseOffset + color.B,0,255));
+            var newColor = new Color(color.A, (byte) Math.Clamp(baseOffset + color.R, 0, 255), (byte) Math.Clamp(baseOffset + color.G, 0, 255), (byte) Math.Clamp(baseOffset + color.B, 0, 255));
             this.Background = new SolidColorBrush(newColor);
-            this.BorderBrush = new SolidColorBrush(new Color(newColor.A,(byte) (0.8 * newColor.R),(byte) (0.8 * newColor.G),(byte) (0.8 * newColor.B)));
+            this.BorderBrush = new SolidColorBrush(new Color(newColor.A, (byte) (0.8 * newColor.R), (byte) (0.8 * newColor.G), (byte) (0.8 * newColor.B)));
         }
     }
 }

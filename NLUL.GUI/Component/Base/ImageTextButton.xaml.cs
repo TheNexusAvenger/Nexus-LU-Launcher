@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Button that contains an image and text.
- */
-
 using System;
 using System.Reflection;
 using Avalonia;
@@ -19,42 +13,69 @@ namespace NLUL.GUI.Component.Base
 {
     public class ImageTextButton : Panel
     {
-        public static readonly RoutedEvent<RoutedEventArgs> ButtonPressedEvent = RoutedEvent.Register<InputElement,RoutedEventArgs>(nameof(ButtonPressed),RoutingStrategies.Direct);
+        /// <summary>
+        /// Event for the button being pressed.
+        /// </summary>
+        public static readonly RoutedEvent<RoutedEventArgs> ButtonPressedEvent = RoutedEvent.Register<InputElement, RoutedEventArgs>(nameof(ButtonPressed), RoutingStrategies.Direct);
         public event EventHandler<RoutedEventArgs> ButtonPressed
         {
-            add { AddHandler(ButtonPressedEvent,value); }
-            remove { RemoveHandler(ButtonPressedEvent,value); }
+            add => AddHandler(ButtonPressedEvent, value);
+            remove => RemoveHandler(ButtonPressedEvent, value);
         }
         
+        /// <summary>
+        /// Image of the button.
+        /// </summary>
         public string Image
         {
-            get { return GetValue(ImageProperty); }
-            set { SetValue(ImageProperty,value); }
+            get => GetValue(ImageProperty);
+            set => SetValue(ImageProperty,value);
         }
-        public static readonly StyledProperty<string> ImageProperty = AvaloniaProperty.Register<Window,string>(nameof(Image),"");
+        public static readonly StyledProperty<string> ImageProperty = AvaloniaProperty.Register<Window, string>(nameof(Image), "");
         
+        /// <summary>
+        /// Text of the button.
+        /// </summary>
         public string Text
         {
-            get { return GetValue(TextProperty); }
-            set { SetValue(TextProperty,value); }
+            get => GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
-        public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<Window,string>(nameof(Text),"");
+        public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<Window, string>(nameof(Text), "");
         
+        /// <summary>
+        /// Size of the font of the button.
+        /// </summary>
         public double FontSize
         {
-            get { return GetValue(FontSizeProperty); }
-            set { SetValue(FontSizeProperty,value); }
+            get => GetValue(FontSizeProperty);
+            set => SetValue(FontSizeProperty,value);
         }
-        public static readonly StyledProperty<double> FontSizeProperty = AvaloniaProperty.Register<Window,double>(nameof(FontSize),14);
+        public static readonly StyledProperty<double> FontSizeProperty = AvaloniaProperty.Register<Window, double>(nameof(FontSize), 14);
         
+        /// <summary>
+        /// Image of the button.
+        /// </summary>
         private Image buttonImage;
+        
+        /// <summary>
+        /// Text of the button.
+        /// </summary>
         private TextBlock buttonText;
+        
+        /// <summary>
+        /// Whether the button is hovering.
+        /// </summary>
         private bool hovering;
+        
+        /// <summary>
+        /// Whether the button is pressing.
+        /// </summary>
         private bool pressing;
         
-        /*
-         * Creates the image button.
-         */
+        /// <summary>
+        /// Creates the image button.
+        /// </summary>
         public ImageTextButton()
         {
             // Load the XAML.
@@ -86,25 +107,23 @@ namespace NLUL.GUI.Component.Base
             };
             this.PointerReleased += (sender,args) =>
             {
-                if (this.pressing)
-                {
-                    this.pressing = false;
-                    this.UpdateButton();
-                    RaiseEvent(new RoutedEventArgs(ButtonPressedEvent));
-                }
+                if (!this.pressing) return;
+                this.pressing = false;
+                this.UpdateButton();
+                RaiseEvent(new RoutedEventArgs(ButtonPressedEvent));
             };
         }
         
-        /*
-         * Updates the button.
-         */
-        public void UpdateButton()
+        /// <summary>
+        /// Updates the button.
+        /// </summary>
+        private void UpdateButton()
         {
             // Update the image and color.
             if (this.Image != "")
             {
                 var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                this.buttonImage.Source = new Bitmap(assets.Open(new Uri("avares://" + Assembly.GetEntryAssembly().GetName().Name + this.Image)));
+                this.buttonImage.Source = new Bitmap(assets.Open(new Uri("avares://" + Assembly.GetEntryAssembly()?.GetName().Name + this.Image)));
             }
             this.buttonImage.Width = this.Height;
             this.buttonImage.Height = this.Height;
@@ -114,11 +133,11 @@ namespace NLUL.GUI.Component.Base
             // Update the text color.
             if (this.pressing || this.hovering)
             {
-                this.buttonText.Foreground = new SolidColorBrush(new Color(255,255,255,255));
+                this.buttonText.Foreground = new SolidColorBrush(new Color(255, 255, 255, 255));
             }
             else
             {
-                this.buttonText.Foreground = new SolidColorBrush(new Color(255,127,127,127));
+                this.buttonText.Foreground = new SolidColorBrush(new Color(255, 127, 127, 127));
             }
         }
     }

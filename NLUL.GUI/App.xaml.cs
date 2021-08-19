@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * App for Nexus Lego Universe Launcher.
- */
-
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -13,18 +7,18 @@ namespace NLUL.GUI
 {
     public class App : Application
     {
-        /*
-         * Initializes the app.
-         */
+        /// <summary>
+        /// Initializes the app.
+        /// </summary>
         public override void Initialize()
         {
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
         }
         
-        /*
-         * Invoked when the initialization of the app is complete.
-         */
+        /// <summary>
+        /// Invoked when the initialization of the app is complete.
+        /// </summary>
         public override void OnFrameworkInitializationCompleted()
         {
             // Create the main window.

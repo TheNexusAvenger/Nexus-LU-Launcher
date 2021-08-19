@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Button that uses images.
- */
-
 using System;
 using System.Reflection;
 using Avalonia;
@@ -18,47 +12,69 @@ namespace NLUL.GUI.Component.Base
 {
     public class ImageButton : Image
     {
-        public static readonly RoutedEvent<RoutedEventArgs> ButtonPressedEvent = RoutedEvent.Register<InputElement,RoutedEventArgs>(nameof(PointerEnter),RoutingStrategies.Direct);
+        /// <summary>
+        /// Event for the button being pressed.
+        /// </summary>
+        public static readonly RoutedEvent<RoutedEventArgs> ButtonPressedEvent = RoutedEvent.Register<InputElement, RoutedEventArgs>(nameof(PointerEnter), RoutingStrategies.Direct);
         public event EventHandler<RoutedEventArgs> ButtonPressed
         {
-            add { AddHandler(ButtonPressedEvent,value); }
-            remove { RemoveHandler(ButtonPressedEvent,value); }
+            add => AddHandler(ButtonPressedEvent, value);
+            remove => RemoveHandler(ButtonPressedEvent, value);
         }
         
+        /// <summary>
+        /// Image of the button when idle.
+        /// </summary>
         public string BaseSource
         {
-            get { return GetValue(BaseSourceProperty); }
-            set { SetValue(BaseSourceProperty,value); }
+            get => GetValue(BaseSourceProperty);
+            set => SetValue(BaseSourceProperty, value);
         }
-        public static readonly StyledProperty<string> BaseSourceProperty = AvaloniaProperty.Register<Window,string>(nameof(BaseSource),"");
+        public static readonly StyledProperty<string> BaseSourceProperty = AvaloniaProperty.Register<Window, string>(nameof(BaseSource), "");
         
+        /// <summary>
+        /// Image of the button when hovering.
+        /// </summary>
         public string HoverSource
         {
             get { return GetValue(HoverSourceProperty); }
             set { SetValue(HoverSourceProperty,value); }
         }
-        public static readonly StyledProperty<string> HoverSourceProperty = AvaloniaProperty.Register<Window,string>(nameof(HoverSource),"");
+        public static readonly StyledProperty<string> HoverSourceProperty = AvaloniaProperty.Register<Window, string>(nameof(HoverSource), "");
         
+        /// <summary>
+        /// Image of the button when pressed.
+        /// </summary>
         public string PressSource
         {
-            get { return GetValue(PressSourceProperty); }
-            set { SetValue(PressSourceProperty,value); }
+            get => GetValue(PressSourceProperty);
+            set => SetValue(PressSourceProperty,value);
         }
-        public static readonly StyledProperty<string> PressSourceProperty = AvaloniaProperty.Register<Window,string>(nameof(PressSource),"");
+        public static readonly StyledProperty<string> PressSourceProperty = AvaloniaProperty.Register<Window, string>(nameof(PressSource), "");
         
+        /// <summary>
+        /// Whether the button is active.
+        /// </summary>
         public bool Active
         {
-            get { return GetValue(ActiveProperty); }
-            set { SetValue(ActiveProperty,value); }
+            get => GetValue(ActiveProperty);
+            set => SetValue(ActiveProperty,value);
         }
-        public static readonly StyledProperty<bool> ActiveProperty = AvaloniaProperty.Register<Window,bool>(nameof(Active),true);
+        public static readonly StyledProperty<bool> ActiveProperty = AvaloniaProperty.Register<Window, bool>(nameof(Active), true);
 
+        /// <summary>
+        /// Whether the button is hovered.
+        /// </summary>
         private bool hovering;
+        
+        /// <summary>
+        /// Whether the button is pressed.
+        /// </summary>
         private bool pressing;
         
-        /*
-         * Creates the image button.
-         */
+        /// <summary>
+        /// Creates the image button.
+        /// </summary>
         public ImageButton()
         {
             // Load the XAML.
@@ -91,18 +107,16 @@ namespace NLUL.GUI.Component.Base
             };
             this.PointerReleased += (sender,args) =>
             {
-                if (this.pressing)
-                {
-                    this.pressing = false;
-                    this.UpdateSource();
-                    RaiseEvent(new RoutedEventArgs(ButtonPressedEvent));
-                }
+                if (!this.pressing) return;
+                this.pressing = false;
+                this.UpdateSource();
+                RaiseEvent(new RoutedEventArgs(ButtonPressedEvent));
             };
         }
         
-        /*
-         * Updates the button image.
-         */
+        /// <summary>
+        /// Updates the button image.
+        /// </summary>
         private void UpdateSource()
         {
             // Determine the button image to use.
@@ -120,11 +134,9 @@ namespace NLUL.GUI.Component.Base
             }
             
             // Set the image source.
-            if (source != "")
-            {
-                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                this.Source = new Bitmap(assets.Open(new Uri("avares://" + Assembly.GetEntryAssembly().GetName().Name + source)));
-            }
+            if (source == "") return;
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            this.Source = new Bitmap(assets.Open(new Uri("avares://" + Assembly.GetEntryAssembly()?.GetName().Name + source)));
         }
     }
 }

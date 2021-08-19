@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Main window for Nexus Lego Universe Launcher.
- */
-
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
@@ -11,6 +5,9 @@ namespace NLUL.GUI
 {
     public class MainWindow : Window
     {
+        /// <summary>
+        /// Creates the main window.
+        /// </summary>
         public MainWindow()
         {
             // Load the XAML.

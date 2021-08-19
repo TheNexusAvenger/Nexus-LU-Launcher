@@ -1,9 +1,3 @@
-/*
- * TheNexusAvenger
- *
- * Toggles between the play view and host view.
- */
-
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -23,24 +17,28 @@ namespace NLUL.GUI.Component
     
     public class ToggleView : Canvas
     {
-        private PlayView playView;
-        private PatchesView patchesView;
-        private ImageTextButton playButton;
-        private ImageTextButton patchesButton;
-        private ImageTextButton settingsButton;
+        /// <summary>
+        /// View of the server list.
+        /// </summary>
+        private readonly PlayView playView;
         
-        /*
-         * Creates a toggle view panel.
-         */
+        /// <summary>
+        /// View of the patches.
+        /// </summary>
+        private readonly PatchesView patchesView;
+        
+        /// <summary>
+        /// Creates a toggle view panel.
+        /// </summary>
         public ToggleView()
         {
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
             this.playView = this.Get<PlayView>("PlayView");
             this.patchesView = this.Get<PatchesView>("PatchesView");
-            this.playButton = this.Get<ImageTextButton>("PlayButton");
-            this.patchesButton = this.Get<ImageTextButton>("PatchesButton");
-            this.settingsButton = this.Get<ImageTextButton>("SettingsButton");
+            var playButton = this.Get<ImageTextButton>("PlayButton");
+            var patchesButton = this.Get<ImageTextButton>("PatchesButton");
+            var settingsButton = this.Get<ImageTextButton>("SettingsButton");
 
             // Set the active view.
             this.SetView(ActiveView.Play);
@@ -68,16 +66,17 @@ namespace NLUL.GUI.Component
             };
             Client.StateChanged += () =>
             {
-                playButton.IsVisible = (Client.state != PlayState.Launched);
-                patchesButton.IsVisible = (Client.state != PlayState.Launched);
-                settingsButton.IsVisible = (Client.state != PlayState.Launched);
+                playButton.IsVisible = (Client.State != PlayState.Launched);
+                patchesButton.IsVisible = (Client.State != PlayState.Launched);
+                settingsButton.IsVisible = (Client.State != PlayState.Launched);
             };
         }
         
-        /*
-         * Sets the view to use.
-         */
-        public void SetView(ActiveView view)
+        /// <summary>
+        /// Sets the view to use.
+        /// </summary>
+        /// <param name="view">View to use.</param>
+        private void SetView(ActiveView view)
         {
             // Update the visibility.
             this.playView.IsVisible = (view == ActiveView.Play);
