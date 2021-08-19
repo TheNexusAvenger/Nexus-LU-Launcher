@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using NLUL.GUI.Component.Base;
 using NLUL.GUI.Component.Patches;
 using NLUL.GUI.Component.Play;
+using NLUL.GUI.Component.Settings;
 using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component
@@ -28,6 +29,11 @@ namespace NLUL.GUI.Component
         private readonly PatchesView patchesView;
         
         /// <summary>
+        /// View of the settings.
+        /// </summary>
+        private readonly SettingsView settingsView;
+        
+        /// <summary>
         /// Creates a toggle view panel.
         /// </summary>
         public ToggleView()
@@ -36,6 +42,7 @@ namespace NLUL.GUI.Component
             AvaloniaXamlLoader.Load(this);
             this.playView = this.Get<PlayView>("PlayView");
             this.patchesView = this.Get<PatchesView>("PatchesView");
+            this.settingsView = this.Get<SettingsView>("SettingsView");
             var playButton = this.Get<ImageTextButton>("PlayButton");
             var patchesButton = this.Get<ImageTextButton>("PatchesButton");
             var settingsButton = this.Get<ImageTextButton>("SettingsButton");
@@ -81,6 +88,7 @@ namespace NLUL.GUI.Component
             // Update the visibility.
             this.playView.IsVisible = (view == ActiveView.Play);
             this.patchesView.IsVisible = (view == ActiveView.Patches);
+            this.settingsView.IsVisible = (view == ActiveView.Settings);
         }
     }
 }

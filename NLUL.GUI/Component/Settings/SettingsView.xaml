@@ -1,0 +1,10 @@
+<StackPanel xmlns="https://github.com/avaloniaui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:NLUL.GUI.Component.Settings="clr-namespace:NLUL.GUI.Component.Settings"
+            x:Class="NLUL.GUI.Component.Settings.SettingsView">
+    <Border Background="#0C0D16" Width="664" Height="256" Margin="2,0" CornerRadius="7">
+        <ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left">
+            <StackPanel Name="ServerList" Margin="0,0,0,5"/>
+        </ScrollViewer>
+    </Border>
+</StackPanel>
