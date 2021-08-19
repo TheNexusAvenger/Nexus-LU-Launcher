@@ -326,7 +326,10 @@ namespace NLUL.GUI.Component.Play
                     // The launch may get delayed by pre-launch patches.
                     if (!SystemInfo.GetDefault().Settings.LogsEnabled)
                     {
-                        this.GetWindow()?.Close();
+                        this.Run(() =>
+                        {
+                            this.GetWindow()?.Close();
+                        });
                         return;
                     }
                     Client.SetState(PlayState.Launched);
