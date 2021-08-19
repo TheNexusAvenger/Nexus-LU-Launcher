@@ -1,7 +1,10 @@
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using NLUL.Core;
 using NLUL.GUI.Component.Base;
+using NLUL.GUI.Component.Prompt;
+using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component.Settings
 {
@@ -10,12 +13,17 @@ namespace NLUL.GUI.Component.Settings
         /// <summary>
         /// Information about the system.
         /// </summary>
-        private SystemInfo systemInfo = SystemInfo.GetDefault();
+        private readonly SystemInfo systemInfo = SystemInfo.GetDefault();
 
         /// <summary>
         /// Button for toggling the logs.
         /// </summary>
-        private RoundedImageButton logsToggle;
+        private readonly RoundedImageButton logsToggle;
+
+        /// <summary>
+        /// List of the sources.
+        /// </summary>
+        private readonly ComboBox sourcesList;
         
         /// <summary>
         /// Creates a settings view.
@@ -25,6 +33,7 @@ namespace NLUL.GUI.Component.Settings
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
             this.logsToggle = this.Get<RoundedImageButton>("LogsToggle");
+            this.sourcesList = this.Get<ComboBox>("SourcesList");
             this.UpdateSettings();
             
             // Connect the events.
@@ -34,12 +43,24 @@ namespace NLUL.GUI.Component.Settings
                 this.systemInfo.SaveSettings();
                 this.UpdateSettings();
             };
+            this.sourcesList.SelectionChanged += (sender, args) =>
+            {
+                var newSource = Client.ClientSourcesList.First(source => ("(" + source.Type + ") " + source.Name) == (string) sourcesList.SelectedItem);
+                if (newSource == Client.ClientSource) return;
+                ConfirmPrompt.OpenPrompt("Changing client sources will delete you existing client and require a re-download. Continue?", () =>
+                    {
+                        // TODO: Change client source.
+                    }, () =>
+                    {
+                        sourcesList.SelectedItem = "(" + Client.ClientSource.Type + ") " + Client.ClientSource.Name;
+                    });
+            };
         }
 
         /// <summary>
         /// Updates the displayed settings.
         /// </summary>
-        public void UpdateSettings()
+        private void UpdateSettings()
         {
             // Update the logs toggle.
             if (this.systemInfo.Settings.LogsEnabled)
@@ -55,6 +76,11 @@ namespace NLUL.GUI.Component.Settings
                 this.logsToggle.PressSource = "/Assets/Images/Prompt/CancelPress.png";
             }
             this.logsToggle.UpdateSource();
+            
+            // Update the sources list.
+            var sources = Client.ClientSourcesList.Select(source => "(" + source.Type + ") " + source.Name).ToList();
+            this.sourcesList.Items = sources;
+            this.sourcesList.PlaceholderText = "(" + Client.ClientSource.Type + ") " + Client.ClientSource.Name;
         }
     }
 }

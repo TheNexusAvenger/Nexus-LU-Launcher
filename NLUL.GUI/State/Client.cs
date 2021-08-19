@@ -102,6 +102,11 @@ namespace NLUL.GUI.State
         /// Selected client source.
         /// </summary>
         public static ClientSourceEntry ClientSource => ClientRunner.ClientSource;
+
+        /// <summary>
+        /// Client source options.
+        /// </summary>
+        public static SourceList ClientSourcesList => ClientRunner.ClientSourcesList;
         
         /// <summary>
         /// Current state of the client.
