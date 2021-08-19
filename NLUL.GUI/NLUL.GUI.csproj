@@ -27,5 +27,6 @@
     <ItemGroup>
       <UpToDateCheckInput Remove="Component\Host\HostButtons.xaml" />
       <UpToDateCheckInput Remove="Component\Host\HostView.xaml" />
+      <UpToDateCheckInput Remove="Prompt\ConfirmPrompt.xaml" />
     </ItemGroup>
 </Project>

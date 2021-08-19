@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using NLUL.GUI.Component.Base;
+using NLUL.GUI.Component.Prompt;
 using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component.Play
@@ -93,7 +94,10 @@ namespace NLUL.GUI.Component.Play
             };
             removeButton.ButtonPressed += (sender, args) =>
             {
-                PersistentState.RemoveServerEntry(this.ServerName);
+                ConfirmPrompt.OpenPrompt("Confirm removing the server \"" + this.ServerName + "\"?", () =>
+                {
+                    PersistentState.RemoveServerEntry(this.ServerName);
+                });
             };
             PersistentState.SelectedServerChanged += this.UpdateSelectButton;
             

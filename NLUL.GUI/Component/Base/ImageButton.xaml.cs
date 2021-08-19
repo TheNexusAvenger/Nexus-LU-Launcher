@@ -37,8 +37,8 @@ namespace NLUL.GUI.Component.Base
         /// </summary>
         public string HoverSource
         {
-            get { return GetValue(HoverSourceProperty); }
-            set { SetValue(HoverSourceProperty,value); }
+            get => GetValue(HoverSourceProperty);
+            set => SetValue(HoverSourceProperty, value);
         }
         public static readonly StyledProperty<string> HoverSourceProperty = AvaloniaProperty.Register<Window, string>(nameof(HoverSource), "");
         
@@ -48,7 +48,7 @@ namespace NLUL.GUI.Component.Base
         public string PressSource
         {
             get => GetValue(PressSourceProperty);
-            set => SetValue(PressSourceProperty,value);
+            set => SetValue(PressSourceProperty, value);
         }
         public static readonly StyledProperty<string> PressSourceProperty = AvaloniaProperty.Register<Window, string>(nameof(PressSource), "");
         
@@ -58,7 +58,7 @@ namespace NLUL.GUI.Component.Base
         public bool Active
         {
             get => GetValue(ActiveProperty);
-            set => SetValue(ActiveProperty,value);
+            set => SetValue(ActiveProperty, value);
         }
         public static readonly StyledProperty<bool> ActiveProperty = AvaloniaProperty.Register<Window, bool>(nameof(Active), true);
 
