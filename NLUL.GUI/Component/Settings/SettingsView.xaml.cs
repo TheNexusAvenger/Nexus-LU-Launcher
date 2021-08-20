@@ -98,9 +98,8 @@ namespace NLUL.GUI.Component.Settings
                     // Move the clients.
                     ConfirmPrompt.OpenPrompt("Changing install locations will move any clients you have downloaded to it. Continue?", () =>
                     {
+                        this.parentDirectoryDisplay.Text = newDirectory.Replace(Path.DirectorySeparatorChar == '/' ? '\\' : '/', Path.DirectorySeparatorChar);
                         Client.ChangeParentDirectory(newDirectory);
-                        this.systemInfo.Settings.ClientParentLocation = newDirectory;
-                        this.UpdateSettings();
                     });
                 });
             };
