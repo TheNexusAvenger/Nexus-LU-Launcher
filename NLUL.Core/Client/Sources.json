@@ -2,7 +2,7 @@
   {
     "Name": "Local Test 1",
     "Type": "Unpacked",
-    "Url": "http://localhost:8000/luclient.zip",
+    "Url": "https://s3.amazonaws.com/luclient/luclient.zip",
     "Method": "zip",
     "Patches": [
       {
