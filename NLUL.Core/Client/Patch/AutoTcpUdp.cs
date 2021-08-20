@@ -42,22 +42,22 @@ namespace NLUL.Core.Client.Patch
         /// <summary>
         /// Location of the mod folder.
         /// </summary>
-        private readonly string modFolderLocation;
+        private string ModFolderLocation => Path.Combine(this.systemInfo.ClientLocation, "mods", "auto_raknet_replacer");
         
         /// <summary>
         /// Location of the disabled mod folder.
         /// </summary>
-        private readonly string disableModFolderLocation;
+        private string DisableModFolderLocation => Path.Combine(this.systemInfo.ClientLocation, "disabledmods", "auto_raknet_replacer");
         
         /// <summary>
         /// Location of the mod executable.
         /// </summary>
-        private readonly string modLocation;
+        private string ModLocation => Path.Combine(this.ModFolderLocation, "mod.dll");
         
         /// <summary>
         /// Location of the disabled mod executable.
         /// </summary>
-        private readonly string disabledModLocation;
+        private string DisabledModLocation => Path.Combine(this.DisableModFolderLocation, "mod.dll");
         
         /// <summary>
         /// Whether an update is available.
@@ -67,22 +67,18 @@ namespace NLUL.Core.Client.Patch
         /// <summary>
         /// Whether the patch is installed
         /// </summary>
-        public bool Installed => File.Exists(this.modLocation) || File.Exists(this.disabledModLocation);
+        public bool Installed => File.Exists(this.ModLocation) || File.Exists(this.DisabledModLocation);
 
         /// <summary>
         /// Creates the patch.
         /// </summary>
         /// <param name="systemInfo">System info of the client.</param>
         /// <param name="manifest">GitHub manifest of the client.</param>
-        public AutoTcpUdp(SystemInfo systemInfo,GitHubManifest manifest)
+        public AutoTcpUdp(SystemInfo systemInfo, GitHubManifest manifest)
         {
             this.systemInfo = systemInfo;
             this.manifest = manifest;
             this.repositoryEntry = manifest.GetEntry("lcdr/raknet_shim_dll", Path.Combine(systemInfo.SystemFileLocation, "autotcpudp"));
-            this.modFolderLocation = Path.Combine(this.systemInfo.ClientLocation, "mods", "auto_raknet_replacer");
-            this.disableModFolderLocation = Path.Combine(this.systemInfo.ClientLocation, "disabledmods", "auto_raknet_replacer");
-            this.modLocation = Path.Combine(this.modFolderLocation, "mod.dll");
-            this.disabledModLocation = Path.Combine(this.disableModFolderLocation, "mod.dll");
         }
 
         /// <summary>
@@ -94,20 +90,20 @@ namespace NLUL.Core.Client.Patch
             var tag = this.repositoryEntry.GetLatestTag();
             
             // Create the mod directory.
-            if (!Directory.Exists(this.modFolderLocation))
+            if (!Directory.Exists(this.ModFolderLocation))
             {
-                Directory.CreateDirectory(this.modFolderLocation);
+                Directory.CreateDirectory(this.ModFolderLocation);
             }
 
             // Remove the existing mod.dll.
-            if (File.Exists(this.modLocation))
+            if (File.Exists(this.ModLocation))
             {
-                File.Delete(this.modLocation);
+                File.Delete(this.ModLocation);
             }
             
             // Download the mod.
             var client = new WebClient();
-            client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.dll", modLocation);
+            client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.dll", ModLocation);
 
             // Save the manifest.
             this.repositoryEntry.LastCommit = tag.commit;
@@ -120,13 +116,13 @@ namespace NLUL.Core.Client.Patch
         public void Uninstall()
         {
             // Remove the mod directory.
-            if (Directory.Exists(this.modFolderLocation))
+            if (Directory.Exists(this.ModFolderLocation))
             {
-                Directory.Delete(this.modFolderLocation, true);
+                Directory.Delete(this.ModFolderLocation, true);
             }
-            if (Directory.Exists(this.disableModFolderLocation))
+            if (Directory.Exists(this.DisableModFolderLocation))
             {
-                Directory.Delete(this.disableModFolderLocation, true);
+                Directory.Delete(this.DisableModFolderLocation, true);
             }
         }
         
@@ -178,7 +174,7 @@ namespace NLUL.Core.Client.Patch
         /// </summary>
         private void Enable()
         {
-            this.SwitchModDirectory(this.disableModFolderLocation, this.modFolderLocation);
+            this.SwitchModDirectory(this.DisableModFolderLocation, this.ModFolderLocation);
         }
         
         /// <summary>
@@ -186,7 +182,7 @@ namespace NLUL.Core.Client.Patch
         /// </summary>
         private void Disable()
         {
-            this.SwitchModDirectory(this.modFolderLocation, this.disableModFolderLocation);
+            this.SwitchModDirectory(this.ModFolderLocation, this.DisableModFolderLocation);
         }
         
         /// <summary>

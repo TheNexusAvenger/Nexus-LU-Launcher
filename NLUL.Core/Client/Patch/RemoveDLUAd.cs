@@ -20,9 +20,14 @@ namespace NLUL.Core.Client.Patch
         public ClientPatchName PatchEnum => ClientPatchName.RemoveDLUAd;
         
         /// <summary>
+        /// System info of the client.
+        /// </summary>
+        private readonly SystemInfo systemInfo;
+        
+        /// <summary>
         /// Location of the locale file.
         /// </summary>
-        private readonly string localeFileLocation;
+        private string LocaleFileLocation => Path.Combine(systemInfo.ClientLocation, "locale", "locale.xml");
      
         /// <summary>
         /// Whether an update is available.
@@ -32,7 +37,7 @@ namespace NLUL.Core.Client.Patch
         /// <summary>
         /// Whether the patch is installed
         /// </summary>
-        public bool Installed => File.Exists(this.localeFileLocation) && !File.ReadAllText(this.localeFileLocation).Contains("DLU is coming!");
+        public bool Installed => File.Exists(this.LocaleFileLocation) && !File.ReadAllText(this.LocaleFileLocation).Contains("DLU is coming!");
      
         /// <summary>
         /// Creates the patch.
@@ -40,7 +45,7 @@ namespace NLUL.Core.Client.Patch
         /// <param name="systemInfo">System info of the client.</param>
         public RemoveDLUAd(SystemInfo systemInfo)
         {
-            this.localeFileLocation = Path.Combine(systemInfo.ClientLocation, "locale", "locale.xml");
+            this.systemInfo = systemInfo;
         }
         
         /// <summary>
@@ -48,9 +53,9 @@ namespace NLUL.Core.Client.Patch
         /// </summary>
         public void Install()
         {
-            if (!File.Exists(this.localeFileLocation)) return;
-            File.WriteAllText(this.localeFileLocation,
-                File.ReadAllText(this.localeFileLocation)
+            if (!File.Exists(this.LocaleFileLocation)) return;
+            File.WriteAllText(this.LocaleFileLocation,
+                File.ReadAllText(this.LocaleFileLocation)
                     .Replace("DLU is coming!", "Build on Nimbus Isle!")
                     .Replace("Follow us on Twitter", "Get inspired and build on Nimbus Station&apos;s largest Property!")
                     .Replace("@darkflameuniv", "Look for the launch pad by the water&apos;s edge in Brick Annexe!"));
@@ -61,9 +66,9 @@ namespace NLUL.Core.Client.Patch
         /// </summary>
         public void Uninstall()
         {
-            if (!File.Exists(this.localeFileLocation)) return;
-            File.WriteAllText(this.localeFileLocation,
-                File.ReadAllText(this.localeFileLocation)
+            if (!File.Exists(this.LocaleFileLocation)) return;
+            File.WriteAllText(this.LocaleFileLocation,
+                File.ReadAllText(this.LocaleFileLocation)
                     .Replace("Build on Nimbus Isle!", "DLU is coming!")
                     .Replace("Get inspired and build on Nimbus Station&apos;s largest Property!", "Follow us on Twitter")
                     .Replace("Look for the launch pad by the water&apos;s edge in Brick Annexe!", "@darkflameuniv"));

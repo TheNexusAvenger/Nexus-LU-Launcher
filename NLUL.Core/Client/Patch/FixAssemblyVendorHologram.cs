@@ -33,9 +33,14 @@ namespace NLUL.Core.Client.Patch
         private static readonly byte[] ValidAnimPath = Encoding.ASCII.GetBytes("\x01(\x00\x00\x00.\\..\\..\\mesh\\3DUI\\Assembly_Logo_Sign.nif");
         
         /// <summary>
+        /// System info of the client.
+        /// </summary>
+        private readonly SystemInfo systemInfo;
+        
+        /// <summary>
         /// Location of the Assembly sign in Nimbus Station.
         /// </summary>
-        private readonly string assemblySignFileLocation;
+        private string AssemblySignFileLocation => Path.Combine(this.systemInfo.ClientLocation, "res", "animations", "3dui", "assembly_sign_anim_sm.kfm");
      
         /// <summary>
         /// Whether an update is available.
@@ -45,7 +50,7 @@ namespace NLUL.Core.Client.Patch
         /// <summary>
         /// Whether the patch is installed
         /// </summary>
-        public bool Installed => File.Exists(this.assemblySignFileLocation) && !((IList) File.ReadAllBytes(this.assemblySignFileLocation)).Contains((byte) ':');
+        public bool Installed => File.Exists(this.AssemblySignFileLocation) && !((IList) File.ReadAllBytes(this.AssemblySignFileLocation)).Contains((byte) ':');
         
         /// <summary>
         /// Creates the patch.
@@ -53,7 +58,7 @@ namespace NLUL.Core.Client.Patch
         /// <param name="systemInfo">System info of the client.</param>
         public FixAssemblyVendorHologram(SystemInfo systemInfo)
         {
-            this.assemblySignFileLocation = Path.Combine(systemInfo.ClientLocation, "res", "animations", "3dui", "assembly_sign_anim_sm.kfm");
+            this.systemInfo = systemInfo;
         }
         
         /// <summary>
@@ -61,7 +66,7 @@ namespace NLUL.Core.Client.Patch
         /// </summary>
         public void Install()
         {
-            ReplaceByteContents(this.assemblySignFileLocation, InvalidAnimPath, ValidAnimPath);
+            ReplaceByteContents(this.AssemblySignFileLocation, InvalidAnimPath, ValidAnimPath);
         }
         
         /// <summary>
@@ -69,7 +74,7 @@ namespace NLUL.Core.Client.Patch
         /// </summary>
         public void Uninstall()
         {
-            ReplaceByteContents(this.assemblySignFileLocation, ValidAnimPath, InvalidAnimPath);
+            ReplaceByteContents(this.AssemblySignFileLocation, ValidAnimPath, InvalidAnimPath);
         }
         
         /// <summary>

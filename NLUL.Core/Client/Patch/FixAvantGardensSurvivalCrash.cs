@@ -20,9 +20,14 @@ namespace NLUL.Core.Client.Patch
         public ClientPatchName PatchEnum => ClientPatchName.FixAvantGardensSurvivalCrash;
         
         /// <summary>
+        /// System info of the client.
+        /// </summary>
+        private readonly SystemInfo systemInfo;
+
+        /// <summary>
         /// Location of the Avant Gardens Survival client file.
         /// </summary>
-        private readonly string survivalScriptFileLocation;
+        private string SurvivalScriptFileLocation => Path.Combine(systemInfo.ClientLocation, "res", "scripts", "ai", "minigame", "survival", "l_zone_survival_client.lua");
      
         /// <summary>
         /// Whether an update is available.
@@ -32,7 +37,7 @@ namespace NLUL.Core.Client.Patch
         /// <summary>
         /// Whether the patch is installed
         /// </summary>
-        public bool Installed => File.Exists(this.survivalScriptFileLocation) && !File.ReadAllText(this.survivalScriptFileLocation).Contains("    PlayerReady(self)");
+        public bool Installed => File.Exists(this.SurvivalScriptFileLocation) && !File.ReadAllText(this.SurvivalScriptFileLocation).Contains("    PlayerReady(self)");
      
         /// <summary>
         /// Creates the patch.
@@ -40,7 +45,7 @@ namespace NLUL.Core.Client.Patch
         /// <param name="systemInfo">System info of the client.</param>
         public FixAvantGardensSurvivalCrash(SystemInfo systemInfo)
         {
-            this.survivalScriptFileLocation = Path.Combine(systemInfo.ClientLocation, "res", "scripts", "ai", "minigame", "survival", "l_zone_survival_client.lua");
+            this.systemInfo = systemInfo;
         }
         
         /// <summary>
@@ -48,9 +53,9 @@ namespace NLUL.Core.Client.Patch
         /// </summary>
         public void Install()
         {
-            if (!File.Exists(this.survivalScriptFileLocation)) return;
-            File.WriteAllText(this.survivalScriptFileLocation,
-                File.ReadAllText(this.survivalScriptFileLocation)
+            if (!File.Exists(this.SurvivalScriptFileLocation)) return;
+            File.WriteAllText(this.SurvivalScriptFileLocation,
+                File.ReadAllText(this.SurvivalScriptFileLocation)
                     .Replace("    PlayerReady(self)", "    onPlayerReady(self)"));
         }
         
@@ -59,9 +64,9 @@ namespace NLUL.Core.Client.Patch
         /// </summary>
         public void Uninstall()
         {
-            if (!File.Exists(this.survivalScriptFileLocation)) return;
-            File.WriteAllText(this.survivalScriptFileLocation,
-                File.ReadAllText(this.survivalScriptFileLocation)
+            if (!File.Exists(this.SurvivalScriptFileLocation)) return;
+            File.WriteAllText(this.SurvivalScriptFileLocation,
+                File.ReadAllText(this.SurvivalScriptFileLocation)
                     .Replace("    onPlayerReady(self)", "    PlayerReady(self)"));
         }
     }
