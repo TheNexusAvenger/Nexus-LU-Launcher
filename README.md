@@ -56,7 +56,7 @@ is a proper justification to have them. They can including finishing incomplete
 features on the client, like guilds, or components that allow the client
 to work, like alternative communication mods.
 
-## Servers (Coming Soon)
+## Servers *(Cancelled)*
 Creating servers has been removed from the project as of release 0.3.0.
 
 # Disclaimer
