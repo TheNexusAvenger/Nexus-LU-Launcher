@@ -59,11 +59,16 @@ namespace NLUL.Core.Util
         /// Repository of the entry.
         /// </summary>
         public string Repository { get; set; }
-        
+
         /// <summary>
         /// Directory of the entry.
         /// </summary>
-        public string EntryDirectory { get; set; }
+        private string entryDirectory;
+        public string EntryDirectory
+        {
+            get => this.entryDirectory;
+            set => this.entryDirectory = value.Replace("\\", "/");
+        }
         
         /// <summary>
         /// Last commit of the entry.
@@ -73,6 +78,7 @@ namespace NLUL.Core.Util
         /// <summary>
         /// Manifest of the entry.
         /// </summary>
+        [JsonIgnore]
         public GitHubManifest Manifest { get; internal set; }
         
         /// <summary>
@@ -247,7 +253,7 @@ namespace NLUL.Core.Util
         /// <summary>
         /// Entries in the manifest.
         /// </summary>
-        private readonly List<GitHubManifestEntry> manifest = new List<GitHubManifestEntry>();
+        public readonly List<GitHubManifestEntry> Manifest = new List<GitHubManifestEntry>();
         
         /// <summary>
         /// File location of the manifest.
@@ -266,7 +272,7 @@ namespace NLUL.Core.Util
             if (!File.Exists(fileLocation)) return;
             try
             {
-                this.manifest = JsonConvert.DeserializeObject<List<GitHubManifestEntry>>(File.ReadAllText(fileLocation));
+                this.Manifest = JsonConvert.DeserializeObject<List<GitHubManifestEntry>>(File.ReadAllText(fileLocation));
             }
             catch (JsonException)
             {
@@ -280,10 +286,12 @@ namespace NLUL.Core.Util
         /// <param name="repository">Repository to get.</param>
         /// <param name="directory">Directory to manage.</param>
         /// <returns>Whether the entry for a remote and file location.</returns>
-        public GitHubManifestEntry GetEntry(string repository,string directory)
+        public GitHubManifestEntry GetEntry(string repository, string directory)
         {
+            directory = directory.Replace("\\", "/");
+            
             // Find and return the entry if it exists.
-            foreach (var entry in this.manifest)
+            foreach (var entry in this.Manifest)
             {
                 if (string.Equals(entry.Repository, repository, StringComparison.CurrentCultureIgnoreCase) && string.Equals(entry.EntryDirectory, directory, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -294,7 +302,7 @@ namespace NLUL.Core.Util
             
             // Create and return a new entry.
             var newEntry = new GitHubManifestEntry(repository,directory, this);
-            this.manifest.Add(newEntry);
+            this.Manifest.Add(newEntry);
             return newEntry;
         }
         
@@ -303,7 +311,7 @@ namespace NLUL.Core.Util
         /// </summary>
         protected internal void Save()
         {
-            File.WriteAllText(this.fileLocation,JsonConvert.SerializeObject(this.manifest,Formatting.Indented));
+            File.WriteAllText(this.fileLocation,JsonConvert.SerializeObject(this.Manifest,Formatting.Indented));
         }
     }
 }

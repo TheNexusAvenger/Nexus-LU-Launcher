@@ -40,7 +40,7 @@ namespace NLUL.Core.Client
         /// <summary>
         /// Patcher for the client runner.
         /// </summary>
-        public ClientPatcher Patcher { get; }
+        public ClientPatcher Patcher { get; private set; }
 
         /// <summary>
         /// Size of the client to download. Initially set to the rough size of the
@@ -118,7 +118,40 @@ namespace NLUL.Core.Client
                 this.DownloadStateChanged?.Invoke(null, state);
             };
         }
-        
+
+        /// <summary>
+        /// Moves the client parent directory.
+        /// </summary>
+        /// <param name="destination">Destination directory of the clients.</param>
+        public void MoveClientParentDirectory(string destination)
+        {
+            // Create the parent directory.
+            var existingParentDirectory = this.systemInfo.SystemFileLocation;
+            Directory.CreateDirectory(destination);
+            foreach (var manifestEntry in this.Patcher.Manifest.Manifest)
+            {
+                manifestEntry.EntryDirectory = manifestEntry.EntryDirectory.Replace(existingParentDirectory.Replace("\\", "/"), destination.Replace("\\", "/"));
+            }
+            this.Patcher.Manifest.Save();
+
+            // Set the parent directory.
+            this.systemInfo.Settings.ClientParentLocation = destination;
+            this.systemInfo.SaveSettings();
+
+            // Move the clients.
+            foreach (var clientDirectory in Directory.GetDirectories(existingParentDirectory))
+            {
+                var clientDirectoryName = new DirectoryInfo(clientDirectory).Name;
+                if (File.Exists(Path.Combine(clientDirectory, "legouniverse.exe")))
+                {
+                    Directory.Move(clientDirectory, Path.Combine(destination, clientDirectoryName));
+                }
+            }
+
+            // Reload the patches.
+            this.Patcher = new ClientPatcher(systemInfo);
+        }
+
         /// <summary>
         /// Tries to download and extract the client files. If it fails,
         /// the client is re-downloaded.

@@ -27,6 +27,11 @@ namespace NLUL.Core.Client.Patch
         /// Patches that can be applied to the client.
         /// </summary>
         public readonly List<IPatch> Patches;
+
+        /// <summary>
+        /// Manifest of the client patcher.
+        /// </summary>
+        public readonly GitHubManifest Manifest;
         
         /// <summary>
         /// Creates the client patcher.
@@ -34,12 +39,12 @@ namespace NLUL.Core.Client.Patch
         /// <param name="systemInfo">System info of the client.</param>
         public ClientPatcher(SystemInfo systemInfo)
         {
-            var manifest = new GitHubManifest(Path.Combine(systemInfo.ClientLocation, "GitHubPatches.json"));
+            this.Manifest = new GitHubManifest(Path.Combine(systemInfo.ClientLocation, "GitHubPatches.json"));
             this.Patches = new List<IPatch>()
             {
-                new ModLoader(systemInfo, manifest),
-                new TcpUdp(systemInfo, manifest),
-                new AutoTcpUdp(systemInfo, manifest),
+                new ModLoader(systemInfo, this.Manifest),
+                new TcpUdp(systemInfo, this.Manifest),
+                new AutoTcpUdp(systemInfo, this.Manifest),
                 new FixAvantGardensSurvivalCrash(systemInfo),
                 new FixAssemblyVendorHologram(systemInfo),
                 new RemoveDLUAd(systemInfo),

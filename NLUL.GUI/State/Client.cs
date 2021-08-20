@@ -313,6 +313,27 @@ namespace NLUL.GUI.State
                 UpdateState();
             });
         }
+
+        /// <summary>
+        /// Changes the parent directory of the client.
+        /// </summary>
+        /// <param name="destination">Destination of the client.</param>
+        public static void ChangeParentDirectory(string destination)
+        {
+            // Set the state to deleting.
+            SetState(PlayState.MovingClientDirectory);
+            
+            // Start moving the clients.
+            Task.Run(() =>
+            {
+                // Move the clients.
+                ClientRunner.MoveClientParentDirectory(destination);
+                
+                // Reset the state.
+                SetState(PlayState.Uninitialized);
+                UpdateState();
+            });
+        }
         
         /// <summary>
         /// Launches the client.
