@@ -30,7 +30,7 @@ namespace NLUL.Core.Client.Patch
         /// <summary>
         /// Whether the patch is installed
         /// </summary>
-        public bool Installed => !File.Exists(this.assemblySignFileLocation) || !((IList) File.ReadAllBytes(this.assemblySignFileLocation)).Contains((byte) ':');
+        public bool Installed => File.Exists(this.assemblySignFileLocation) && !((IList) File.ReadAllBytes(this.assemblySignFileLocation)).Contains((byte) ':');
         
         /// <summary>
         /// Creates the patch.

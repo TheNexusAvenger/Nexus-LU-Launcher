@@ -17,7 +17,7 @@ namespace NLUL.Core.Client.Patch
         /// <summary>
         /// Whether the patch is installed
         /// </summary>
-        public bool Installed => !File.Exists(this.localeFileLocation) || !File.ReadAllText(this.localeFileLocation).Contains("DLU is coming!");
+        public bool Installed => File.Exists(this.localeFileLocation) && !File.ReadAllText(this.localeFileLocation).Contains("DLU is coming!");
      
         /// <summary>
         /// Creates the patch.
