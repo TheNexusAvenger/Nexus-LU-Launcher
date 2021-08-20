@@ -24,9 +24,7 @@ be made at some point:
 
 ## Custom Download Location
 By default, Nexus LU Launcher will download files to a directory named
-`.nlul` in your user directory. This can be changed by setting `NLULHome`
-in your system's environment variables. See other guides on how to do
-this for your specific operating system.
+`.nlul` in your user directory. This can be changed in the "Settings" tab.
 
 # Building
 Nexus LEGO Universe Launcher requires .NET 5.0 to be installed
