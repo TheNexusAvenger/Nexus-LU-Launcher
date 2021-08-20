@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
@@ -25,7 +26,7 @@ namespace NLUL.Core.Client.Patch
         /// <summary>
         /// Patches that can be applied to the client.
         /// </summary>
-        public readonly Dictionary<ClientPatchName,IPatch> patches;
+        public readonly List<IPatch> Patches;
         
         /// <summary>
         /// Creates the client patcher.
@@ -34,15 +35,24 @@ namespace NLUL.Core.Client.Patch
         public ClientPatcher(SystemInfo systemInfo)
         {
             var manifest = new GitHubManifest(Path.Combine(systemInfo.ClientLocation, "GitHubPatches.json"));
-            this.patches = new Dictionary<ClientPatchName,IPatch>()
+            this.Patches = new List<IPatch>()
             {
-                {ClientPatchName.ModLoader, new ModLoader(systemInfo, manifest)},
-                {ClientPatchName.TcpUdp, new TcpUdp(systemInfo, manifest)},
-                {ClientPatchName.AutoTcpUdp, new AutoTcpUdp(systemInfo, manifest)},
-                {ClientPatchName.FixAssemblyVendorHologram, new FixAssemblyVendorHologram(systemInfo)},
-                {ClientPatchName.RemoveDLUAd, new RemoveDLUAd(systemInfo)},
-                {ClientPatchName.FixAvantGardensSurvivalCrash, new FixAvantGardensSurvivalCrash(systemInfo)},
+                new ModLoader(systemInfo, manifest),
+                new TcpUdp(systemInfo, manifest),
+                new AutoTcpUdp(systemInfo, manifest),
+                new FixAvantGardensSurvivalCrash(systemInfo),
+                new FixAssemblyVendorHologram(systemInfo),
+                new RemoveDLUAd(systemInfo),
             };
+        }
+
+        /// <summary>
+        /// Returns the patch for the given name.
+        /// </summary>
+        /// <param name="patchName">Patch name to search for.</param>
+        private IPatch GetPatch(ClientPatchName patchName)
+        {
+            return this.Patches.First(patch => patch.PatchEnum == patchName);
         }
         
         /// <summary>
@@ -52,7 +62,7 @@ namespace NLUL.Core.Client.Patch
         /// <returns>Whether an update is available for the patch.</returns>
         public bool IsUpdateAvailable(ClientPatchName patchName)
         {
-            return this.patches[patchName].UpdateAvailable;
+            return this.GetPatch(patchName).UpdateAvailable;
         }
         
         /// <summary>
@@ -62,7 +72,7 @@ namespace NLUL.Core.Client.Patch
         /// <returns>Whether the patch is installed.</returns>
         public bool IsInstalled(ClientPatchName patchName)
         {
-            return this.patches[patchName].Installed;
+            return this.GetPatch(patchName).Installed;
         }
         
         /// <summary>
@@ -72,7 +82,7 @@ namespace NLUL.Core.Client.Patch
         public void Install(ClientPatchName patchName)
         {
             // Return if the patch is installed and up to date.
-            var patch = this.patches[patchName];
+            var patch = this.GetPatch(patchName);
             if (patch.Installed && !patch.UpdateAvailable)
             {
                 return;
@@ -89,7 +99,7 @@ namespace NLUL.Core.Client.Patch
         public void Uninstall(ClientPatchName patchName)
         {
             // Return if the patch is not installed.
-            var patch = this.patches[patchName];
+            var patch = this.GetPatch(patchName);
             if (!patch.Installed)
             {
                 return;

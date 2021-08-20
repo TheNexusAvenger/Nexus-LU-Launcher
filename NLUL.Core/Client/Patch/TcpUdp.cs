@@ -7,6 +7,21 @@ namespace NLUL.Core.Client.Patch
     public class TcpUdp : IPatch
     {
         /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        public string Name => "TCP/UDP Shim";
+        
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        public string Description => "Enables connecting to community-run LEGO Universe servers that use TCP/UDP. Requires the Mod Loader to be installed.";
+        
+        /// <summary>
+        /// Enum of the patch.
+        /// </summary>
+        public ClientPatchName PatchEnum => ClientPatchName.TcpUdp;
+        
+        /// <summary>
         /// System info of the client.
         /// </summary>
         private readonly SystemInfo systemInfo;

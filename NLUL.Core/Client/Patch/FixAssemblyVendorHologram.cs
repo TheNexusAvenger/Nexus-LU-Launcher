@@ -8,6 +8,21 @@ namespace NLUL.Core.Client.Patch
     public class FixAssemblyVendorHologram : IPatch
     {
         /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        public string Name => "Fix Assembly Vendor Hologram";
+        
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        public string Description => "Fixes the Assembly vendor at Nimbus Station showing a Missing NIF error.";
+
+        /// <summary>
+        /// Enum of the patch.
+        /// </summary>
+        public ClientPatchName PatchEnum => ClientPatchName.FixAssemblyVendorHologram;
+        
+        /// <summary>
         /// Data of the invalid path.
         /// </summary>
         private static readonly byte[] InvalidAnimPath = Encoding.ASCII.GetBytes("\x01" + "9\x00\x00\x00Z:\\lwo\\4_game\\client\\res\\mesh\\3DUI\\Assembly_Logo_Sign.nif"); // Has to be split since \x019 becomes 0b25 instead of 0b01 + '9'.

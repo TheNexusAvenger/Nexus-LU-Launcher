@@ -5,6 +5,21 @@ namespace NLUL.Core.Client.Patch
     public class RemoveDLUAd : IPatch
     {
         /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        public string Name => "Remove DLU Ad";
+        
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        public string Description => "Removes the advertisement for DLU from the zone loading screen.";
+
+        /// <summary>
+        /// Enum of the patch.
+        /// </summary>
+        public ClientPatchName PatchEnum => ClientPatchName.RemoveDLUAd;
+        
+        /// <summary>
         /// Location of the locale file.
         /// </summary>
         private readonly string localeFileLocation;

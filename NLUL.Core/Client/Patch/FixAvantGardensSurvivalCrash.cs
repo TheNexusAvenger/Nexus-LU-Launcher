@@ -5,6 +5,21 @@ namespace NLUL.Core.Client.Patch
     public class FixAvantGardensSurvivalCrash : IPatch
     {
         /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        public string Name => "Fix Avant Gardens Survival Crash";
+        
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        public string Description => "Fixes a mistake in the Avant Gardens Survival script that results in players crashing in Avant Gardens Survival if they are not the first player.";
+        
+        /// <summary>
+        /// Enum of the patch.
+        /// </summary>
+        public ClientPatchName PatchEnum => ClientPatchName.FixAvantGardensSurvivalCrash;
+        
+        /// <summary>
         /// Location of the Avant Gardens Survival client file.
         /// </summary>
         private readonly string survivalScriptFileLocation;

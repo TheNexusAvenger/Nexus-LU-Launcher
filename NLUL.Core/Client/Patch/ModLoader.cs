@@ -8,6 +8,21 @@ namespace NLUL.Core.Client.Patch
     public class ModLoader : IPatch
     {
         /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        public string Name => "Mod Loader";
+        
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        public string Description => "Allows the installation of client mods.";
+
+        /// <summary>
+        /// Enum of the patch.
+        /// </summary>
+        public ClientPatchName PatchEnum => ClientPatchName.ModLoader;
+        
+        /// <summary>
         /// System info of the client.
         /// </summary>
         private readonly SystemInfo systemInfo;

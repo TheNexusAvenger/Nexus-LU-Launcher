@@ -2,68 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using NLUL.Core.Client.Patch;
 using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component.Patches
 {
-    public class PatchData
-    {
-        /// <summary>
-        /// Name of the patch.
-        /// </summary>
-        public string PatchName { get; private init; }
-        
-        /// <summary>
-        /// Description of the patch.
-        /// </summary>
-        public string PatchDescription { get; private init; }
-        
-        /// <summary>
-        /// Enum of the patch.
-        /// </summary>
-        public ClientPatchName PatchEnum { get; private init; }
-        
-        /// <summary>
-        /// List of patches with the display information.
-        /// </summary>
-        public static readonly List<PatchData> Patches = new List<PatchData>()
-        {
-            new PatchData() {
-                PatchName = "Mod Loader",
-                PatchDescription = "Allows the installation of client mods.",
-                PatchEnum = ClientPatchName.ModLoader,
-            },
-            new PatchData() {
-                PatchName = "TCP/UDP Shim",
-                PatchDescription = "Enables connecting to community-run LEGO Universe servers that use TCP/UDP. Requires the Mod Loader to be installed.",
-                PatchEnum = ClientPatchName.TcpUdp,
-            },
-            new PatchData() {
-                PatchName = "Auto TCP/UDP Shim",
-                PatchDescription = "Enables connecting to community-run LEGO Universe servers that may or may not use TCP/UDP. This is automatically managed for the requested server. Requires the Mod Loader to be installed. Do not install with TCP/UDP Shim.",
-                PatchEnum = ClientPatchName.AutoTcpUdp,
-            },
-            new PatchData()
-            {
-                PatchName = "Fix Assembly Vendor Hologram",
-                PatchDescription = "Fixes the Assembly vendor at Nimbus Station showing a Missing NIF error.",
-                PatchEnum = ClientPatchName.FixAssemblyVendorHologram,
-            },
-            new PatchData() {
-                PatchName = "Remove DLU Ad",
-                PatchDescription = "Removes the advertisement for DLU from the zone loading screen.",
-                PatchEnum = ClientPatchName.RemoveDLUAd,
-            },
-            new PatchData()
-            {
-                PatchName = "Fix Avant Gardens Survival Crash",
-                PatchDescription = "Fixes a mistake in the Avant Gardens Survival script that results in players crashing in Avant Gardens Survival if they are not the first player.",
-                PatchEnum = ClientPatchName.FixAvantGardensSurvivalCrash,
-            }
-        };
-    }
-    
     public class PatchesView : StackPanel
     {
         /// <summary>
@@ -101,7 +43,7 @@ namespace NLUL.GUI.Component.Patches
             
             // Add the patches.
             var patcher = Client.Patcher;
-            foreach (var patch in PatchData.Patches)
+            foreach (var patch in Client.Patcher.Patches)
             {
                 if (Client.ClientSource.Patches.FirstOrDefault(o => o.Name == patch.PatchEnum) == null) continue;
                 var patchPanel = new PatchEntry();

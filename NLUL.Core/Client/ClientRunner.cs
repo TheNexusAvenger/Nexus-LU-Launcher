@@ -188,9 +188,9 @@ namespace NLUL.Core.Client
             File.WriteAllText(bootConfigLocation,bootConfig.ToString("\n"));
             
             // Apply any pre-launch patches.
-            foreach (var patch in Patcher.patches)
+            foreach (var patch in Patcher.Patches)
             {
-                if (patch.Value is IPreLaunchPatch preLaunchPatch)
+                if (patch is IPreLaunchPatch preLaunchPatch)
                 {
                     preLaunchPatch.OnClientRequestLaunch();
                 }

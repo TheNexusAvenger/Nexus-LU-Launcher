@@ -10,6 +10,21 @@ namespace NLUL.Core.Client.Patch
     public class AutoTcpUdp : IPreLaunchPatch
     {
         /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        public string Name => "Auto TCP/UDP Shim";
+        
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        public string Description => "Enables connecting to community-run LEGO Universe servers that may or may not use TCP/UDP. This is automatically managed for the requested server. Requires the Mod Loader to be installed. Do not install with TCP/UDP Shim.";
+
+        /// <summary>
+        /// Enum of the patch.
+        /// </summary>
+        public ClientPatchName PatchEnum => ClientPatchName.AutoTcpUdp;
+        
+        /// <summary>
         /// System info of the client.
         /// </summary>
         private readonly SystemInfo systemInfo;

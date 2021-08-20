@@ -3,6 +3,21 @@ namespace NLUL.Core.Client.Patch
     public interface IPatch
     {
         /// <summary>
+        /// Name of the patch.
+        /// </summary>
+        public string Name { get; }
+        
+        /// <summary>
+        /// Description of the patch.
+        /// </summary>
+        public string Description { get; }
+        
+        /// <summary>
+        /// Enum of the patch.
+        /// </summary>
+        public ClientPatchName PatchEnum { get; }
+        
+        /// <summary>
         /// Whether an update is available.
         /// </summary>
         public bool UpdateAvailable { get; }

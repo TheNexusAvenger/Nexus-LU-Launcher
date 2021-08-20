@@ -43,12 +43,12 @@ namespace NLUL.GUI.Component.Patches
         /// <summary>
         /// Data of the patch.
         /// </summary>
-        public PatchData PatchData
+        public IPatch PatchData
         {
             get => GetValue(PatchDataProperty);
             set => SetValue(PatchDataProperty, value);
         }
-        public static readonly StyledProperty<PatchData> PatchDataProperty = AvaloniaProperty.Register<Window, PatchData>(nameof(PatchData));
+        public static readonly StyledProperty<IPatch> PatchDataProperty = AvaloniaProperty.Register<Window, IPatch>(nameof(PatchData));
         
         /// <summary>
         /// Patcher of the client.
@@ -188,7 +188,7 @@ namespace NLUL.GUI.Component.Patches
                     this.SetStateConditionally(PatchState.UpdatesCheckFailed, PatchState.CheckingForUpdates);
                     this.Run(() =>
                     {
-                        Debug.WriteLine("Failed to fetch update for " + patchData.PatchName + " because: " + e);
+                        Debug.WriteLine("Failed to fetch update for " + patchData.Name + " because: " + e);
                     });
                 }
             });
@@ -220,7 +220,7 @@ namespace NLUL.GUI.Component.Patches
                     this.SetStateConditionally(PatchState.FailedToInstall, PatchState.Installing);
                     this.Run(() =>
                     {
-                        Debug.WriteLine("Failed to install for " + patchData.PatchName + " because: " + e);
+                        Debug.WriteLine("Failed to install for " + patchData.Name + " because: " + e);
                     });
                 }
             });
@@ -252,7 +252,7 @@ namespace NLUL.GUI.Component.Patches
                     this.SetStateConditionally(PatchState.FailedToUninstall, PatchState.Uninstalling);
                     this.Run(() =>
                     {
-                        Debug.WriteLine("Failed to uninstall for " + patchData.PatchName + " because: " + e);
+                        Debug.WriteLine("Failed to uninstall for " + patchData.Name + " because: " + e);
                     });
                 }
             });
@@ -284,7 +284,7 @@ namespace NLUL.GUI.Component.Patches
                     this.SetStateConditionally(PatchState.FailedToUpdate, PatchState.Updating);
                     this.Run(() =>
                     {
-                        Debug.WriteLine("Failed to update for " + patchData.PatchName + " because: " + e);
+                        Debug.WriteLine("Failed to update for " + patchData.Name + " because: " + e);
                     });
                 }
             });
@@ -418,8 +418,8 @@ namespace NLUL.GUI.Component.Patches
             }
             
             // Update the data.
-            this.patchName.Text = this.PatchData.PatchName;
-            this.patchDescription.Text = this.PatchData.PatchDescription;
+            this.patchName.Text = this.PatchData.Name;
+            this.patchDescription.Text = this.PatchData.Description;
         }
     }
 }
