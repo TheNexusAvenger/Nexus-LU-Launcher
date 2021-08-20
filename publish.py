@@ -2,9 +2,6 @@
 TheNexusAvenger
 
 Creates the binaries for distribution.
-Currently only does x64 builds. The need for ARM64
-(mainly macOS) is unknown given the client only runs
-on x86.
 """
 
 PROJECTS = [
@@ -13,6 +10,7 @@ PROJECTS = [
 PLATFORMS = [
     ["Windows-x64","win-x64"],
     ["macOS-x64","osx-x64"],
+    # ["macOS-ARM64","osx-arm64"], # TODO: LU works on Apple M1. .NET 6 required for macOS ARM64 (still in preview). Also need to find a tester to validate.
     ["Linux-x64","linux-x64"],
 ]
 
