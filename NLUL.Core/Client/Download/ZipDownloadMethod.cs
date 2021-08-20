@@ -66,30 +66,43 @@ namespace NLUL.Core.Client.Download
             {
                 return true;
             }
-            
-            // Verify the files exist and throw an exception if a file is missing.
-            using (var zipFile = ZipFile.OpenRead(this.DownloadLocation))
+
+            try
             {
-                var entries = zipFile.Entries;
-                foreach (var entry in entries)
+                // Verify the files exist and throw an exception if a file is missing.
+                using (var zipFile = ZipFile.OpenRead(this.DownloadLocation))
                 {
-                    // Get the file name to check.
-                    var fileName = entry.FullName;
-                    if (fileName.Contains("/"))
+                    var entries = zipFile.Entries;
+                    foreach (var entry in entries)
                     {
-                        var directory = fileName.Substring(0, fileName.IndexOf("/", StringComparison.Ordinal));
-                        if (!Directory.Exists(Path.Combine(this.SystemInfo.ClientLocation, directory)))
+                        // Get the file name to check.
+                        var fileName = entry.FullName;
+                        if (fileName.Contains("/"))
                         {
-                            fileName = fileName.Substring(fileName.IndexOf("/", StringComparison.Ordinal) + 1);
+                            var directory = fileName.Substring(0, fileName.IndexOf("/", StringComparison.Ordinal));
+                            if (!Directory.Exists(Path.Combine(this.SystemInfo.ClientLocation, directory)))
+                            {
+                                fileName = fileName.Substring(fileName.IndexOf("/", StringComparison.Ordinal) + 1);
+                            }
                         }
+
+                        // Throw an exception if the file is missing.
+                        var filePath = Path.Combine(this.SystemInfo.ClientLocation, fileName);
+                        if (entry.Length == 0 || File.Exists(filePath)) continue;
+                        return false;
                     }
-                    
-                    // Throw an exception if the file is missing.
-                    var filePath = Path.Combine(this.SystemInfo.ClientLocation, fileName);
-                    if (entry.Length == 0 || File.Exists(filePath)) continue;
-                    return false;
                 }
             }
+            catch (Exception)
+            {
+                // Clear the archive and return false. This would have happened if the archive is corrupted.
+                if (File.Exists(this.DownloadLocation))
+                {
+                    File.Delete(this.DownloadLocation);
+                }
+                return false;
+            }
+            
             
             // Delete the client archive.
             if (File.Exists(this.DownloadLocation))
