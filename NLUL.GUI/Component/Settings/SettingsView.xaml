@@ -14,6 +14,13 @@
                                                         Canvas.Top="8" Canvas.Left="210"/>
             <ComboBox Width="300" Height="28" Canvas.Top="50" Canvas.Left="210" Name="SourcesList"
                       Background="#FFFFFF"/>
+            <NLUL.GUI.Component.Base:RoundedImageButton Width="32" Height="32" Name="ChangeClientParentDirectory" Color="#2A2B34"
+                                                        BaseSource="/Assets/Images/BottomButtons/GearIcon.png"
+                                                        HoverSource="/Assets/Images/BottomButtons/GearIcon.png"
+                                                        PressSource="/Assets/Images/BottomButtons/GearIcon.png"
+                                                        Canvas.Top="88" Canvas.Left="210"/>
+            <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="ClientParentDirectory"
+                       FontSize="20" Canvas.Left="250" Canvas.Top="93">Some path</TextBlock>
         </Canvas>
     </Border>
 </StackPanel>

@@ -1,4 +1,6 @@
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using NLUL.Core;
@@ -24,6 +26,16 @@ namespace NLUL.GUI.Component.Settings
         /// List of the sources.
         /// </summary>
         private readonly ComboBox sourcesList;
+
+        /// <summary>
+        /// Display of the parent directory.
+        /// </summary>
+        private readonly TextBlock parentDirectoryDisplay;
+        
+        /// <summary>
+        /// Parent directory of the clients.
+        /// </summary>
+        private string CurrentParentDirectory => SystemInfo.GetDefault().SystemFileLocation.Replace(Path.DirectorySeparatorChar == '/' ? '\\' : '/', Path.DirectorySeparatorChar);
         
         /// <summary>
         /// Creates a settings view.
@@ -34,6 +46,7 @@ namespace NLUL.GUI.Component.Settings
             AvaloniaXamlLoader.Load(this);
             this.logsToggle = this.Get<RoundedImageButton>("LogsToggle");
             this.sourcesList = this.Get<ComboBox>("SourcesList");
+            this.parentDirectoryDisplay = this.Get<TextBlock>("ClientParentDirectory");
             this.UpdateSettings();
             
             // Connect the events.
@@ -45,9 +58,12 @@ namespace NLUL.GUI.Component.Settings
             };
             this.sourcesList.SelectionChanged += (sender, args) =>
             {
+                // Get the new source.
                 var newSource = Client.ClientSourcesList.First(source => ("(" + source.Type + ") " + source.Name) == (string) sourcesList.SelectedItem);
                 if (newSource == Client.ClientSource) return;
 
+                // Set the source.
+                // If the client isn't download, ignore warning the player.
                 if (Client.State == PlayState.DownloadClient || Client.State == PlayState.DownloadRuntime || Client.State == PlayState.DownloadRuntimeAndClient)
                 {
                     Client.ChangeSource(newSource);
@@ -62,6 +78,25 @@ namespace NLUL.GUI.Component.Settings
                         sourcesList.SelectedItem = "(" + Client.ClientSource.Type + ") " + Client.ClientSource.Name;
                     });
                 }
+            };
+            this.Get<RoundedImageButton>("ChangeClientParentDirectory").ButtonPressed += (sender, args) =>
+            {
+                Task.Run(async () =>
+                {
+                    // Prompt for the directory.
+                    var dialog = new OpenFolderDialog();
+                    dialog.Directory = this.CurrentParentDirectory;
+                    var newDirectory = await dialog.ShowAsync(this.GetWindow());
+                    if (newDirectory == null) return;
+                    
+                    // Move the clients.
+                    ConfirmPrompt.OpenPrompt("Changing install locations will move any clients you have downloaded to it. Continue?", () =>
+                    {
+                        Client.ChangeParentDirectory(newDirectory);
+                        this.systemInfo.Settings.ClientParentLocation = newDirectory;
+                        this.UpdateSettings();
+                    });
+                });
             };
         }
 
@@ -89,6 +124,9 @@ namespace NLUL.GUI.Component.Settings
             var sources = Client.ClientSourcesList.Select(source => "(" + source.Type + ") " + source.Name).ToList();
             this.sourcesList.Items = sources;
             this.sourcesList.PlaceholderText = "(" + Client.ClientSource.Type + ") " + Client.ClientSource.Name;
+            
+            // Update the parent directory.
+            this.parentDirectoryDisplay.Text = this.CurrentParentDirectory;
         }
     }
 }
