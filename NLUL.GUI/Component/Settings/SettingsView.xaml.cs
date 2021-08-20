@@ -47,13 +47,21 @@ namespace NLUL.GUI.Component.Settings
             {
                 var newSource = Client.ClientSourcesList.First(source => ("(" + source.Type + ") " + source.Name) == (string) sourcesList.SelectedItem);
                 if (newSource == Client.ClientSource) return;
-                ConfirmPrompt.OpenPrompt("Changing client sources will delete you existing client and require a re-download. Continue?", () =>
+
+                if (Client.State == PlayState.DownloadClient || Client.State == PlayState.DownloadRuntime || Client.State == PlayState.DownloadRuntimeAndClient)
+                {
+                    Client.ChangeSource(newSource);
+                }
+                else
+                {
+                    ConfirmPrompt.OpenPrompt("Changing client sources will delete you existing client and require a re-download. Continue?", () =>
                     {
-                        // TODO: Change client source.
+                        Client.ChangeSource(newSource);
                     }, () =>
                     {
                         sourcesList.SelectedItem = "(" + Client.ClientSource.Type + ") " + Client.ClientSource.Name;
                     });
+                }
             };
         }
 

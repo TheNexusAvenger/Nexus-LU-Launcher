@@ -273,6 +273,20 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = Client.RuntimeInstallMessage;
                 this.SetLoadingBar(0);
             }
+            else if (state == PlayState.DeletingClient)
+            {
+                this.playButton.Color = ButtonDisabledColor;
+                this.playButton.Active = false;
+                this.loadingText.Text = "Deleting client...";
+                this.DisplayLoadingBarAnimation(PlayState.DeletingClient);
+            }
+            else if (state == PlayState.MovingClientDirectory)
+            {
+                this.playButton.Color = ButtonDisabledColor;
+                this.playButton.Active = false;
+                this.loadingText.Text = "Moving client to new location...";
+                this.DisplayLoadingBarAnimation(PlayState.MovingClientDirectory);
+            }
         }
         
         /// <summary>

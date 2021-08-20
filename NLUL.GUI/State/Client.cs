@@ -37,6 +37,10 @@ namespace NLUL.GUI.State
         // External setup.
         public static readonly PlayState ManualRuntimeNotInstalled = new PlayState(false, true);
         
+        // Client migration.
+        public static readonly PlayState DeletingClient = new PlayState(true, false);
+        public static readonly PlayState MovingClientDirectory = new PlayState(true, false);
+        
         /// <summary>
         /// Whether the state can only be manually set.
         /// </summary>
@@ -81,6 +85,11 @@ namespace NLUL.GUI.State
         /// Event for the state changing.
         /// </summary>
         public static event EmptyEventHandler StateChanged;
+        
+        /// <summary>
+        /// Event for the source changing.
+        /// </summary>
+        public static event EmptyEventHandler ClientSourceChanged;
         
         /// <summary>
         /// Runtime name for the client.
@@ -274,6 +283,35 @@ namespace NLUL.GUI.State
             ClientRunner.PatchClient();
             SetState(PlayState.Uninitialized);
             UpdateState();
+        }
+
+        /// <summary>
+        /// Changes the source of the client.
+        /// </summary>
+        /// <param name="source"></param>
+        public static void ChangeSource(ClientSourceEntry source)
+        {
+            // Set the state to deleting.
+            SetState(PlayState.DeletingClient);
+            
+            // Start deleting the client.
+            Task.Run(() =>
+            {
+                // Set the source.
+                ClientRunner.SetSource(source);
+                Dispatcher.UIThread.InvokeAsync(() => ClientSourceChanged?.Invoke());
+                
+                // Delete the client.
+                var systemInfo = SystemInfo.GetDefault();
+                if (Directory.Exists(systemInfo.ClientLocation))
+                {
+                    Directory.Delete(systemInfo.ClientLocation, true);
+                }
+
+                // Reset the state.
+                SetState(PlayState.Uninitialized);
+                UpdateState();
+            });
         }
         
         /// <summary>
