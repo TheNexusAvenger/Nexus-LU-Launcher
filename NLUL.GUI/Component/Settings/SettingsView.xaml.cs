@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +13,11 @@ namespace NLUL.GUI.Component.Settings
 {
     public class SettingsView : Panel
     {
+        /// <summary>
+        /// Filter for sources to list.
+        /// </summary>
+        private readonly List<string> supportedSourceMethods = new List<string>() { "zip" };
+        
         /// <summary>
         /// Information about the system.
         /// </summary>
@@ -121,7 +127,10 @@ namespace NLUL.GUI.Component.Settings
             this.logsToggle.UpdateSource();
             
             // Update the sources list.
-            var sources = Client.ClientSourcesList.Select(source => "(" + source.Type + ") " + source.Name).ToList();
+            var sources = Client.ClientSourcesList
+                .Where(source => this.supportedSourceMethods.Contains(source.Method.ToLower()))
+                .Select(source => "(" + source.Type + ") " + source.Name)
+                .ToList();
             this.sourcesList.Items = sources;
             this.sourcesList.PlaceholderText = "(" + Client.ClientSource.Type + ") " + Client.ClientSource.Name;
             
