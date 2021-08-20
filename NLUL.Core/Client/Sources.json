@@ -18,6 +18,10 @@
         "Default": false
       },
       {
+        "Name": "FixAvantGardensSurvivalCrash",
+        "Default": true
+      },
+      {
         "Name": "FixAssemblyVendorHologram",
         "Default": true
       },

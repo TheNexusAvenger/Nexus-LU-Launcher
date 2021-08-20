@@ -55,6 +55,12 @@ namespace NLUL.GUI.Component.Patches
                 PatchDescription = "Removes the advertisement for DLU from the zone loading screen.",
                 PatchEnum = ClientPatchName.RemoveDLUAd,
             },
+            new PatchData()
+            {
+                PatchName = "Fix Avant Gardens Survival Crash",
+                PatchDescription = "Fixes a mistake in the Avant Gardens Survival script that results in players crashing in Avant Gardens Survival if they are not the first player.",
+                PatchEnum = ClientPatchName.FixAvantGardensSurvivalCrash,
+            }
         };
     }
     

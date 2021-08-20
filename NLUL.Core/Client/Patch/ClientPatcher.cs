@@ -14,6 +14,7 @@ namespace NLUL.Core.Client.Patch
         AutoTcpUdp,
         FixAssemblyVendorHologram,
         RemoveDLUAd,
+        FixAvantGardensSurvivalCrash,
     }
     
     /// <summary>
@@ -35,11 +36,12 @@ namespace NLUL.Core.Client.Patch
             var manifest = new GitHubManifest(Path.Combine(systemInfo.ClientLocation, "GitHubPatches.json"));
             this.patches = new Dictionary<ClientPatchName,IPatch>()
             {
-                {ClientPatchName.ModLoader,new ModLoader(systemInfo, manifest)},
-                {ClientPatchName.TcpUdp,new TcpUdp(systemInfo, manifest)},
-                {ClientPatchName.AutoTcpUdp,new AutoTcpUdp(systemInfo, manifest)},
+                {ClientPatchName.ModLoader, new ModLoader(systemInfo, manifest)},
+                {ClientPatchName.TcpUdp, new TcpUdp(systemInfo, manifest)},
+                {ClientPatchName.AutoTcpUdp, new AutoTcpUdp(systemInfo, manifest)},
                 {ClientPatchName.FixAssemblyVendorHologram, new FixAssemblyVendorHologram(systemInfo)},
-                {ClientPatchName.RemoveDLUAd,new RemoveDLUAd(systemInfo)},
+                {ClientPatchName.RemoveDLUAd, new RemoveDLUAd(systemInfo)},
+                {ClientPatchName.FixAvantGardensSurvivalCrash, new FixAvantGardensSurvivalCrash(systemInfo)},
             };
         }
         
