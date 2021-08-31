@@ -225,6 +225,7 @@ namespace NLUL.Core.Client
             {
                 if (patch is IPreLaunchPatch preLaunchPatch)
                 {
+                    if (!patch.Installed) continue;
                     preLaunchPatch.OnClientRequestLaunch();
                 }
             }
