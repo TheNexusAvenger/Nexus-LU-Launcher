@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -87,20 +88,26 @@ namespace NLUL.GUI.Component.Settings
             };
             this.Get<RoundedImageButton>("ChangeClientParentDirectory").ButtonPressed += (sender, args) =>
             {
+                // Prompt for the directory.
+                var dialog = new OpenFolderDialog();
+                dialog.Directory = this.CurrentParentDirectory;
+                var newDirectoryTask = dialog.ShowAsync(this.GetWindow());
+
                 Task.Run(async () =>
                 {
-                    // Prompt for the directory.
-                    var dialog = new OpenFolderDialog();
-                    dialog.Directory = this.CurrentParentDirectory;
-                    var newDirectory = await dialog.ShowAsync(this.GetWindow());
-                    if (newDirectory == null) return;
-                    
+                    // Get the new directory.
+                    // Can't be awaited directly with ShowAsync because of a multithreading crash on macOS.
+                    var newDirectory = await newDirectoryTask;
+                    if (string.IsNullOrEmpty(newDirectory) || newDirectory == this.CurrentParentDirectory) return;
+
                     // Move the clients.
-                    ConfirmPrompt.OpenPrompt("Changing install locations will move any clients you have downloaded to it. Continue?", () =>
-                    {
-                        this.parentDirectoryDisplay.Text = newDirectory.Replace(Path.DirectorySeparatorChar == '/' ? '\\' : '/', Path.DirectorySeparatorChar);
-                        Client.ChangeParentDirectory(newDirectory);
-                    });
+                    ConfirmPrompt.OpenPrompt(
+                        "Changing install locations will move any clients you have downloaded to it. Continue?", () =>
+                        {
+                            this.parentDirectoryDisplay.Text = newDirectory.Replace(
+                                Path.DirectorySeparatorChar == '/' ? '\\' : '/', Path.DirectorySeparatorChar);
+                            Client.ChangeParentDirectory(newDirectory);
+                        });
                 });
             };
         }
