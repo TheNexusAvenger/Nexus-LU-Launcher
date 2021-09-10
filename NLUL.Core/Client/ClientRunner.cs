@@ -189,7 +189,7 @@ namespace NLUL.Core.Client
         /// </summary>
         /// <param name="host">Host to launch.</param>
         /// <returns>Process that was started.</returns>
-        public Process Launch(string host)
+        public Process Launch(ServerEntry host)
         {
             // Set up the runtime if it isn't installed.
             if (!this.Runtime.IsInstalled)
@@ -217,7 +217,8 @@ namespace NLUL.Core.Client
             {
                 bootConfig = LegoDataDictionary.FromString(File.ReadAllText(Path.Combine(this.systemInfo.ClientLocation, "boot_backup.cfg")).Trim());
             }
-            bootConfig["AUTHSERVERIP"] = host;
+            bootConfig["SERVERNAME"] = host.ServerName;
+            bootConfig["AUTHSERVERIP"] = host.ServerAddress;
             File.WriteAllText(bootConfigLocation,bootConfig.ToString("\n"));
             
             // Apply any pre-launch patches.

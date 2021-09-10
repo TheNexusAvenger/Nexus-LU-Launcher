@@ -342,7 +342,7 @@ namespace NLUL.GUI.State
         public static Process Launch()
         {
             var selectedServer = PersistentState.SelectedServer;
-            return selectedServer != null ? ClientRunner.Launch(selectedServer.ServerAddress) : null;
+            return selectedServer != null ? ClientRunner.Launch(selectedServer) : null;
         }
     }
 }
