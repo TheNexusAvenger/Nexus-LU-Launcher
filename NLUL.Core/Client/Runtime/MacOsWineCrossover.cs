@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -107,11 +108,16 @@ namespace NLUL.Core.Client.Runtime
         /// <returns>The process of the runtime.</returns>
         public Process RunApplication(string executablePath, string workingDirectory)
         {
+            // Determine the WINE binary to use.
+            // wine32on64 works on 10.15 and above only, and wine only works on 10.14 and below.
+            var wineBinaryName = (Environment.OSVersion.Version.Major <= 10 && Environment.OSVersion.Version.Minor <= 14) ? "wine" : "wine32on64";
+            
+            // Create and return the process.
             var clientProcess = new Process
             {
                 StartInfo =
                 {
-                    FileName = Path.Combine(this.systemInfo.SystemFileLocation, "Wine", "bin", "wine32on64"),
+                    FileName = Path.Combine(this.systemInfo.SystemFileLocation, "Wine", "bin", wineBinaryName),
                     Arguments = executablePath,
                     WorkingDirectory = workingDirectory,
                     CreateNoWindow = true,
