@@ -31,12 +31,21 @@ namespace NLUL.GUI.Component
             {
                 if (Client.State.SafeToClose)
                 {
+                    // Close the window.
                     this.GetWindow()?.Close();
                     Process.GetCurrentProcess().Kill();
                 }
                 else
                 {
-                    ConfirmPrompt.OpenPrompt("Closing the launcher stops downloading the client. Confirm closing?", () =>
+                    // Determine the message.
+                    var message = "Closing the launcher stops downloading the client. Confirm closing?";
+                    if (Client.State == PlayState.MovingClientDirectory)
+                    {
+                        message = "Closing the launcher stops moving the files. Confirm closing?";
+                    }
+                    
+                    // Show the prompt.
+                    ConfirmPrompt.OpenPrompt(message, () =>
                     {
                         this.GetWindow()?.Close();
                         Process.GetCurrentProcess().Kill();
