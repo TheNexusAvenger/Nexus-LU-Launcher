@@ -7,6 +7,7 @@ using NLUL.Core.Client.Download;
 using NLUL.Core.Client.Patch;
 using NLUL.Core.Client.Runtime;
 using NLUL.Core.Client.Source;
+using NLUL.Core.Util;
 
 namespace NLUL.Core.Client
 {
@@ -144,7 +145,7 @@ namespace NLUL.Core.Client
                 var clientDirectoryName = new DirectoryInfo(clientDirectory).Name;
                 if (File.Exists(Path.Combine(clientDirectory, "legouniverse.exe")))
                 {
-                    Directory.Move(clientDirectory, Path.Combine(destination, clientDirectoryName));
+                    DirectoryExtensions.Move(clientDirectory, Path.Combine(destination, clientDirectoryName));
                 }
             }
 
