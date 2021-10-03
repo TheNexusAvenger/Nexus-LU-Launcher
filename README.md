@@ -1,3 +1,9 @@
+## No Longer Functional
+As of October 3rd, 2021, the hosting of the client files was taken down and
+there are no plans to set up new mirrors of the client. Attempting to use
+the launcher without having a previous download of the client will result
+in an error.
+
 # Nexus LU Launcher
 Nexus LU (LEGO Universe) Launcher is a custom, cross-platform
 user interface for installing and launching LEGO Universe
