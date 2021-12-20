@@ -96,15 +96,15 @@ namespace NLUL.Core.Client
             LegoDataDictionary bootConfig = null;
             try
             {
-                bootConfig = LegoDataDictionary.FromString(File.ReadAllText(bootConfigLocation).Trim());
+                bootConfig = LegoDataDictionary.FromString(File.ReadAllText(bootConfigLocation).Trim().Replace("\n", ""), ',');
             }
             catch (FormatException)
             {
-                bootConfig = LegoDataDictionary.FromString(File.ReadAllText(Path.Combine(this.systemInfo.ClientLocation, "boot_backup.cfg")).Trim());
+                bootConfig = LegoDataDictionary.FromString(File.ReadAllText(Path.Combine(this.systemInfo.ClientLocation, "boot_backup.cfg")).Trim().Replace("\n", ""), ',');
             }
             bootConfig["SERVERNAME"] = host.ServerName;
             bootConfig["AUTHSERVERIP"] = host.ServerAddress;
-            File.WriteAllText(bootConfigLocation,bootConfig.ToString("\n"));
+            File.WriteAllText(bootConfigLocation,bootConfig.ToString(","));
             
             // Apply any pre-launch patches.
             foreach (var patch in Patcher.Patches)
