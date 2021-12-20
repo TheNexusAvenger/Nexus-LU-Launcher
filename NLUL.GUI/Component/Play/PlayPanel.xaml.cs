@@ -262,7 +262,7 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Verifying client.";
                 
                 // Run the animation in a thread.
-                this.DisplayLoadingBarAnimation(PlayState.ExtractingClient);
+                this.DisplayLoadingBarAnimation(PlayState.VerifyingClient);
             }
             else if (state == PlayState.PatchingClient)
             {
