@@ -143,7 +143,7 @@ namespace NLUL.GUI.Component.Patches
                 Client.StateChanged += () =>
                 {
                     var state = Client.State;
-                    if (state == PlayState.DownloadingClient || state == PlayState.PatchingClient)
+                    if (state == PlayState.ExtractingClient || state == PlayState.PatchingClient)
                     {
                         // Prepare to update the state after the download/patching ends.
                         patchingStarted = true;

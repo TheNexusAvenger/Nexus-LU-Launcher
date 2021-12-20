@@ -29,11 +29,6 @@ namespace NLUL.Core.Client
         private DownloadMethod downloadMethod;
         
         /// <summary>
-        /// Whether the client extract can be verified.
-        /// </summary>
-        public bool CanVerifyExtractedClient => this.downloadMethod != null && this.downloadMethod.CanVerifyExtractedClient;
-        
-        /// <summary>
         /// Patcher for the client runner.
         /// </summary>
         public ClientRuntime Runtime { get; }
@@ -153,38 +148,6 @@ namespace NLUL.Core.Client
             this.Patcher = new ClientPatcher(systemInfo);
         }
 
-        /// <summary>
-        /// Tries to download and extract the client files. If it fails,
-        /// the client is re-downloaded.
-        /// </summary>
-        public void Download()
-        {
-            this.downloadMethod.Download();
-            this.systemInfo.Settings.InstalledClientSourceName = this.ClientSource.Name;
-            this.systemInfo.SaveSettings();
-        }
-        
-        /// <summary>
-        /// Patches the client files with the default patches.
-        /// </summary>
-        public void PatchClient()
-        {
-            foreach (var patchEntry in this.ClientSource.Patches)
-            {
-                if (!patchEntry.Default) continue;
-                this.Patcher.Install(patchEntry.Name);
-            }
-        }
-        
-        /// <summary>
-        /// Verifies the extracted client.
-        /// </summary>
-        /// <returns>Whether the client was verified.</returns>
-        public bool VerifyExtractedClient()
-        {
-            return this.downloadMethod.Verify();
-        }
-        
         /// <summary>
         /// Launches the client.
         /// </summary>

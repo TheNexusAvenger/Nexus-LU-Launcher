@@ -167,18 +167,18 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Loading...";
                 this.SetLoadingBar(0);
             }
-            else if (state == PlayState.DownloadClient)
+            else if (state == PlayState.ExtractClient)
             {
                 this.playButton.Color = ButtonNormalColor;
                 this.playButton.Active = true;
-                this.loadingText.Text = "Pending client download.";
+                this.loadingText.Text = "Pending client extract. An archive of the client must be downloaded.";
                 this.SetLoadingBar(0);
             }
-            else if (state == PlayState.DownloadFailed)
+            else if (state == PlayState.ExtractFailed)
             {
                 this.playButton.Color = ButtonNormalColor;
                 this.playButton.Active = true;
-                this.loadingText.Text = "Client download failed. Retry required.";
+                this.loadingText.Text = "Client extract failed. Retry required.";
                 this.SetLoadingBar(0);
             }
             else if (state == PlayState.VerifyFailed)
@@ -195,13 +195,6 @@ namespace NLUL.GUI.Component.Play
                 this.loadingText.Text = "Pending " + Client.RuntimeName + " download.";
                 this.SetLoadingBar(0);
             }
-            else if (state == PlayState.DownloadRuntimeAndClient)
-            {
-                this.playButton.Color = ButtonNormalColor;
-                this.playButton.Active = true;
-                this.loadingText.Text = "Pending " + Client.RuntimeName + " and client download.";
-                this.SetLoadingBar(0);
-            }
             else if (state == PlayState.DownloadingRuntime)
             {
                 // Set the button and loading text.
@@ -212,20 +205,10 @@ namespace NLUL.GUI.Component.Play
                 // Run the animation in a thread.
                 this.DisplayLoadingBarAnimation(PlayState.DownloadingRuntime);
             }
-            else if (state == PlayState.DownloadingClient)
-            {
-                this.playButton.Color = ButtonDisabledColor;
-                this.playButton.Active = false;
-            }
             else if (state == PlayState.ExtractingClient)
             {
-                // Set the button and loading text.
                 this.playButton.Color = ButtonDisabledColor;
                 this.playButton.Active = false;
-                this.loadingText.Text = "Extracting client.";
-                
-                // Run the animation in a thread.
-                this.DisplayLoadingBarAnimation(PlayState.ExtractingClient);
             }
             else if (state == PlayState.VerifyingClient)
             {
@@ -295,7 +278,7 @@ namespace NLUL.GUI.Component.Play
         private void OnButtonPressed()
         {
             var state = Client.State;
-            if (state == PlayState.DownloadRuntime || state == PlayState.DownloadRuntimeAndClient)
+            if (state == PlayState.DownloadRuntime)
             {
                 // Start the download in a thread.
                 Client.SetState(PlayState.DownloadingRuntime);
@@ -304,26 +287,50 @@ namespace NLUL.GUI.Component.Play
                     // Start the runtime download.
                     Client.DownloadRuntime(() =>
                     {
-                        // Start the download if the client is required.
-                        if (Client.State == PlayState.DownloadClient || Client.State == PlayState.VerifyFailed || Client.State == PlayState.DownloadFailed)
+                        // Start the extract if the client is required.
+                        if (state == PlayState.ExtractClient || Client.State == PlayState.VerifyFailed || Client.State == PlayState.ExtractFailed)
                         {
                             this.OnButtonPressed();
                         }
                     });
                 });
             }
-            else if (state == PlayState.DownloadClient || state == PlayState.VerifyFailed || state == PlayState.DownloadFailed)
+            else if (state == PlayState.ExtractClient || state == PlayState.VerifyFailed || state == PlayState.ExtractFailed)
             {
-                // Start the download in a thread.
-                Client.SetState(PlayState.DownloadingClient);
-                Task.Run(() =>
+                // Prompt for the file.
+                var dialog = new OpenFileDialog();
+                dialog.AllowMultiple = false;
+                dialog.Filters = new List<FileDialogFilter>()
                 {
-                    // Start the client download.
-                    Client.RunDownload((message, percent) =>
+                    new FileDialogFilter()
                     {
-                        this.loadingText.Set("Text", message);
-                        this.SetLoadingBar(percent);
-                    });
+                        Name = "Archive File",
+                        Extensions = new List<string>() { "rar", "zip", }
+                    }
+                };
+                var openFileTask = dialog.ShowAsync(this.GetWindow());
+                
+                Task.Run(async () =>
+                {
+                    // Get the archive location.
+                    // Can't be awaited directly with ShowAsync because of a multithreading crash on macOS.
+                    var archiveLocations = await openFileTask;
+                    if (archiveLocations.Length == 0) return;
+                    var archiveLocation = archiveLocations[0];
+                    
+                    // Start the extract.
+                    try
+                    {
+                        Client.RunExtract(archiveLocation, (message, percent) =>
+                        {
+                            this.loadingText.Set("Text", message);
+                            this.SetLoadingBar(percent);
+                        });
+                    }
+                    catch (ExtractException exception)
+                    {
+                        // TODO: Catch
+                    }
                 });
             }
             else if (state == PlayState.Ready)

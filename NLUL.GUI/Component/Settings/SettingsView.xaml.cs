@@ -71,7 +71,7 @@ namespace NLUL.GUI.Component.Settings
 
                 // Set the source.
                 // If the client isn't download, ignore warning the player.
-                if (Client.State == PlayState.DownloadClient || Client.State == PlayState.DownloadRuntime || Client.State == PlayState.DownloadRuntimeAndClient)
+                if (Client.State == PlayState.ExtractClient || Client.State == PlayState.DownloadRuntime)
                 {
                     Client.ChangeSource(newSource);
                 }

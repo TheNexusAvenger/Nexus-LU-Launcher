@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using NLUL.Core;
 using NLUL.Core.Client;
+using NLUL.Core.Client.Archive;
 using NLUL.Core.Client.Patch;
 using NLUL.Core.Client.Source;
 
@@ -16,17 +17,15 @@ namespace NLUL.GUI.State
         // Uninitialized state.
         public static readonly PlayState Uninitialized = new PlayState(false, true);
         
-        // Download client requirement.
-        public static readonly PlayState DownloadClient = new PlayState(false, true);
-        public static readonly PlayState DownloadRuntime = new PlayState(false, true);
-        public static readonly PlayState DownloadRuntimeAndClient = new PlayState(false, true);
-        public static readonly PlayState DownloadingRuntime = new PlayState(true, false);
-        public static readonly PlayState DownloadingClient = new PlayState(true, false);
+        // Download/Extract client requirement.
+        public static readonly PlayState ExtractClient = new PlayState(false, true);
         public static readonly PlayState ExtractingClient = new PlayState(true, false);
         public static readonly PlayState VerifyingClient = new PlayState(true, false);
         public static readonly PlayState PatchingClient = new PlayState(true, false);
-        public static readonly PlayState DownloadFailed = new PlayState(false, true);
+        public static readonly PlayState ExtractFailed = new PlayState(false, true);
         public static readonly PlayState VerifyFailed = new PlayState(false, true);
+        public static readonly PlayState DownloadRuntime = new PlayState(false, true);
+        public static readonly PlayState DownloadingRuntime = new PlayState(true, false);
         
         // Ready to play requirements.
         public static readonly PlayState NoSelectedServer = new PlayState(false, true);
@@ -62,15 +61,26 @@ namespace NLUL.GUI.State
             this.SafeToClose = safeToClose;
         }
     }
+
+    public class ExtractException : Exception
+    {
+        /// <summary>
+        /// Message to display to the user.
+        /// </summary>
+        public readonly string Message;
+
+        /// <summary>
+        /// Creates the extract exception.
+        /// </summary>
+        /// <param name="message">Message to display to the user.</param>
+        public ExtractException(string message)
+        {
+            this.Message = message;
+        }
+    }
     
     public class Client
     {
-        /// <summary>
-        /// Constant for converting bytes to gigabytes. Used for
-        /// the download progress bar.
-        /// </summary>
-        private const double ByteToGigabyte = 1000000000;
-
         /// <summary>
         /// Client runner for the launcher.
         /// </summary>
@@ -139,16 +149,8 @@ namespace NLUL.GUI.State
             {
                 if (!State.ManualChangeOnly)
                 {
-                    if (ClientRunner.Runtime.IsInstalled)
-                    {
-                        SetState(PlayState.DownloadClient);
-                        return;
-                    }
-                    else
-                    {
-                        SetState(PlayState.DownloadRuntimeAndClient);
-                        return;
-                    }
+                    SetState(PlayState.ExtractClient);
+                    return;
                 }
             }
             else
@@ -163,17 +165,6 @@ namespace NLUL.GUI.State
             // Set the game state.
             if (!State.ManualChangeOnly)
             {
-                // Verify the client.
-                if (ClientRunner.CanVerifyExtractedClient)
-                {
-                    // Set the state as the verified failed.
-                    if (!ClientRunner.VerifyExtractedClient())
-                    {
-                        SetState(PlayState.VerifyFailed);
-                        return;
-                    }
-                }
-
                 // Set the select state.
                 if (PersistentState.SelectedServer == null)
                 {
@@ -210,77 +201,46 @@ namespace NLUL.GUI.State
             UpdateState();
             callback();
         }
-        
+
         /// <summary>
-        /// Runs the client download.
+        /// Runs the client extract.
         /// Calls back a method with the loading message and percent.
         /// </summary>
+        /// <param name="archiveLocation">Location of the archive.</param>
         /// <param name="callback">Callback that is sent a message and percent.</param>
-        public static void RunDownload(Action<string, double> callback)
+        public static void RunExtract(string archiveLocation, Action<string, double> callback)
         {
-            // Start the download.
-            SetState(PlayState.DownloadingClient);
-            var errorOccured = false;
-
-            void EventHandler(object _, string downloadState)
-            {
-                if (downloadState.Equals("Download"))
-                {
-                    // Set the state as downloading.
-                    SetState(PlayState.DownloadingClient);
-
-                    // Start updating the size.
-                    Task.Run(async () =>
-                    {
-                        while (State == PlayState.DownloadingClient)
-                        {
-                            // Update the text.
-                            var downloadedClientSize = (double) ClientRunner.DownloadedClientSize;
-                            callback(
-                                "Downloading client (" + (downloadedClientSize / ByteToGigabyte).ToString("F") +
-                                " GB / " + (ClientRunner.ClientDownloadSize / ByteToGigabyte).ToString("F") + " GB)",
-                                downloadedClientSize / ClientRunner.ClientDownloadSize);
-
-                            // Wait to update again.
-                            await Task.Delay(100);
-                        }
-                    });
-                }
-                else if (downloadState.Equals("Extract"))
-                {
-                    // Set the state as extracting.
-                    SetState(PlayState.ExtractingClient);
-                }
-                else if (downloadState.Equals("Verify"))
-                {
-                    // Set the state as verifying.
-                    SetState(PlayState.VerifyingClient);
-                }
-                else if (downloadState.Equals("VerifyFailed"))
-                {
-                    // Set the state as the verified failed.
-                    SetState(PlayState.VerifyFailed);
-                    errorOccured = true;
-                }
-            }
-            ClientRunner.DownloadStateChanged += EventHandler;
+            // Start the extract.
+            SetState(PlayState.ExtractingClient);
             
-            try {
-                // Run the download.
-                ClientRunner.Download();
-            }
-            catch (WebException)
+            // Get the archive.
+            var archive = ArchiveResolver.GetArchive(archiveLocation);
+            if (archive == null)
             {
-                // Set the state as the download failed.
-                SetState(PlayState.DownloadFailed);
-                return; 
+                SetState(PlayState.ExtractClient);
+                throw new ExtractException("The selected archive file is not readable or does not contain a LEGO Universe client.");
             }
-            ClientRunner.DownloadStateChanged -= EventHandler;
             
-            // Run the patch.
-            if (errorOccured) return;
+            // Extract the files.
+            try
+            {
+                archive.ExtractProgress += (progress) =>
+                {
+                    callback("Extracting client...", progress);
+                };
+                archive.ExtractTo(SystemInfo.GetDefault().ClientLocation);
+            }
+            catch (Exception exception)
+            {
+                throw new ExtractException("An error occured extracting the files. Make sure you have enough space and try again.");
+            }
+            
+            // Verify the files.
+            // TODO: Verify files
+            
+            // Run the patches.
             SetState(PlayState.PatchingClient);
-            ClientRunner.PatchClient();
+            // TODO: Patch client
             SetState(PlayState.Uninitialized);
             UpdateState();
         }
