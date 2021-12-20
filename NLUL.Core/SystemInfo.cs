@@ -39,16 +39,6 @@ namespace NLUL.Core
         /// Whether to display logs after launching.
         /// </summary>
         public bool LogsEnabled { get; set; }
-        
-        /// <summary>
-        /// Name of the source for the installed client.
-        /// </summary>
-        public string InstalledClientSourceName { get; set; }
-        
-        /// <summary>
-        /// Name of the source for the requested client.
-        /// </summary>
-        public string RequestedClientSourceName { get; set; }
     }
     
     public class SystemInfo

@@ -1,12 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using InfectedRose.Lvl;
-using NLUL.Core.Client.Download;
 using NLUL.Core.Client.Patch;
 using NLUL.Core.Client.Runtime;
-using NLUL.Core.Client.Source;
 using NLUL.Core.Util;
 
 namespace NLUL.Core.Client
@@ -19,16 +16,6 @@ namespace NLUL.Core.Client
         private readonly SystemInfo systemInfo;
         
         /// <summary>
-        /// Cached sources list.
-        /// </summary>
-        private SourceList cachedSourceList;
-
-        /// <summary>
-        /// Download method for the client.
-        /// </summary>
-        private DownloadMethod downloadMethod;
-        
-        /// <summary>
         /// Patcher for the client runner.
         /// </summary>
         public ClientRuntime Runtime { get; }
@@ -39,40 +26,6 @@ namespace NLUL.Core.Client
         public ClientPatcher Patcher { get; private set; }
 
         /// <summary>
-        /// Size of the client to download. Initially set to the rough size of the
-        /// unpacked client so that it has a non-zero fallback. It is set when a
-        /// download starts.
-        /// </summary>
-        public long ClientDownloadSize => this.downloadMethod != null && this.downloadMethod.ClientDownloadSize != default ? this.downloadMethod.ClientDownloadSize : 4513866950;
-        
-        /// <summary>
-        /// Size of the client that has been downloaded.
-        /// </summary>
-        public long DownloadedClientSize => this.downloadMethod?.DownloadedClientSize ?? 0;
-
-        /// <summary>
-        /// Source of the client to download.
-        /// </summary>
-        public ClientSourceEntry ClientSource { get; private set; }
-
-        /// <summary>
-        /// Event for the state changing.
-        /// </summary>
-        public event EventHandler<string> DownloadStateChanged;
-        
-        /// <summary>
-        /// Sources list for clients.
-        /// </summary>
-        public SourceList ClientSourcesList
-        {
-            get
-            {
-                this.cachedSourceList ??= SourceList.GetSources();
-                return cachedSourceList;
-            }
-        }
-
-        /// <summary>
         /// Creates a Client instance.
         /// </summary>
         /// <param name="systemInfo">Information of the system.</param>
@@ -81,38 +34,6 @@ namespace NLUL.Core.Client
             this.systemInfo = systemInfo;
             this.Patcher = new ClientPatcher(systemInfo);
             this.Runtime = new ClientRuntime(systemInfo);
-            
-            // Set the source.
-            var selectedSource = this.ClientSourcesList.FirstOrDefault(source => string.Equals(source.Name,
-                this.systemInfo.Settings.RequestedClientSourceName, StringComparison.CurrentCultureIgnoreCase));
-            selectedSource ??= this.ClientSourcesList[0];
-            this.SetSource(selectedSource);
-        }
-
-        /// <summary>
-        /// Sets the download source.
-        /// </summary>
-        /// <param name="source">Source to use.</param>
-        public void SetSource(ClientSourceEntry source)
-        {
-            // Set the download source.
-            if (source.Method == "zip")
-            {
-                this.downloadMethod = new ZipDownloadMethod(this.systemInfo, source);
-                this.systemInfo.Settings.RequestedClientSourceName = source.Name;
-                this.systemInfo.SaveSettings();
-            }
-            else
-            {
-                throw new InvalidOperationException("Unsupported method: " + source.Method);
-            }
-            
-            // Set up the source and events.
-            this.ClientSource = source;
-            this.downloadMethod.DownloadStateChanged += (_, state) =>
-            {
-                this.DownloadStateChanged?.Invoke(null, state);
-            };
         }
 
         /// <summary>

@@ -38,7 +38,7 @@ namespace NLUL.GUI.Component
                 else
                 {
                     // Determine the message.
-                    var message = "Closing the launcher stops downloading the client. Confirm closing?";
+                    var message = "Closing the launcher stops extracting the client. Confirm closing?";
                     if (Client.State == PlayState.MovingClientDirectory)
                     {
                         message = "Closing the launcher stops moving the files. Confirm closing?";

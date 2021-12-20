@@ -1,14 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using NLUL.Core;
 using NLUL.Core.Client;
 using NLUL.Core.Client.Archive;
 using NLUL.Core.Client.Patch;
-using NLUL.Core.Client.Source;
 
 namespace NLUL.GUI.State
 {
@@ -17,7 +15,7 @@ namespace NLUL.GUI.State
         // Uninitialized state.
         public static readonly PlayState Uninitialized = new PlayState(false, true);
         
-        // Download/Extract client requirement.
+        // Extract client requirement.
         public static readonly PlayState ExtractClient = new PlayState(false, true);
         public static readonly PlayState ExtractingClient = new PlayState(true, false);
         public static readonly PlayState VerifyingClient = new PlayState(true, false);
@@ -97,11 +95,6 @@ namespace NLUL.GUI.State
         public static event EmptyEventHandler StateChanged;
         
         /// <summary>
-        /// Event for the source changing.
-        /// </summary>
-        public static event EmptyEventHandler ClientSourceChanged;
-        
-        /// <summary>
         /// Runtime name for the client.
         /// </summary>
         public static string RuntimeName => ClientRunner.Runtime.Name ?? "(No runtime name)";
@@ -116,16 +109,6 @@ namespace NLUL.GUI.State
         /// Patcher of the client.
         /// </summary>
         public static ClientPatcher Patcher => ClientRunner.Patcher;
-
-        /// <summary>
-        /// Selected client source.
-        /// </summary>
-        public static ClientSourceEntry ClientSource => ClientRunner.ClientSource;
-
-        /// <summary>
-        /// Client source options.
-        /// </summary>
-        public static SourceList ClientSourcesList => ClientRunner.ClientSourcesList;
         
         /// <summary>
         /// Current state of the client.
@@ -145,7 +128,7 @@ namespace NLUL.GUI.State
             }
             
             // Check for the download to be complete.
-            if (!File.Exists(Path.Combine(SystemInfo.GetDefault().ClientLocation, "legouniverse.exe")) || (SystemInfo.GetDefault().Settings.RequestedClientSourceName != SystemInfo.GetDefault().Settings.InstalledClientSourceName && SystemInfo.GetDefault().Settings.InstalledClientSourceName != null))
+            if (!File.Exists(Path.Combine(SystemInfo.GetDefault().ClientLocation, "legouniverse.exe")))
             {
                 if (!State.ManualChangeOnly)
                 {
@@ -243,35 +226,6 @@ namespace NLUL.GUI.State
             // TODO: Patch client
             SetState(PlayState.Uninitialized);
             UpdateState();
-        }
-
-        /// <summary>
-        /// Changes the source of the client.
-        /// </summary>
-        /// <param name="source"></param>
-        public static void ChangeSource(ClientSourceEntry source)
-        {
-            // Set the state to deleting.
-            SetState(PlayState.DeletingClient);
-            
-            // Start deleting the client.
-            Task.Run(() =>
-            {
-                // Set the source.
-                ClientRunner.SetSource(source);
-                Dispatcher.UIThread.InvokeAsync(() => ClientSourceChanged?.Invoke());
-                
-                // Delete the client.
-                var systemInfo = SystemInfo.GetDefault();
-                if (Directory.Exists(systemInfo.ClientLocation))
-                {
-                    Directory.Delete(systemInfo.ClientLocation, true);
-                }
-
-                // Reset the state.
-                SetState(PlayState.Uninitialized);
-                UpdateState();
-            });
         }
 
         /// <summary>

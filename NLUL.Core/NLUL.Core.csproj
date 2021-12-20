@@ -15,7 +15,6 @@
 
     <ItemGroup>
       <None Remove="Client\Sources.json" />
-      <EmbeddedResource Include="Client\Sources.json" />
     </ItemGroup>
 
 </Project>

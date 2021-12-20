@@ -15,11 +15,6 @@ namespace NLUL.GUI.Component.Settings
     public class SettingsView : Panel
     {
         /// <summary>
-        /// Filter for sources to list.
-        /// </summary>
-        private readonly List<string> supportedSourceMethods = new List<string>() { "zip" };
-        
-        /// <summary>
         /// Information about the system.
         /// </summary>
         private readonly SystemInfo systemInfo = SystemInfo.GetDefault();
@@ -28,11 +23,6 @@ namespace NLUL.GUI.Component.Settings
         /// Button for toggling the logs.
         /// </summary>
         private readonly RoundedImageButton logsToggle;
-
-        /// <summary>
-        /// List of the sources.
-        /// </summary>
-        private readonly ComboBox sourcesList;
 
         /// <summary>
         /// Display of the parent directory.
@@ -52,7 +42,6 @@ namespace NLUL.GUI.Component.Settings
             // Load the XAML.
             AvaloniaXamlLoader.Load(this);
             this.logsToggle = this.Get<RoundedImageButton>("LogsToggle");
-            this.sourcesList = this.Get<ComboBox>("SourcesList");
             this.parentDirectoryDisplay = this.Get<TextBlock>("ClientParentDirectory");
             this.UpdateSettings();
             
@@ -62,29 +51,6 @@ namespace NLUL.GUI.Component.Settings
                 this.systemInfo.Settings.LogsEnabled = !this.systemInfo.Settings.LogsEnabled;
                 this.systemInfo.SaveSettings();
                 this.UpdateSettings();
-            };
-            this.sourcesList.SelectionChanged += (sender, args) =>
-            {
-                // Get the new source.
-                var newSource = Client.ClientSourcesList.First(source => ("(" + source.Type + ") " + source.Name) == (string) sourcesList.SelectedItem);
-                if (newSource == Client.ClientSource) return;
-
-                // Set the source.
-                // If the client isn't download, ignore warning the player.
-                if (Client.State == PlayState.ExtractClient || Client.State == PlayState.DownloadRuntime)
-                {
-                    Client.ChangeSource(newSource);
-                }
-                else
-                {
-                    ConfirmPrompt.OpenPrompt("Changing client sources will delete you existing client and require a re-download. Continue?", () =>
-                    {
-                        Client.ChangeSource(newSource);
-                    }, () =>
-                    {
-                        sourcesList.SelectedItem = "(" + Client.ClientSource.Type + ") " + Client.ClientSource.Name;
-                    });
-                }
             };
             this.Get<RoundedImageButton>("ChangeClientParentDirectory").ButtonPressed += (sender, args) =>
             {
@@ -131,14 +97,6 @@ namespace NLUL.GUI.Component.Settings
                 this.logsToggle.PressSource = "/Assets/Images/Prompt/CancelPress.png";
             }
             this.logsToggle.UpdateSource();
-            
-            // Update the sources list.
-            var sources = Client.ClientSourcesList
-                .Where(source => this.supportedSourceMethods.Contains(source.Method.ToLower()))
-                .Select(source => "(" + source.Type + ") " + source.Name)
-                .ToList();
-            this.sourcesList.Items = sources;
-            this.sourcesList.PlaceholderText = "(" + Client.ClientSource.Type + ") " + Client.ClientSource.Name;
             
             // Update the parent directory.
             this.parentDirectoryDisplay.Text = this.CurrentParentDirectory;

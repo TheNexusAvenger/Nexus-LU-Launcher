@@ -43,7 +43,6 @@ namespace NLUL.GUI.Component.Patches
             
             // Add the patch frames.
             this.ReloadPatches();
-            Client.ClientSourceChanged += this.ReloadPatches;
             
             // Connect updating the patches visibility.
             Client.StateChanged += this.UpdateVisibility;
@@ -76,7 +75,6 @@ namespace NLUL.GUI.Component.Patches
             var patcher = Client.Patcher;
             foreach (var patch in Client.Patcher.Patches)
             {
-                if (Client.ClientSource.Patches.FirstOrDefault(o => o.Name == patch.PatchEnum) == null) continue;
                 var patchPanel = new PatchEntry();
                 patchPanel.Patcher = patcher;
                 patchPanel.PatchData = patch;
