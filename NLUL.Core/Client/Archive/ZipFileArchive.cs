@@ -72,5 +72,33 @@ namespace NLUL.Core.Client.Archive
             }
             this.ReportExtractingProgress(1);
         }
+        
+        /// <summary>
+        /// Verifies the client in a directory is extracted correctly.
+        /// </summary>
+        /// <param name="targetLocation">Location to verify.</param>
+        /// <returns>Whether the extract was verified.</returns>
+        public override bool Verify(string targetLocation)
+        {
+            // Get the archive entries.
+            using var zipFile = ZipFile.OpenRead(this.ArchiveFile);
+            var archiveDirectory = Path.GetDirectoryName(zipFile.Entries.First(entry => entry.Name.ToLower() == "legouniverse.exe").FullName);
+            
+            // Verify the files exist and return false if a file is missing.
+            foreach (var entry in zipFile.Entries)
+            {
+                // Return if the file is not in the parent directory of legouniverse.exe.
+                // Some archives include other files that should not be looked at.
+                if (!entry.FullName.ToLower().StartsWith(archiveDirectory!.ToLower()) || entry.FullName.EndsWith("/")) continue;
+                
+                // Determine the destination file path.
+                var filePath = Path.Combine(targetLocation, Path.GetRelativePath(archiveDirectory, entry.FullName));
+                if (entry.Length == 0 || File.Exists(filePath)) continue;
+                return false;
+            }
+
+            // Return true (verified).
+            return true;
+        }
     }
 }

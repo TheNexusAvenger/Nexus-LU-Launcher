@@ -205,21 +205,26 @@ namespace NLUL.GUI.State
             }
             
             // Extract the files.
+            var clientLocation = SystemInfo.GetDefault().ClientLocation;
             try
             {
                 archive.ExtractProgress += (progress) =>
                 {
                     callback("Extracting client...", progress);
                 };
-                archive.ExtractTo(SystemInfo.GetDefault().ClientLocation);
+                archive.ExtractTo(clientLocation);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 throw new ExtractException("An error occured extracting the files. Make sure you have enough space and try again.");
             }
             
             // Verify the files.
-            // TODO: Verify files
+            SetState(PlayState.VerifyingClient);
+            if (!archive.Verify(clientLocation))
+            {
+                SetState(PlayState.VerifyFailed);
+            }
             
             // Run the patches.
             SetState(PlayState.PatchingClient);

@@ -65,5 +65,12 @@ namespace NLUL.Core.Client.Archive
         /// </summary>
         /// <param name="targetLocation">Location to extract to</param>
         public abstract void ExtractTo(string targetLocation);
+        
+        /// <summary>
+        /// Verifies the client in a directory is extracted correctly.
+        /// </summary>
+        /// <param name="targetLocation">Location to verify.</param>
+        /// <returns>Whether the extract was verified.</returns>
+        public abstract bool Verify(string targetLocation);
     }
 }
