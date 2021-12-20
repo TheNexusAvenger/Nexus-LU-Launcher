@@ -139,7 +139,7 @@ namespace NLUL.Core.Client.Patch
         public void OnClientRequestLaunch()
         {
             // Determine the host to check.
-            var bootConfig = LegoDataDictionary.FromString(File.ReadAllText(Path.Combine(this.systemInfo.ClientLocation, "boot.cfg")).Trim());
+            var bootConfig = LegoDataDictionary.FromString(File.ReadAllText(Path.Combine(this.systemInfo.ClientLocation, "boot.cfg").Replace("\n", "")).Trim(), ',');
             var host = (string) bootConfig["AUTHSERVERIP"];
             Console.WriteLine("Check for TCP/UDP for: " + host);
             
