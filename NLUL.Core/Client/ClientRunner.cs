@@ -56,7 +56,12 @@ namespace NLUL.Core.Client
         {
             foreach (var patch in DefaultPatches)
             {
-                this.Patcher.Install(patch);
+                try
+                {
+                    this.Patcher.Install(patch);
+                } catch (Exception) {
+                    // Applying patch failed. Should just be GitHub rate limiting.
+                }
             }
         }
 
