@@ -228,7 +228,7 @@ namespace NLUL.GUI.State
             
             // Run the patches.
             SetState(PlayState.PatchingClient);
-            // TODO: Patch client
+            ClientRunner.ApplyDefaultPatches();
             SetState(PlayState.Uninitialized);
             UpdateState();
         }

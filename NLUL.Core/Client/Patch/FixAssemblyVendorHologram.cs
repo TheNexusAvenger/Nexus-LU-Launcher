@@ -16,6 +16,11 @@ namespace NLUL.Core.Client.Patch
         /// Description of the patch.
         /// </summary>
         public string Description => "Fixes the Assembly vendor at Nimbus Station showing a Missing NIF error.";
+        
+        /// <summary>
+        /// Whether the patch is hidden in the list of patches.
+        /// </summary>
+        public bool Hidden => !File.Exists(this.AssemblySignFileLocation);
 
         /// <summary>
         /// Enum of the patch.

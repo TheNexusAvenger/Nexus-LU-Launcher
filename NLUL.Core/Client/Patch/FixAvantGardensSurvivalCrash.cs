@@ -15,6 +15,11 @@ namespace NLUL.Core.Client.Patch
         public string Description => "Fixes a mistake in the Avant Gardens Survival script that results in players crashing in Avant Gardens Survival if they are not the first player.";
         
         /// <summary>
+        /// Whether the patch is hidden in the list of patches.
+        /// </summary>
+        public bool Hidden => !File.Exists(this.SurvivalScriptFileLocation);
+        
+        /// <summary>
         /// Enum of the patch.
         /// </summary>
         public ClientPatchName PatchEnum => ClientPatchName.FixAvantGardensSurvivalCrash;

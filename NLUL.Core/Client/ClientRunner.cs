@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using InfectedRose.Lvl;
@@ -10,6 +11,18 @@ namespace NLUL.Core.Client
 {
     public class ClientRunner
     {
+        /// <summary>
+        /// Default patches to apply
+        /// </summary>
+        public static readonly List<ClientPatchName> DefaultPatches = new List<ClientPatchName>()
+        {
+            ClientPatchName.ModLoader,
+            ClientPatchName.AutoTcpUdp,
+            ClientPatchName.FixAssemblyVendorHologram,
+            ClientPatchName.RemoveDLUAd,
+            ClientPatchName.FixAvantGardensSurvivalCrash,
+        };
+        
         /// <summary>
         /// Information of the system.
         /// </summary>
@@ -34,6 +47,17 @@ namespace NLUL.Core.Client
             this.systemInfo = systemInfo;
             this.Patcher = new ClientPatcher(systemInfo);
             this.Runtime = new ClientRuntime(systemInfo);
+        }
+
+        /// <summary>
+        /// Applies the default patches to the client.
+        /// </summary>
+        public void ApplyDefaultPatches()
+        {
+            foreach (var patch in DefaultPatches)
+            {
+                this.Patcher.Install(patch);
+            }
         }
 
         /// <summary>

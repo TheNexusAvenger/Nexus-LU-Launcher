@@ -13,6 +13,11 @@ namespace NLUL.Core.Client.Patch
         public string Description { get; }
         
         /// <summary>
+        /// Whether the patch is hidden in the list of patches.
+        /// </summary>
+        public bool Hidden { get; }
+        
+        /// <summary>
         /// Enum of the patch.
         /// </summary>
         public ClientPatchName PatchEnum { get; }

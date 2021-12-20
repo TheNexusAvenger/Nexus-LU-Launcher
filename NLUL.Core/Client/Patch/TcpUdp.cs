@@ -17,6 +17,11 @@ namespace NLUL.Core.Client.Patch
         public string Description => "Enables connecting to community-run LEGO Universe servers that use TCP/UDP. Requires the Mod Loader to be installed.";
         
         /// <summary>
+        /// Whether the patch is hidden in the list of patches.
+        /// </summary>
+        public bool Hidden => false;
+        
+        /// <summary>
         /// Enum of the patch.
         /// </summary>
         public ClientPatchName PatchEnum => ClientPatchName.TcpUdp;

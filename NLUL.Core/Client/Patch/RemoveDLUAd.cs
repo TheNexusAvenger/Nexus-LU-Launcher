@@ -13,6 +13,11 @@ namespace NLUL.Core.Client.Patch
         /// Description of the patch.
         /// </summary>
         public string Description => "Removes the advertisement for DLU from the zone loading screen.";
+        
+        /// <summary>
+        /// Whether the patch is hidden in the list of patches.
+        /// </summary>
+        public bool Hidden => true; // Not intended to be undone. This is due to some archives adding this.
 
         /// <summary>
         /// Enum of the patch.

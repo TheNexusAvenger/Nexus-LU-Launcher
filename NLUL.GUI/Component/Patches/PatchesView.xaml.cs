@@ -43,10 +43,15 @@ namespace NLUL.GUI.Component.Patches
             
             // Add the patch frames.
             this.ReloadPatches();
+            Client.StateChanged += () =>
+            {
+                if (Client.State != PlayState.Ready) return;
+                this.ReloadPatches();
+            };
             
             // Connect updating the patches visibility.
             Client.StateChanged += this.UpdateVisibility;
-            this.UpdateVisibility();;
+            this.UpdateVisibility();
         }
 
         /// <summary>
@@ -75,6 +80,7 @@ namespace NLUL.GUI.Component.Patches
             var patcher = Client.Patcher;
             foreach (var patch in Client.Patcher.Patches)
             {
+                if (patch.Hidden) continue;
                 var patchPanel = new PatchEntry();
                 patchPanel.Patcher = patcher;
                 patchPanel.PatchData = patch;

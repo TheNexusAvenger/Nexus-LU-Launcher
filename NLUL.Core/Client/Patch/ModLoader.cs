@@ -16,6 +16,11 @@ namespace NLUL.Core.Client.Patch
         /// Description of the patch.
         /// </summary>
         public string Description => "Allows the installation of client mods.";
+        
+        /// <summary>
+        /// Whether the patch is hidden in the list of patches.
+        /// </summary>
+        public bool Hidden => false;
 
         /// <summary>
         /// Enum of the patch.
