@@ -63,17 +63,12 @@ namespace NLUL.GUI.State
     public class ExtractException : Exception
     {
         /// <summary>
-        /// Message to display to the user.
-        /// </summary>
-        public readonly string Message;
-
-        /// <summary>
         /// Creates the extract exception.
         /// </summary>
         /// <param name="message">Message to display to the user.</param>
-        public ExtractException(string message)
+        public ExtractException(string message) : base(message)
         {
-            this.Message = message;
+            
         }
     }
     
@@ -224,6 +219,7 @@ namespace NLUL.GUI.State
             if (!archive.Verify(clientLocation))
             {
                 SetState(PlayState.VerifyFailed);
+                throw new ExtractException("An error occured verifying the extracted files. Make sure you have enough space and try again.");
             }
             
             // Run the patches.

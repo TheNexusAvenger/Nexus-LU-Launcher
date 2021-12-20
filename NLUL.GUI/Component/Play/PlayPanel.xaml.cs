@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using NLUL.Core;
 using NLUL.GUI.Component.Base;
+using NLUL.GUI.Component.Prompt;
 using NLUL.GUI.State;
 
 namespace NLUL.GUI.Component.Play
@@ -125,6 +126,49 @@ namespace NLUL.GUI.Component.Play
                 // Set the fill of the dot.
                 dot.Set("FillPercent", Math.Clamp(1 - (distanceToValue * 5), 0, 1));
             }
+        }
+
+        /// <summary>
+        /// Prompts to extract an archive.
+        /// </summary>
+        private void PromptExtract()
+        {
+            // Prompt for the file.
+            var dialog = new OpenFileDialog();
+            dialog.AllowMultiple = false;
+            dialog.Filters = new List<FileDialogFilter>()
+            {
+                new FileDialogFilter()
+                {
+                    Name = "Archive File",
+                    Extensions = new List<string>() { "rar", "zip", }
+                }
+            };
+            var openFileTask = dialog.ShowAsync(this.GetWindow());
+                
+            Task.Run(async () =>
+            {
+                // Get the archive location.
+                // Can't be awaited directly with ShowAsync because of a multithreading crash on macOS.
+                var archiveLocations = await openFileTask;
+                if (archiveLocations.Length == 0) return;
+                var archiveLocation = archiveLocations[0];
+                    
+                try
+                {
+                    // Start the extract.
+                    Client.RunExtract(archiveLocation, (message, percent) =>
+                    {
+                        this.loadingText.Set("Text", message);
+                        this.SetLoadingBar(percent);
+                    });
+                }
+                catch (ExtractException exception)
+                {
+                    // Show the prompt that it failed and prompt to try again.
+                    ConfirmPrompt.OpenPrompt(exception.Message + " Try again?", this.PromptExtract);
+                }
+            });
         }
         
         /// <summary>
@@ -297,41 +341,8 @@ namespace NLUL.GUI.Component.Play
             }
             else if (state == PlayState.ExtractClient || state == PlayState.VerifyFailed || state == PlayState.ExtractFailed)
             {
-                // Prompt for the file.
-                var dialog = new OpenFileDialog();
-                dialog.AllowMultiple = false;
-                dialog.Filters = new List<FileDialogFilter>()
-                {
-                    new FileDialogFilter()
-                    {
-                        Name = "Archive File",
-                        Extensions = new List<string>() { "rar", "zip", }
-                    }
-                };
-                var openFileTask = dialog.ShowAsync(this.GetWindow());
-                
-                Task.Run(async () =>
-                {
-                    // Get the archive location.
-                    // Can't be awaited directly with ShowAsync because of a multithreading crash on macOS.
-                    var archiveLocations = await openFileTask;
-                    if (archiveLocations.Length == 0) return;
-                    var archiveLocation = archiveLocations[0];
-                    
-                    // Start the extract.
-                    try
-                    {
-                        Client.RunExtract(archiveLocation, (message, percent) =>
-                        {
-                            this.loadingText.Set("Text", message);
-                            this.SetLoadingBar(percent);
-                        });
-                    }
-                    catch (ExtractException exception)
-                    {
-                        // TODO: Catch
-                    }
-                });
+                // Prompt extracting an archive.
+                PromptExtract();
             }
             else if (state == PlayState.Ready)
             {
