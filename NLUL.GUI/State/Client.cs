@@ -169,7 +169,7 @@ namespace NLUL.GUI.State
         /// Runs the runtime download.
         /// </summary>
         /// <param name="callback">Callback to run after the download completes.</param>
-        public static void DownloadRuntime(Action callback)
+        public static void DownloadRuntime(Action callback = null)
         {
             // Download the runtime.
             ClientRunner.Runtime.Install();
@@ -177,7 +177,7 @@ namespace NLUL.GUI.State
             // Update the state and invoke the callback.
             SetState(PlayState.Uninitialized);
             UpdateState();
-            callback();
+            callback?.Invoke();
         }
 
         /// <summary>
@@ -221,6 +221,10 @@ namespace NLUL.GUI.State
                 SetState(PlayState.VerifyFailed);
                 throw new ExtractException("An error occured verifying the extracted files. Make sure you have enough space and try again.");
             }
+            
+            // Download the runtime.
+            SetState(PlayState.DownloadingRuntime);
+            DownloadRuntime();
             
             // Run the patches.
             SetState(PlayState.PatchingClient);
