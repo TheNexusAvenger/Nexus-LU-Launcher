@@ -1,4 +1,4 @@
-## No Longer Functional
+## Client Download Changes
 As of October 3rd, 2021, the hosting of the client files was taken down and
 there are no plans to set up new mirrors of the client. V.0.3.X and lower no
 longer work if the client was not downloaded before, and V.0.4.0 and newer will
