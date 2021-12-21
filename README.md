@@ -1,8 +1,8 @@
 ## No Longer Functional
 As of October 3rd, 2021, the hosting of the client files was taken down and
-there are no plans to set up new mirrors of the client. Attempting to use
-the launcher without having a previous download of the client will result
-in an error.
+there are no plans to set up new mirrors of the client. V.0.3.X and lower no
+longer work if the client was not downloaded before, and V.0.4.0 and newer will
+require you to find the client archive yourself.
 
 # Nexus LU Launcher
 Nexus LU (LEGO Universe) Launcher is a custom, cross-platform
@@ -15,7 +15,7 @@ for community-run LEGO Universe servers.
 The goals of the launcher is the following:
 * Allow for launching the client on Windows, macOS, and Linux.
 * Use a user interface similar to the original LEGO Universe launcher.
-* Automate the process of downloading the client, installing patches,
+* Automate the process of extracting the client, installing patches,
   and launching LEGO Universe.
 * Be able to select from a list of servers to connect to.
 * Enable the installation of optional patches.
@@ -26,6 +26,7 @@ be made at some point:
 * Provide a method to change the locale.
   * This feature could be worked on but requires work on the client to enable
     localization. The primary blocker for this is translations for the client.
+* Unpacking the client for use with server hosting.
 * Automate installing WINE for non-Windows and non-macOS installs.
 
 ## Custom Download Location
