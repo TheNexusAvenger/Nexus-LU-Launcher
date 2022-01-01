@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using InfectedRose.Lvl;
+using InfectedRose.Core;
 using NLUL.Core.Client.Patch;
 using NLUL.Core.Client.Runtime;
 using NLUL.Core.Util;

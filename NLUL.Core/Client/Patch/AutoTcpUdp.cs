@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using InfectedRose.Lvl;
+using InfectedRose.Core;
 using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
