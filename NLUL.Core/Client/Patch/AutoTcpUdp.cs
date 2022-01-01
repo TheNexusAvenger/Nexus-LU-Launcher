@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using InfectedRose.Core;
 using NLUL.Core.Util;
@@ -107,7 +107,7 @@ namespace NLUL.Core.Client.Patch
             }
             
             // Download the mod.
-            var client = new WebClient();
+            var client = new HttpClient();
             client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.dll", ModLocation);
 
             // Save the manifest.

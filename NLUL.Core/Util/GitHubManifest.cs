@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json;
 
@@ -209,7 +208,7 @@ namespace NLUL.Core.Util
             }
             
             // Download the ZIP of the commit.
-            var client = new WebClient();
+            var client = new HttpClient();
             client.DownloadFile("https://github.com/" + this.Repository + "/archive/" + commit + ".zip", zipDirectory);
             
             // Un-compress the ZIP file to the temporary directory.

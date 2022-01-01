@@ -1,5 +1,5 @@
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
@@ -85,7 +85,7 @@ namespace NLUL.Core.Client.Patch
                 File.Delete(modLocation);
             }
             // Download the mod.
-            var client = new WebClient();
+            var client = new HttpClient();
             client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.dll",modLocation);
 
             // Save the manifest.

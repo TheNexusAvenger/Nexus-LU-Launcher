@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
+using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Runtime
 {
@@ -58,7 +59,7 @@ namespace NLUL.Core.Client.Runtime
             var wineDownloadLocation = Path.Combine(this.systemInfo.SystemFileLocation, "wine-crossover.tar.xz");
             if (!File.Exists(wineDownloadLocation))
             {
-                var client = new WebClient();
+                var client = new HttpClient();
                 client.DownloadFile("https://github.com/Gcenx/homebrew-wine/releases/download/20.0.2/wine-crossover-20.0.2-osx64.tar.xz",wineDownloadLocation);
             }
             

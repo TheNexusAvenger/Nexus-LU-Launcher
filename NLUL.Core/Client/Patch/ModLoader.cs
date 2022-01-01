@@ -1,6 +1,6 @@
 using System.IO;
 using System.IO.Compression;
-using System.Net;
+using System.Net.Http;
 using NLUL.Core.Util;
 
 namespace NLUL.Core.Client.Patch
@@ -79,7 +79,7 @@ namespace NLUL.Core.Client.Patch
             }
             
             // Download the mod loader ZIP.
-            var client = new WebClient();
+            var client = new HttpClient();
             var modDownloadDirectory = Path.Combine(this.systemInfo.SystemFileLocation, "modloader.zip"); 
             var modUncompressDirectory = Path.Combine(this.systemInfo.SystemFileLocation, "modloader");
             client.DownloadFile("https://github.com/lcdr/raknet_shim_dll/releases/download/" + tag.name + "/mod.zip", modDownloadDirectory);

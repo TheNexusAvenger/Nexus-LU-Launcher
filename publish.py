@@ -10,8 +10,12 @@ PROJECTS = [
 PLATFORMS = [
     ["Windows-x64","win-x64"],
     ["macOS-x64","osx-x64"],
-    # ["macOS-ARM64","osx-arm64"], # TODO: LU works on Apple M1. .NET 6 required for macOS ARM64 (still in preview). Also need to find a tester to validate.
+    ["macOS-ARM64","osx-arm64"],
     ["Linux-x64","linux-x64"],
+]
+MACOS_PACKAGE_BUILDS = [
+    ["macOS-x64","osx-x64"],
+    ["macOS-ARM64","osx-arm64"],
 ]
 
 import os
@@ -46,7 +50,7 @@ for project in PROJECTS:
     for platform in PLATFORMS:
         # Compile the project for the platform.
         print("Exporting " + project + " for " + platform[0])
-        subprocess.call(["dotnet","publish","-r",platform[1],"-c","Release","NLUL." + project + "/NLUL." + project + ".csproj"],stdout=open(os.devnull,"w"))
+        subprocess.call(["dotnet","publish","-r",platform[1],"-c","Release","NLUL." + project + "/NLUL." + project + ".csproj"])
 
         # Clear the unwanted files of the compile.
         dotNetVersion = os.listdir("NLUL." + project + "/bin/Release/")[0]
@@ -79,12 +83,13 @@ if os.path.exists("bin/NLUL-GUI-macOS-x64.zip"):
 # Package the macOS release.
 print("Packaging macOS release.")
 dotNetVersion = os.listdir("NLUL.GUI/bin/Release/")[0]
-shutil.copytree("NLUL.GUI/bin/Release/" + dotNetVersion + "/osx-x64/publish","bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/MacOS")
-os.mkdir("bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/Resources")
-shutil.copy("packaging/macOS/NexusLULauncherLogo.icns","bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/Resources/NexusLULauncherLogo.icns")
-shutil.copy("packaging/macOS/Info.plist","bin/NLUL-GUI-macOS-x64/Nexus LU Launcher.app/Contents/Info.plist")
-shutil.make_archive("bin/NLUL-GUI-macOS-x64","zip","bin/NLUL-GUI-macOS-x64")
-shutil.rmtree("bin/NLUL-GUI-macOS-x64")
+for macOsBuild in MACOS_PACKAGE_BUILDS:
+    shutil.copytree("NLUL.GUI/bin/Release/" + dotNetVersion + "/" + macOsBuild[1] + "/publish","bin/NLUL-GUI-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/MacOS")
+    os.mkdir("bin/NLUL-GUI-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Resources")
+    shutil.copy("packaging/macOS/NexusLULauncherLogo.icns","bin/NLUL-GUI-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Resources/NexusLULauncherLogo.icns")
+    shutil.copy("packaging/macOS/Info.plist","bin/NLUL-GUI-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Info.plist")
+    shutil.make_archive("bin/NLUL-GUI-" + macOsBuild[0],"zip","bin/NLUL-GUI-" + macOsBuild[0])
+    shutil.rmtree("bin/NLUL-GUI-" + macOsBuild[0])
 
 # Rename the GUI releases to be more clear.
 # The GUI releases are expected to be used by more users.
