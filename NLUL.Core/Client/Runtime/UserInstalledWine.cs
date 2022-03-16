@@ -62,6 +62,7 @@ namespace NLUL.Core.Client.Runtime
                 }
             };
             clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES","dinput8.dll=n,b");
+            clientProcess.StartInfo.EnvironmentVariables.Add("WINEPREFIX",Path.Combine(workingDirectory, "..", "Prefix"));
             return clientProcess;
         }
     }
