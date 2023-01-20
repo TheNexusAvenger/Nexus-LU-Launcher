@@ -17,7 +17,6 @@ namespace NLUL.Core.Client
         public static readonly List<ClientPatchName> DefaultPatches = new List<ClientPatchName>()
         {
             ClientPatchName.ModLoader,
-            ClientPatchName.AutoTcpUdp,
             ClientPatchName.FixAssemblyVendorHologram,
             ClientPatchName.RemoveDLUAd,
             ClientPatchName.FixAvantGardensSurvivalCrash,
