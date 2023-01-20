@@ -55,7 +55,7 @@ namespace NLUL.Core.Client.Archive
                 if (!entry.FullName.ToLower().StartsWith(archiveDirectory!.ToLower()) || entry.FullName.EndsWith("/")) continue;
                 
                 // Determine the destination file path.
-                var filePath = Path.GetRelativePath(archiveDirectory, entry.FullName);
+                var filePath = archiveDirectory == "" ? entry.FullName : Path.GetRelativePath(archiveDirectory, entry.FullName);
                 var newPath = Path.Combine(targetLocation, filePath);
                 var newParentPath = Path.GetDirectoryName(newPath);
                 
