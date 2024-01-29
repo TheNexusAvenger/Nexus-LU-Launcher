@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Nexus.LU.Launcher.State.Client.Archive;
+using Nexus.LU.Launcher.State.Client.Patch;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
 
@@ -31,6 +34,11 @@ public class ClientState {
     /// This event is fired with every progress bar change. LauncherStateChanged is recommended.
     /// </summary>
     public event Action<LauncherProgress> LauncherProgressChanged;
+    
+    /// <summary>
+    /// List of patches for the launcher.
+    /// </summary>
+    public List<IClientPatch> Patches;
 
     /// <summary>
     /// Static instance of the client state.
@@ -41,7 +49,16 @@ public class ClientState {
     /// Creates the client state.
     /// </summary>
     private ClientState() {
+        // Initialize the state.
         this.Initialize();
+        
+        // Build the patch list.
+        var systemInfo = SystemInfo.GetDefault();
+        this.Patches = new List<IClientPatch>()
+        {
+            new FixAssemblyVendorHologramPatch(systemInfo),
+            new FixAvantGardensSurvivalCrashPatch(systemInfo),
+        };
     }
 
     /// <summary>
@@ -116,7 +133,7 @@ public class ClientState {
     /// Extracts the client.
     /// </summary>
     /// <param name="archivePath">Path to the archive to extract from.</param>
-    public void Extract(string archivePath)
+    public async Task ExtractAsync(string archivePath)
     {
         // Set the state as archiving.
         this.SetLauncherProgress(new LauncherProgress()
@@ -181,7 +198,18 @@ public class ClientState {
         // TODO
         
         // Apply the default patches.
-        // TODO
+        this.SetLauncherProgress(new LauncherProgress()
+        {
+            LauncherState = LauncherState.PatchingClient,
+            ProgressBarState = ProgressBarState.Progressing,
+        });
+        foreach (var patch in this.Patches)
+        {
+            await patch.RefreshAsync();
+            if (!patch.ApplyByDefault) return;
+            if (patch.State != PatchState.NotInstalled) return;
+            await patch.InstallAsync();
+        }
         
         // Re-initialize the state.
         this.Initialize();

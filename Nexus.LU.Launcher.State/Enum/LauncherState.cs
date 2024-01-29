@@ -12,6 +12,7 @@ public enum LauncherState {
     VerifyingClient,
     ExtractFailed,
     VerifyFailed,
+    PatchingClient,
 
     // Automated runtime.
     RuntimeNotInstalled,
