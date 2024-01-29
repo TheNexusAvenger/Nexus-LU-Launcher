@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfectedRose.Lvl", "Infecte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfectedRose.Core", "InfectedRose\InfectedRose.Core\InfectedRose.Core.csproj", "{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nexus.LU.Launcher.State", "Nexus.LU.Launcher.State\Nexus.LU.Launcher.State.csproj", "{28E915BE-4160-4D49-A368-33A781C97B3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AEFD244-3AFA-443F-8E5A-BCC65D820DCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28E915BE-4160-4D49-A368-33A781C97B3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28E915BE-4160-4D49-A368-33A781C97B3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28E915BE-4160-4D49-A368-33A781C97B3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28E915BE-4160-4D49-A368-33A781C97B3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

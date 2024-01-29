@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="SharpCompress" Version="0.36.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\InfectedRose\InfectedRose.Lvl\InfectedRose.Lvl.csproj" />
+    </ItemGroup>
+
+</Project>
