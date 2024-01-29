@@ -32,6 +32,7 @@ public class RarFileArchive : ClientArchive
         catch (Exception)
         {
             // Return false (potentially not a .rar archive).
+            Logger.Warn($"File \"{this.ArchiveFile}\" is not a RAR file.");
             return false;
         }
     }
@@ -66,6 +67,7 @@ public class RarFileArchive : ClientArchive
                 Directory.CreateDirectory(newParentPath);
             }
             entry.WriteToFile(newPath);
+            Logger.Debug($"Extracted file {newPath}");
             
             // Report the progress.
             completedFiles += 1;
@@ -96,6 +98,7 @@ public class RarFileArchive : ClientArchive
             var filePath = archiveDirectory == "" ? entry.Key : Path.GetRelativePath(archiveDirectory, entry.Key);
             var newPath = Path.Combine(targetLocation, filePath);
             if (entry.Size == 0 || File.Exists(newPath)) continue;
+            Logger.Warn($"File {newPath} was not verified correctly.");
             return false;
         }
 

@@ -31,6 +31,7 @@ public class ZipFileArchive : ClientArchive
         catch (Exception)
         {
             // Return false (potentially not a .zip archive).
+            Logger.Warn($"File \"{this.ArchiveFile}\" is not a ZIP file.");
             return false;
         }
     }
@@ -65,6 +66,7 @@ public class ZipFileArchive : ClientArchive
                 Directory.CreateDirectory(newParentPath);
             }
             entry.ExtractToFile(newPath, true);
+            Logger.Debug($"Extracted file {newPath}");
             
             // Report the progress.
             completedFiles += 1;
@@ -95,6 +97,7 @@ public class ZipFileArchive : ClientArchive
             var filePath = archiveDirectory == "" ? entry.FullName : Path.GetRelativePath(archiveDirectory, entry.FullName);
             var newPath = Path.Combine(targetLocation, filePath);
             if (entry.Length == 0 || File.Exists(newPath)) continue;
+            Logger.Warn($"File {newPath} was not verified correctly.");
             return false;
         }
 

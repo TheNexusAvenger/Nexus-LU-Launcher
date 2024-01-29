@@ -136,6 +136,7 @@ public class ClientState {
     public async Task ExtractAsync(string archivePath)
     {
         // Set the state as archiving.
+        Logger.Info($"Extracting client from \"{archivePath}\".");
         this.SetLauncherProgress(new LauncherProgress()
         {
             LauncherState = LauncherState.ExtractingClient,
@@ -145,6 +146,7 @@ public class ClientState {
         var archive = ClientArchive.GetArchive(archivePath);
         if (archive == null)
         {
+            Logger.Error($"Archive \"{archivePath}\" is not a supported archive or does not contain LEGO Universe.");
             this.SetLauncherProgress(new LauncherProgress()
             {
                 LauncherState = LauncherState.ExtractFailed,
@@ -154,6 +156,7 @@ public class ClientState {
         }
         
         // Extract the files.
+        Logger.Info($"Extracting client using {archive.GetType().Name}.");
         var clientLocation = SystemInfo.GetDefault().ClientLocation;
         archive.ExtractProgress += (progress) =>
         {
@@ -169,8 +172,9 @@ public class ClientState {
         {
             archive.ExtractTo(clientLocation);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Logger.Error($"An error occured extracting the files. Make sure you have enough space and try again.\n{e}");
             this.SetLauncherProgress(new LauncherProgress()
             {
                 LauncherState = LauncherState.ExtractFailed,
@@ -180,6 +184,7 @@ public class ClientState {
         }
         
         // Verify the files.
+        Logger.Info("Verifying client.");
         this.SetLauncherProgress(new LauncherProgress()
         {
             LauncherState = LauncherState.VerifyingClient,
@@ -198,6 +203,7 @@ public class ClientState {
         // TODO
         
         // Apply the default patches.
+        Logger.Info("Applying patches.");
         this.SetLauncherProgress(new LauncherProgress()
         {
             LauncherState = LauncherState.PatchingClient,
@@ -206,12 +212,22 @@ public class ClientState {
         foreach (var patch in this.Patches)
         {
             await patch.RefreshAsync();
-            if (!patch.ApplyByDefault) return;
-            if (patch.State != PatchState.NotInstalled) return;
+            if (!patch.ApplyByDefault)
+            {
+                Logger.Debug($"Patch {patch.Name} is ignored since it is not applied by default.");
+                return;
+            }
+            if (patch.State != PatchState.NotInstalled)
+            {
+                Logger.Debug($"Patch {patch.Name} is ignored because it is {patch.State}.");
+            }
+            Logger.Debug($"Applying patch {patch.Name}.");
             await patch.InstallAsync();
+            Logger.Info($"Applied patch {patch.Name}.");
         }
         
         // Re-initialize the state.
         this.Initialize();
+        Logger.Info($"Client is now {this.CurrentLauncherState}.");
     }
 }
