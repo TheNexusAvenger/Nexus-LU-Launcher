@@ -10,11 +10,6 @@ namespace Nexus.LU.Launcher.State.Client.Runtime;
 public class UserInstalledWineRuntime : IRuntime
 {
     /// <summary>
-    /// Name of the runtime.
-    /// </summary>
-    public string Name => "WINE";
-
-    /// <summary>
     /// State of the runtime.
     /// </summary>
     public RuntimeState RuntimeState => Environment.GetEnvironmentVariable("PATH")!.Split(":").Any(directory => File.Exists(Path.Combine(directory, "wine"))) ? RuntimeState.Installed : RuntimeState.ManualInstallRequired;

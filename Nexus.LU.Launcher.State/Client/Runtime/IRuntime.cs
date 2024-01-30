@@ -7,11 +7,6 @@ namespace Nexus.LU.Launcher.State.Client.Runtime;
 public interface IRuntime
 {
     /// <summary>
-    /// Name of the runtime.
-    /// </summary>
-    public string Name { get; }
-    
-    /// <summary>
     /// State of the runtime.
     /// </summary>
     public RuntimeState RuntimeState { get; }

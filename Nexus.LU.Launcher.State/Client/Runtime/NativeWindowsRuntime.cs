@@ -9,11 +9,6 @@ namespace Nexus.LU.Launcher.State.Client.Runtime;
 public class NativeWindowsRuntime : IRuntime
 {
     /// <summary>
-    /// Name of the runtime.
-    /// </summary>
-    public string Name => "Native Windows";
-
-    /// <summary>
     /// State of the runtime.
     /// </summary>
     public RuntimeState RuntimeState => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? RuntimeState.Installed : RuntimeState.Unsupported;

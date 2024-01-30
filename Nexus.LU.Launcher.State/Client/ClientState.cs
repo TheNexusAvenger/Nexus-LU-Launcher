@@ -270,7 +270,7 @@ public class ClientState {
         var runtime = this.GetRuntime();
         if (runtime.RuntimeState == RuntimeState.NotInstalled)
         {
-            Logger.Debug($"Installing runtime {runtime.Name}.");
+            Logger.Debug($"Installing runtime {runtime.GetType().Name}.");
             this.SetLauncherProgress(new LauncherProgress()
             {
                 LauncherState = LauncherState.InstallingRuntime,
@@ -278,7 +278,7 @@ public class ClientState {
                 AdditionalData = runtime.GetType().Name,
             });
             await runtime.InstallAsync();
-            Logger.Info($"Installed runtime {runtime.Name}.");
+            Logger.Info($"Installed runtime {runtime.GetType().Name}.");
         }
         
         // Apply the default patches.
