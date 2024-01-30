@@ -16,6 +16,7 @@
         <Border Background="#1A1922" BorderBrush="#12131C" BorderThickness="3" CornerRadius="20" Width="674" Height="420" Canvas.Top="50">
             <StackPanel>
                 <Nexus.LU.Launcher.Gui.Component:TopBar Height="62"/>
+                <Nexus.LU.Launcher.Gui.Component:ToggleView/>
             </StackPanel>
         </Border>
         <Image Source="/Assets/Images/NexusLegoUniverseLauncherLogo.png" Width="100" Height="100" Canvas.Left="290"></Image>
