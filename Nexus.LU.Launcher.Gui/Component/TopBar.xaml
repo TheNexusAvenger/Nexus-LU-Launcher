@@ -1,0 +1,22 @@
+﻿<Panel xmlns="https://github.com/avaloniaui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:Nexus.LU.Launcher.Gui.Component.Base="clr-namespace:Nexus.LU.Launcher.Gui.Component.Base"
+       x:Class="Nexus.LU.Launcher.Gui.Component.TopBar">
+    <DockPanel HorizontalAlignment="Right">
+        <StackPanel Height="36" Width="36">
+            <Nexus.LU.Launcher.Gui.Component.Base:ImageButton Width="24" Height="24" Name="Minimize"
+                                                              BaseSource="/Assets/Images/TopBar/MinimizeNormal.png"
+                                                              HoverSource="/Assets/Images/TopBar/MinimizeHover.png"
+                                                              PressSource="/Assets/Images/TopBar/MinimizePress.png"
+            />
+        </StackPanel>
+        <StackPanel Height="36" Width="36">
+            <Nexus.LU.Launcher.Gui.Component.Base:ImageButton Width="24" Height="24" Name="Close"
+                                                              BaseSource="/Assets/Images/TopBar/CloseNormal.png"
+                                                              HoverSource="/Assets/Images/TopBar/CloseHover.png"
+                                                              PressSource="/Assets/Images/TopBar/ClosePress.png"
+            />
+        </StackPanel>
+        <Panel Width="8"></Panel>
+    </DockPanel>
+</Panel>

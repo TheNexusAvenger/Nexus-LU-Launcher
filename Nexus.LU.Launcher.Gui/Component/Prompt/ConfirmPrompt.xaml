@@ -1,0 +1,32 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Nexus.LU.Launcher.Gui.Component.Base="clr-namespace:Nexus.LU.Launcher.Gui.Component.Base"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="250"
+        x:Class="Nexus.LU.Launcher.Gui.Component.Prompt.ConfirmPrompt"
+        d:WindowTransparencyLevelHint="Transparent"
+        Width="400" Height="250"
+        TransparencyLevelHint="Transparent"
+        Background="Transparent"
+        SystemDecorations="None"
+        Title="Confirm?"
+        Icon="/Assets/Images/NexusLegoUniverseLauncherLogo.ico"
+        Topmost="True">
+    <Border Background="#BB0000" BorderBrush="#EE0000" BorderThickness="3" CornerRadius="20" Width="400" Height="250">
+        <Canvas>
+            <TextBlock Name="Message" VerticalAlignment="Center" TextAlignment="Center" Foreground="#FFFFFF" TextWrapping="Wrap"
+                       FontFamily="Arial" FontSize="20" FontWeight="Bold" Width="380" Height="130" Canvas.Left="10" Canvas.Top="30"/>
+            <Nexus.LU.Launcher.Gui.Component.Base:RoundedImageButton Width="64" Height="64" Name="Confirm" Color="#1A1922"
+                                                                     BaseSource="/Assets/Images/Prompt/Confirm.png"
+                                                                     HoverSource="/Assets/Images/Prompt/Confirm.png"
+                                                                     PressSource="/Assets/Images/Prompt/ConfirmPress.png"
+                                                                     Canvas.Left="116" Canvas.Top="170"/>
+            <Nexus.LU.Launcher.Gui.Component.Base:RoundedImageButton Width="64" Height="64" Name="Cancel" Color="#1A1922"
+                                                                     BaseSource="/Assets/Images/Prompt/Cancel.png"
+                                                                     HoverSource="/Assets/Images/Prompt/Cancel.png"
+                                                                     PressSource="/Assets/Images/Prompt/CancelPress.png"
+                                                                     Canvas.Left="220" Canvas.Top="170"/>
+        </Canvas>
+    </Border>
+</Window>

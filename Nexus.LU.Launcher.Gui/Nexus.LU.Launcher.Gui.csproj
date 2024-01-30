@@ -24,4 +24,8 @@
         <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.7" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Nexus.LU.Launcher.State\Nexus.LU.Launcher.State.csproj" />
+    </ItemGroup>
+
 </Project>
