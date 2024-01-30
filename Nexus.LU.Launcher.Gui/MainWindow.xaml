@@ -1,0 +1,21 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="680" d:DesignHeight="470"
+        x:Class="Nexus.LU.Launcher.Gui.MainWindow"
+        d:WindowTransparencyLevelHint="Transparent"
+        Width="680" Height="470"
+        TransparencyLevelHint="Transparent"
+        Background="Transparent"
+        SystemDecorations="None"
+        Title="Nexus LEGO Universe Launcher"
+        Icon="/Assets/Images/NexusLegoUniverseLauncherLogo.ico">
+    <Canvas>
+        <Border Background="#1A1922" BorderBrush="#12131C" BorderThickness="3" CornerRadius="20" Width="674" Height="420" Canvas.Top="50">
+            <StackPanel>
+            </StackPanel>
+        </Border>
+        <Image Source="/Assets/Images/NexusLegoUniverseLauncherLogo.png" Width="100" Height="100" Canvas.Left="290"></Image>
+    </Canvas>
+</Window>
