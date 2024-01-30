@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Nexus.LU.Launcher.State.Client.Archive;
 
@@ -19,7 +18,7 @@ public abstract class ClientArchive
     /// <summary>
     /// Event for the archive extraction progressing.
     /// </summary>
-    public event Action<float> ExtractProgress;
+    public event Action<float>? ExtractProgress;
 
     /// <summary>
     /// Location of the archive file.

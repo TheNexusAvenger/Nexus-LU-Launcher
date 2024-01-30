@@ -16,7 +16,7 @@ public class NativeWindowsRuntime : IRuntime
     /// <summary>
     /// State of the runtime.
     /// </summary>
-    public RuntimeState RuntimeState => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Enum.RuntimeState.Installed : RuntimeState.Unsupported;
+    public RuntimeState RuntimeState => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? RuntimeState.Installed : RuntimeState.Unsupported;
 
     /// <summary>
     /// Attempts to install the emulator.

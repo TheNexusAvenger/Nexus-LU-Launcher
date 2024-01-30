@@ -10,31 +10,31 @@ public class ServerList
     /// <summary>
     /// All the stored entries for the server.
     /// </summary>
-    public List<ServerEntry> ServerEntries;
+    public readonly List<ServerEntry> ServerEntries;
 
     /// <summary>
     /// Selected entry for the server list.
     /// </summary>
-    public ServerEntry SelectedEntry;
+    public ServerEntry? SelectedEntry;
     
     /// <summary>
     /// Event for when the server list changes.
     /// </summary>
-    public event Action ServerListChanged;
+    public event Action? ServerListChanged;
 
     /// <summary>
     /// System information that stores the server list.
     /// </summary>
-    private readonly SystemInfo _systemInfo;
+    private readonly SystemInfo systemInfo;
 
     /// <summary>
     /// Creates a server list instance.
     /// </summary>
     public ServerList()
     {
-        this._systemInfo = SystemInfo.GetDefault();
-        this.ServerEntries = this._systemInfo.Settings.Servers;
-        this.SelectedEntry = this.ServerEntries.FirstOrDefault(entry => entry.ServerName == this._systemInfo.Settings.SelectedServer);
+        this.systemInfo = SystemInfo.GetDefault();
+        this.ServerEntries = this.systemInfo.Settings.Servers;
+        this.SelectedEntry = this.ServerEntries.FirstOrDefault(entry => entry.ServerName == this.systemInfo.Settings.SelectedServer);
     }
 
     /// <summary>
@@ -48,11 +48,11 @@ public class ServerList
         if (this.SelectedEntry == null)
         {
             this.SelectedEntry = entry;
-            this._systemInfo.Settings.SelectedServer = this.SelectedEntry?.ServerName;
+            this.systemInfo.Settings.SelectedServer = this.SelectedEntry?.ServerName;
         }
         
         // Save the settings.
-        this._systemInfo.SaveSettings();
+        this.systemInfo.SaveSettings();
         this.ServerListChanged?.Invoke();
     }
 
@@ -74,11 +74,11 @@ public class ServerList
         if (entry == this.SelectedEntry)
         {
             this.SelectedEntry = this.ServerEntries.FirstOrDefault();
-            this._systemInfo.Settings.SelectedServer = this.SelectedEntry?.ServerName;
+            this.systemInfo.Settings.SelectedServer = this.SelectedEntry?.ServerName;
         }
         
         // Save the settings.
-        this._systemInfo.SaveSettings();
+        this.systemInfo.SaveSettings();
         this.ServerListChanged?.Invoke();
     }
 
@@ -97,8 +97,8 @@ public class ServerList
         
         // Set the entry as active and save the settings.
         this.SelectedEntry = entry;
-        this._systemInfo.Settings.SelectedServer = serverName;
-        this._systemInfo.SaveSettings();
+        this.systemInfo.Settings.SelectedServer = serverName;
+        this.systemInfo.SaveSettings();
         this.ServerListChanged?.Invoke();
     }
 }

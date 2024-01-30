@@ -32,33 +32,33 @@ public class ClientState {
     /// <summary>
     /// Event for when the launcher state changes.
     /// </summary>
-    public event Action<LauncherState> LauncherStateChanged;
+    public event Action<LauncherState>? LauncherStateChanged;
 
     /// <summary>
     /// Event for when the launcher progress changes.
     /// This event is fired with every progress bar change. LauncherStateChanged is recommended.
     /// </summary>
-    public event Action<LauncherProgress> LauncherProgressChanged;
+    public event Action<LauncherProgress>? LauncherProgressChanged;
     
     /// <summary>
     /// List of patches for the launcher.
     /// </summary>
-    public List<IClientPatch> Patches;
+    public readonly List<IClientPatch> Patches;
     
     /// <summary>
     /// List of runtimes for the client.
     /// </summary>
-    public List<IRuntime> Runtimes;
+    public readonly List<IRuntime> Runtimes;
 
     /// <summary>
     /// List of server entries.
     /// </summary>
-    public ServerList ServerList;
+    public readonly ServerList ServerList;
 
     /// <summary>
     /// Static instance of the client state.
     /// </summary>
-    private static ClientState _clientState;
+    private static ClientState? _clientState;
 
     /// <summary>
     /// Creates the client state.
@@ -84,7 +84,7 @@ public class ClientState {
         this.ServerList = new ServerList();
         this.ServerList.ServerListChanged += () =>
         {
-            if (this.CurrentLauncherState != LauncherState.NoSelectedServer && this.CurrentLauncherState != LauncherState.ReadyToLaunch);
+            if (this.CurrentLauncherState != LauncherState.NoSelectedServer && this.CurrentLauncherState != LauncherState.ReadyToLaunch) return;
             this.SetLauncherProgress(new LauncherProgress()
             {
                 LauncherState = (this.ServerList.SelectedEntry == null ? LauncherState.NoSelectedServer : LauncherState.ReadyToLaunch),
@@ -122,7 +122,7 @@ public class ClientState {
         }
         
         // Return the first supported runtime.
-        return this.Runtimes.FirstOrDefault(runtime => runtime.RuntimeState != RuntimeState.Unsupported);
+        return this.Runtimes.First(runtime => runtime.RuntimeState != RuntimeState.Unsupported);
     }
 
     /// <summary>
@@ -351,7 +351,7 @@ public class ClientState {
     /// </summary>
     /// <param name="host">Host to launch.</param>
     /// <returns>Process that was started.</returns>
-    public async Task<Process> LaunchAsync(ServerEntry host)
+    public async Task<Process?> LaunchAsync(ServerEntry host)
     {
         // Set up the runtime if it isn't installed.
         var runtime = this.GetRuntime();
@@ -377,7 +377,7 @@ public class ClientState {
         // Modify the boot file.
         var systemInfo = SystemInfo.GetDefault();
         var bootConfigLocation = Path.Combine(systemInfo.ClientLocation, "boot.cfg");
-        LegoDataDictionary bootConfig = null;
+        LegoDataDictionary bootConfig = null!;
         try
         {
             bootConfig = LegoDataDictionary.FromString((await File.ReadAllTextAsync(bootConfigLocation)).Trim().Replace("\n", ""), ',');
@@ -416,8 +416,8 @@ public class ClientState {
     /// Launches the selected client.
     /// </summary>
     /// <returns>Process that was started.</returns>
-    public async Task<Process> LaunchAsync()
+    public async Task<Process?> LaunchAsync()
     {
-        return await this.LaunchAsync(this.ServerList.SelectedEntry);
+        return await this.LaunchAsync(this.ServerList.SelectedEntry!);
     }
 }

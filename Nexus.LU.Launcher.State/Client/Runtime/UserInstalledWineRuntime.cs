@@ -17,7 +17,7 @@ public class UserInstalledWineRuntime : IRuntime
     /// <summary>
     /// State of the runtime.
     /// </summary>
-    public RuntimeState RuntimeState => Environment.GetEnvironmentVariable("PATH")!.Split(":").Any(directory => File.Exists(Path.Combine(directory, "wine"))) ? Enum.RuntimeState.Installed : RuntimeState.ManualInstallRequired;
+    public RuntimeState RuntimeState => Environment.GetEnvironmentVariable("PATH")!.Split(":").Any(directory => File.Exists(Path.Combine(directory, "wine"))) ? RuntimeState.Installed : RuntimeState.ManualInstallRequired;
 
     /// <summary>
     /// Attempts to install the emulator.

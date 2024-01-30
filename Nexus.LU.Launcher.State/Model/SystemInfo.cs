@@ -12,12 +12,12 @@ public class ServerEntry
     /// <summary>
     /// Display name of the server in the launcher.
     /// </summary>
-    public string ServerName;
+    public string ServerName = null!;
             
     /// <summary>
     /// Server address of the server in the launcher.
     /// </summary>
-    public string ServerAddress;
+    public string ServerAddress = null!;
 }
     
 public class LauncherSettings
@@ -30,12 +30,12 @@ public class LauncherSettings
     /// <summary>
     /// Selected server for the launcher.
     /// </summary>
-    public string SelectedServer { get; set; }
-        
+    public string? SelectedServer { get; set; }
+
     /// <summary>
     /// Parent location of the clients.
     /// </summary>
-    public string ClientParentLocation { get; set; }
+    public string? ClientParentLocation { get; set; }
     
     /// <summary>
     /// Gets the server entry for the given name.
@@ -64,7 +64,7 @@ public class SystemInfo
     /// <summary>
     /// Static SystemInfo used by different components.
     /// </summary>
-    private static SystemInfo _staticSystemInfo;
+    private static SystemInfo _staticSystemInfo = null!;
         
     /// <summary>
     /// Location of configuration file.
@@ -74,7 +74,7 @@ public class SystemInfo
     /// <summary>
     /// Location of where clients are stored.
     /// </summary>
-    public string SystemFileLocation => this.Settings.ClientParentLocation;
+    public string SystemFileLocation => this.Settings.ClientParentLocation!;
         
     /// <summary>
     /// Location of the common client that doesn't use a patch server.
@@ -99,7 +99,7 @@ public class SystemInfo
         {
             try
             {
-                this.Settings = JsonSerializer.Deserialize<LauncherSettings>(File.ReadAllText(this.configurationFileLocation), LauncherSettingsJsonContext.Default.LauncherSettings);
+                this.Settings = JsonSerializer.Deserialize<LauncherSettings>(File.ReadAllText(this.configurationFileLocation), LauncherSettingsJsonContext.Default.LauncherSettings)!;
             }
             catch (JsonException)
             {

@@ -31,7 +31,7 @@ public class FixAvantGardensSurvivalCrashPatch : IClientPatch
     /// <summary>
     /// Event for the state changing.
     /// </summary>
-    public event Action<PatchState> StateChanged;
+    public event Action<PatchState>? StateChanged;
     
     /// <summary>
     /// System info of the client.
