@@ -10,6 +10,7 @@ using Nexus.LU.Launcher.State.Client.Patch;
 using Nexus.LU.Launcher.State.Client.Runtime;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
+using Nexus.LU.Launcher.State.Util;
 
 namespace Nexus.LU.Launcher.State.Client;
 
@@ -289,6 +290,44 @@ public class ClientState {
         // Re-initialize the state.
         this.Initialize();
         Logger.Info($"Client is now {this.CurrentLauncherState}.");
+    }
+    
+    /// <summary>
+    /// Moves the client parent directory.
+    /// </summary>
+    /// <param name="destination">Destination directory of the clients.</param>
+    public async Task MoveClientParentDirectoryAsync(string destination)
+    {
+        // Create the parent directory.
+        this.SetLauncherProgress(new LauncherProgress()
+        {
+            LauncherState = LauncherState.MovingClient,
+            ProgressBarState = ProgressBarState.Progressing,
+        });
+        var systemInfo = SystemInfo.GetDefault();
+        var existingParentDirectory = systemInfo.SystemFileLocation;
+        Directory.CreateDirectory(destination);
+
+        // Set the parent directory.
+        systemInfo.Settings.ClientParentLocation = destination;
+        systemInfo.SaveSettings();
+
+        // Move the clients.
+        foreach (var clientDirectory in Directory.GetDirectories(existingParentDirectory))
+        {
+            var clientDirectoryName = new DirectoryInfo(clientDirectory).Name;
+            if (File.Exists(Path.Combine(clientDirectory, "legouniverse.exe")))
+            {
+                DirectoryExtensions.Move(clientDirectory, Path.Combine(destination, clientDirectoryName));
+            }
+        }
+
+        // Reload the patches and state.
+        foreach (var patch in this.Patches)
+        {
+            await patch.RefreshAsync();
+        }
+        this.Initialize();
     }
     
     /// <summary>
