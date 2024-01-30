@@ -17,7 +17,7 @@ public class LauncherProgress
     /// <summary>
     /// Percentage to fill the progress bar if ProgressBarState is PercentFill.
     /// </summary>
-    public float? ProgressBarFill { get; set; }
+    public double? ProgressBarFill { get; set; }
     
     /// <summary>
     /// Additional string for the current progress, typically when an error occurs.

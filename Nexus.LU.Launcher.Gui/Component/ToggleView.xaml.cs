@@ -2,6 +2,8 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Nexus.LU.Launcher.Gui.Component.Base;
+using Nexus.LU.Launcher.Gui.Component.Play;
+using Nexus.LU.Launcher.Gui.Util;
 using Nexus.LU.Launcher.State.Client;
 using Nexus.LU.Launcher.State.Enum;
 
@@ -19,7 +21,7 @@ public class ToggleView : Canvas
     /// <summary>
     /// View of the server list.
     /// </summary>
-    // TODO: private readonly PlayView playView;
+    private readonly PlayView playView;
     
     /// <summary>
     /// View of the patches.
@@ -38,7 +40,7 @@ public class ToggleView : Canvas
     {
         // Load the XAML.
         AvaloniaXamlLoader.Load(this);
-        // TODO: this.playView = this.Get<PlayView>("PlayView");
+        this.playView = this.Get<PlayView>("PlayView");
         // TODO: this.patchesView = this.Get<PatchesView>("PatchesView");
         // TODO: this.settingsView = this.Get<SettingsView>("SettingsView");
         var playButton = this.Get<ImageTextButton>("PlayButton");
@@ -72,9 +74,12 @@ public class ToggleView : Canvas
         };
         clientState.LauncherStateChanged += (state) =>
         {
-            playButton.IsVisible = (state != LauncherState.Launched);
-            patchesButton.IsVisible = (state != LauncherState.Launched);
-            settingsButton.IsVisible = (state != LauncherState.Launched);
+            this.Run(() =>
+            {
+                playButton.IsVisible = (state != LauncherState.Launched);
+                patchesButton.IsVisible = (state != LauncherState.Launched);
+                settingsButton.IsVisible = (state != LauncherState.Launched);
+            });
         };
     }
     
@@ -85,7 +90,7 @@ public class ToggleView : Canvas
     private void SetView(ActiveView view)
     {
         // Update the visibility.
-        // TODO: this.playView.IsVisible = (view == ActiveView.Play);
+        this.playView.IsVisible = (view == ActiveView.Play);
         // TODO: this.patchesView.IsVisible = (view == ActiveView.Patches);
         // TODO: this.settingsView.IsVisible = (view == ActiveView.Settings);
     }

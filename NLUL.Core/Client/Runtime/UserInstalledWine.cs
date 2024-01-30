@@ -26,7 +26,7 @@ namespace NLUL.Core.Client.Runtime
         /// Whether the emulator is installed.
         /// </summary>
         /// <returns></returns>
-        public bool IsInstalled => Environment.GetEnvironmentVariable("PATH").Split(":").Any(directory => File.Exists(Path.Combine(directory, "wine")));
+        public bool IsInstalled => Environment.GetEnvironmentVariable("PATH")!.Split(":").Any(directory => File.Exists(Path.Combine(directory, "wine")));
 
         /// <summary>
         /// The message to display to the user if the runtime

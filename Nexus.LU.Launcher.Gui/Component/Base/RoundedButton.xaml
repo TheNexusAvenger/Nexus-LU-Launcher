@@ -1,0 +1,5 @@
+﻿<Border xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Nexus.LU.Launcher.Gui.Component.Base.RoundedButton"
+        BorderThickness="3" CornerRadius="6">
+</Border>

@@ -151,6 +151,7 @@ public class ClientState {
             this.SetLauncherProgress(new LauncherProgress()
             {
                 LauncherState = LauncherState.ManualRuntimeNotInstalled,
+                AdditionalData = runtime.GetType().Name,
             });
             return;
         }
@@ -274,6 +275,7 @@ public class ClientState {
             {
                 LauncherState = LauncherState.InstallingRuntime,
                 ProgressBarState = ProgressBarState.Progressing,
+                AdditionalData = runtime.GetType().Name,
             });
             await runtime.InstallAsync();
             Logger.Info($"Installed runtime {runtime.Name}.");
@@ -361,6 +363,7 @@ public class ClientState {
             {
                 LauncherState = LauncherState.InstallingRuntime,
                 ProgressBarState = ProgressBarState.Progressing,
+                AdditionalData = runtime.GetType().Name,
             });
             await runtime.InstallAsync();
         }
@@ -370,6 +373,7 @@ public class ClientState {
             this.SetLauncherProgress(new LauncherProgress()
             {
                 LauncherState = LauncherState.ManualRuntimeNotInstalled,
+                AdditionalData = runtime.GetType().Name,
             });
             return null;
         }

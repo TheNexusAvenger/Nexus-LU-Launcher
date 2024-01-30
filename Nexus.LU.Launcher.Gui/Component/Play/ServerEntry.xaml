@@ -1,0 +1,25 @@
+﻿<Border xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Nexus.LU.Launcher.Gui.Component.Base="clr-namespace:Nexus.LU.Launcher.Gui.Component.Base"
+        x:Class="Nexus.LU.Launcher.Gui.Component.Play.ServerEntry"
+        Height="58" Margin="5,5,5,0" Background="#1A1B24" CornerRadius="3">
+    <DockPanel HorizontalAlignment="Right">
+        <StackPanel Name="Background" HorizontalAlignment="Left" MinWidth="456">
+            <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="ServerName"
+                       FontSize="24" Margin="8,4,0,0"></TextBlock>
+            <TextBlock TextAlignment="Left" Foreground="#AAAAAA" FontFamily="Arial" Name="ServerAddress"
+                       FontSize="18" Margin="12,4,0,0"></TextBlock>
+        </StackPanel>
+        <Nexus.LU.Launcher.Gui.Component.Base:RoundedButton Name="SelectButton"
+                                                        Width="110" Height="38">
+            <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial" Name="SelectText"
+                       FontWeight="Bold" FontSize="24" Margin="0,2,0,0">Select</TextBlock>
+        </Nexus.LU.Launcher.Gui.Component.Base:RoundedButton>
+        <Nexus.LU.Launcher.Gui.Component.Base:ImageButton Width="20" Height="20" Name="RemoveButton"
+                                                      BaseSource="/Assets/Images/TopBar/CloseNormal.png"
+                                                      HoverSource="/Assets/Images/TopBar/CloseHover.png"
+                                                      PressSource="/Assets/Images/TopBar/ClosePress.png"
+                                                      Margin="20,0"
+        />
+    </DockPanel>
+</Border>

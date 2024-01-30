@@ -38,6 +38,16 @@ public class ServerList
     }
 
     /// <summary>
+    /// Finds a server entry for a name.
+    /// </summary>
+    /// <param name="serverName">Name of the server to find.</param>
+    /// <returns>Server entry for the name if it exists.</returns>
+    public ServerEntry? GetServerEntry(string serverName)
+    {
+        return this.ServerEntries.FirstOrDefault(entry => entry.ServerName == serverName);
+    }
+
+    /// <summary>
     /// Adds a server entry.
     /// </summary>
     /// <param name="entry">Entry to add.</param>
@@ -63,7 +73,7 @@ public class ServerList
     public void RemoveEntry(string serverName)
     {
         // Return if the entry does not exist.
-        var entry = this.ServerEntries.FirstOrDefault(entry => entry.ServerName == serverName);
+        var entry = this.GetServerEntry(serverName);
         if (entry == null)
         {
             return;
@@ -89,7 +99,7 @@ public class ServerList
     public void SetServerActive(string serverName)
     {
         // Return if the entry does not exist.
-        var entry = this.ServerEntries.FirstOrDefault(entry => entry.ServerName == serverName);
+        var entry = this.GetServerEntry(serverName);
         if (entry == null)
         {
             return;
