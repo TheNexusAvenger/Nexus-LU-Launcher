@@ -73,24 +73,26 @@ public class FixAvantGardensSurvivalCrashPatch : IClientPatch
     /// <summary>
     /// Installs the patch.
     /// </summary>
-    public Task InstallAsync()
+    public async Task InstallAsync()
     {
-        if (!File.Exists(this.SurvivalScriptFileLocation)) return Task.CompletedTask;
-        File.WriteAllText(this.SurvivalScriptFileLocation,
-            File.ReadAllText(this.SurvivalScriptFileLocation)
+        if (!File.Exists(this.SurvivalScriptFileLocation)) return;
+        await File.WriteAllTextAsync(this.SurvivalScriptFileLocation,
+            (await File.ReadAllTextAsync(this.SurvivalScriptFileLocation))
                 .Replace("    PlayerReady(self)", "    onPlayerReady(self)"));
-        return Task.CompletedTask;
+        await this.RefreshAsync();
     }
         
     /// <summary>
     /// Uninstalls the patch.
     /// </summary>
-    public Task UninstallAsync()
+    public async Task UninstallAsync()
     {
-        if (!File.Exists(this.SurvivalScriptFileLocation)) return Task.CompletedTask;
-        File.WriteAllText(this.SurvivalScriptFileLocation,
-            File.ReadAllText(this.SurvivalScriptFileLocation)
+        if (!File.Exists(this.SurvivalScriptFileLocation)) return;
+        await File.WriteAllTextAsync(this.SurvivalScriptFileLocation,
+            (await File.ReadAllTextAsync(this.SurvivalScriptFileLocation))
                 .Replace("    onPlayerReady(self)", "    PlayerReady(self)"));
-        return Task.CompletedTask;
+        this.State = PatchState.NotInstalled;
+        this.StateChanged?.Invoke(this.State);
+        await this.RefreshAsync();
     }
 }

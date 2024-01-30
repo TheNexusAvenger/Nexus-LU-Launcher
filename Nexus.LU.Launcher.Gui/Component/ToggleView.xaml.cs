@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Nexus.LU.Launcher.Gui.Component.Base;
+using Nexus.LU.Launcher.Gui.Component.Patches;
 using Nexus.LU.Launcher.Gui.Component.Play;
 using Nexus.LU.Launcher.Gui.Util;
 using Nexus.LU.Launcher.State.Client;
@@ -26,7 +27,7 @@ public class ToggleView : Canvas
     /// <summary>
     /// View of the patches.
     /// </summary>
-    // TODO: private readonly PatchesView patchesView;
+    private readonly PatchesView patchesView;
     
     /// <summary>
     /// View of the settings.
@@ -41,7 +42,7 @@ public class ToggleView : Canvas
         // Load the XAML.
         AvaloniaXamlLoader.Load(this);
         this.playView = this.Get<PlayView>("PlayView");
-        // TODO: this.patchesView = this.Get<PatchesView>("PatchesView");
+        this.patchesView = this.Get<PatchesView>("PatchesView");
         // TODO: this.settingsView = this.Get<SettingsView>("SettingsView");
         var playButton = this.Get<ImageTextButton>("PlayButton");
         var patchesButton = this.Get<ImageTextButton>("PatchesButton");
@@ -91,7 +92,7 @@ public class ToggleView : Canvas
     {
         // Update the visibility.
         this.playView.IsVisible = (view == ActiveView.Play);
-        // TODO: this.patchesView.IsVisible = (view == ActiveView.Patches);
+        this.patchesView.IsVisible = (view == ActiveView.Patches);
         // TODO: this.settingsView.IsVisible = (view == ActiveView.Settings);
     }
 }

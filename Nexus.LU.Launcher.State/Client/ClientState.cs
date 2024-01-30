@@ -43,7 +43,7 @@ public class ClientState {
     /// <summary>
     /// List of patches for the launcher.
     /// </summary>
-    public readonly List<IClientPatch> Patches;
+    public readonly List<ExtendedClientPatch> Patches;
     
     /// <summary>
     /// List of runtimes for the client.
@@ -66,10 +66,10 @@ public class ClientState {
     private ClientState() {
         // Build the patch list.
         var systemInfo = SystemInfo.GetDefault();
-        this.Patches = new List<IClientPatch>()
+        this.Patches = new List<ExtendedClientPatch>()
         {
-            new FixAssemblyVendorHologramPatch(systemInfo),
-            new FixAvantGardensSurvivalCrashPatch(systemInfo),
+            new ExtendedClientPatch(new FixAssemblyVendorHologramPatch(systemInfo)),
+            new ExtendedClientPatch(new FixAvantGardensSurvivalCrashPatch(systemInfo)),
         };
         
         // Build the runtimes list.
@@ -296,11 +296,10 @@ public class ClientState {
                 Logger.Debug($"Patch {patch.Name} is ignored since it is not applied by default.");
                 return;
             }
-            if (patch.State != PatchState.NotInstalled)
+            if (patch.State != ExtendedPatchState.NotInstalled)
             {
                 Logger.Debug($"Patch {patch.Name} is ignored because it is {patch.State}.");
             }
-            Logger.Debug($"Applying patch {patch.Name}.");
             await patch.InstallAsync();
             Logger.Info($"Applied patch {patch.Name}.");
         }

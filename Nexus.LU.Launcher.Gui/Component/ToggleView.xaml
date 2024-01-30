@@ -2,10 +2,11 @@
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
             xmlns:Nexus.LU.Launcher.Gui.Component.Base="clr-namespace:Nexus.LU.Launcher.Gui.Component.Base"
             xmlns:Nexus.LU.Launcher.Gui.Component.Play="clr-namespace:Nexus.LU.Launcher.Gui.Component.Play"
+            xmlns:Nexus.LU.Launcher.Gui.Component.Patches="clr-namespace:Nexus.LU.Launcher.Gui.Component.Patches"
             x:Class="Nexus.LU.Launcher.Gui.Component.ToggleView">
     <Canvas>
         <Nexus.LU.Launcher.Gui.Component.Play:PlayView Name="PlayView"/>
-        <!--TODO: <Nexus.LU.Launcher.Gui.Component.Patches:PatchesView Name="PatchesView"/>-->
+        <Nexus.LU.Launcher.Gui.Component.Patches:PatchesView Name="PatchesView"/>
         <!--TODO: <Nexus.LU.Launcher.Gui.Component.Settings:SettingsView Name="SettingsView"/>-->
     </Canvas>
     <DockPanel HorizontalAlignment="Left" Margin="60,317">

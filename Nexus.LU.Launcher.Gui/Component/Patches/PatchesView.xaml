@@ -1,0 +1,15 @@
+﻿<StackPanel xmlns="https://github.com/avaloniaui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            x:Class="Nexus.LU.Launcher.Gui.Component.Patches.PatchesView">
+    <StackPanel>
+        <Border Background="#0C0D16" Width="664" Height="305" Margin="2,0" CornerRadius="7">
+            <Canvas>
+                <TextBlock Foreground="#FFFFFF" FontSize="24" Width="664" FontWeight="Bold" Canvas.Top="10"
+                           TextAlignment="Center" Name="NotDownloadedMessage">Client Not Downloaded</TextBlock>
+                <ScrollViewer VerticalAlignment="Top" HorizontalAlignment="Left" Name="PatchesScroll" Height="305">
+                    <StackPanel Name="PatchesList" Margin="0,0,0,5"/>
+                </ScrollViewer>
+            </Canvas>
+        </Border>
+    </StackPanel>
+</StackPanel>
