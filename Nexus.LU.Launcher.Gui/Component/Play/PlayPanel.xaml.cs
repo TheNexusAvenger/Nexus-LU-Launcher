@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Avalonia.Animation;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
@@ -80,12 +79,12 @@ public class PlayPanel : DockPanel
     /// <summary>
     /// Scroll container of the client output.
     /// </summary>
-    public ScrollViewer ClientOutputScroll { get; set; }
+    public ScrollViewer? ClientOutputScroll { get; set; }
 
     /// <summary>
     /// Text container of the client output.
     /// </summary>
-    public TextBox ClientOutput { get; set; }
+    public TextBox? ClientOutput { get; set; }
 
     /// <summary>
     /// Creates a play panel.
@@ -197,7 +196,7 @@ public class PlayPanel : DockPanel
             // Get the archive location.
             // Can't be awaited directly with ShowAsync because of a multithreading crash on macOS.
             var archiveLocations = await openFileTask;
-            if (archiveLocations!.Count == 0) return;
+            if (archiveLocations.Count == 0) return;
             var archiveLocation = archiveLocations[0];
 
             // Start the extract.
@@ -318,7 +317,7 @@ public class PlayPanel : DockPanel
                 }
                 
                 // Set up the displaying the output logs.
-                this.ClientOutputScroll.ScrollChanged += (sender, args) =>
+                this.ClientOutputScroll!.ScrollChanged += (sender, args) =>
                 {
                     if (args.ExtentDelta.Y == 0) return;
                     this.ClientOutputScroll.Run(this.ClientOutputScroll.ScrollToEnd);
@@ -330,7 +329,7 @@ public class PlayPanel : DockPanel
                 {
                     var line = await process.StandardOutput.ReadLineAsync();
                     output += (output == "" ? "" : "\n") + line;
-                    this.ClientOutput.SetThreadSafe("Text", output);
+                    this.ClientOutput!.SetThreadSafe("Text", output);
                 }
             });
         }

@@ -38,7 +38,7 @@ public static class StyledElementExtensions
     /// </summary>
     /// <param name="this">Styled element to get the parent window of.</param>
     /// <returns>Parent window that contains the styled element, if it exists.</returns>
-    public static Window? GetWindow(this StyledElement @this)
+    public static Window? GetWindow(this StyledElement? @this)
     {
         while (@this != null)
         {
