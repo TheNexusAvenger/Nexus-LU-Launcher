@@ -51,6 +51,11 @@ public class ClientState {
     public List<IRuntime> Runtimes;
 
     /// <summary>
+    /// List of server entries.
+    /// </summary>
+    public ServerList ServerList;
+
+    /// <summary>
     /// Static instance of the client state.
     /// </summary>
     private static ClientState _clientState;
@@ -73,6 +78,17 @@ public class ClientState {
             new NativeWindowsRuntime(),
             // TODO: macOS WINE automatic setup
             new UserInstalledWineRuntime(),
+        };
+        
+        // Create the server list.
+        this.ServerList = new ServerList();
+        this.ServerList.ServerListChanged += () =>
+        {
+            if (this.CurrentLauncherState != LauncherState.NoSelectedServer && this.CurrentLauncherState != LauncherState.ReadyToLaunch);
+            this.SetLauncherProgress(new LauncherProgress()
+            {
+                LauncherState = (this.ServerList.SelectedEntry == null ? LauncherState.NoSelectedServer : LauncherState.ReadyToLaunch),
+            });
         };
         
         // Initialize the state.
@@ -163,7 +179,7 @@ public class ClientState {
         }
 
         // Prepare the client to play.
-        if (systemInfo.Settings.GetServerEntry(systemInfo.Settings.SelectedServer) == null)
+        if (this.ServerList.SelectedEntry == null)
         {
             this.SetLauncherProgress(new LauncherProgress()
             {
@@ -392,5 +408,14 @@ public class ClientState {
         
         // Return the output.
         return clientProcess;
+    }
+
+    /// <summary>
+    /// Launches the selected client.
+    /// </summary>
+    /// <returns>Process that was started.</returns>
+    public async Task<Process> LaunchAsync()
+    {
+        return await this.LaunchAsync(this.ServerList.SelectedEntry);
     }
 }
