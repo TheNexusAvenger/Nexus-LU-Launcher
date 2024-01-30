@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Component.Patches;
 using Nexus.LU.Launcher.Gui.Component.Play;
+using Nexus.LU.Launcher.Gui.Component.Settings;
 using Nexus.LU.Launcher.Gui.Util;
 using Nexus.LU.Launcher.State.Client;
 using Nexus.LU.Launcher.State.Enum;
@@ -32,7 +33,7 @@ public class ToggleView : Canvas
     /// <summary>
     /// View of the settings.
     /// </summary>
-    // TODO: private readonly SettingsView settingsView;
+    private readonly SettingsView settingsView;
     
     /// <summary>
     /// Creates a toggle view panel.
@@ -43,7 +44,7 @@ public class ToggleView : Canvas
         AvaloniaXamlLoader.Load(this);
         this.playView = this.Get<PlayView>("PlayView");
         this.patchesView = this.Get<PatchesView>("PatchesView");
-        // TODO: this.settingsView = this.Get<SettingsView>("SettingsView");
+        this.settingsView = this.Get<SettingsView>("SettingsView");
         var playButton = this.Get<ImageTextButton>("PlayButton");
         var patchesButton = this.Get<ImageTextButton>("PatchesButton");
         var settingsButton = this.Get<ImageTextButton>("SettingsButton");
@@ -93,6 +94,6 @@ public class ToggleView : Canvas
         // Update the visibility.
         this.playView.IsVisible = (view == ActiveView.Play);
         this.patchesView.IsVisible = (view == ActiveView.Patches);
-        // TODO: this.settingsView.IsVisible = (view == ActiveView.Settings);
+        this.settingsView.IsVisible = (view == ActiveView.Settings);
     }
 }
