@@ -391,6 +391,7 @@ public class ClientState {
         await File.WriteAllTextAsync(bootConfigLocation,bootConfig.ToString(","));
         
         // Apply any pre-launch patches.
+        Logger.Info("Preparing pre-launch patches.");
         this.SetLauncherProgress(new LauncherProgress()
         {
             LauncherState = LauncherState.Launching,
@@ -399,6 +400,7 @@ public class ClientState {
         // TODO
         
         // Launch the client.
+        Logger.Info($"Launching with {host.ServerName} ({host.ServerAddress})");
         var clientProcess = runtime.RunApplication(Path.Combine(systemInfo.ClientLocation, "legouniverse.exe"), systemInfo.ClientLocation);
         clientProcess.Start();
         this.SetLauncherProgress(new LauncherProgress()

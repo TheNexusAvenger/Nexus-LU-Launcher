@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Nexus.LU.Launcher.State.Model;
 
@@ -52,6 +53,12 @@ public class LauncherSettings
     public bool LogsEnabled { get; set; }
 }
 
+[JsonSerializable(typeof(LauncherSettings))]
+[JsonSourceGenerationOptions(WriteIndented=true, IncludeFields = true)]
+internal partial class LauncherSettingsJsonContext : JsonSerializerContext
+{
+}
+
 public class SystemInfo
 {
     /// <summary>
@@ -92,7 +99,7 @@ public class SystemInfo
         {
             try
             {
-                this.Settings = JsonConvert.DeserializeObject<LauncherSettings>(File.ReadAllText(this.configurationFileLocation));
+                this.Settings = JsonSerializer.Deserialize<LauncherSettings>(File.ReadAllText(this.configurationFileLocation), LauncherSettingsJsonContext.Default.LauncherSettings);
             }
             catch (JsonException)
             {
@@ -144,6 +151,6 @@ public class SystemInfo
         }
             
         // Write the state as JSON.
-        File.WriteAllText(this.configurationFileLocation, JsonConvert.SerializeObject(this.Settings, Formatting.Indented));
+        File.WriteAllText(this.configurationFileLocation, JsonSerializer.Serialize(this.Settings, LauncherSettingsJsonContext.Default.LauncherSettings));
     }
 }
