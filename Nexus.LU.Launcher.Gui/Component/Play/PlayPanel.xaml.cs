@@ -31,8 +31,8 @@ public class PlayPanel : DockPanel
         { "VerifyFailed", "Client extract failed. Retry required." },
         { "PatchingClient", "Patching client..." },
         { "MovingClient", "Moving client to new location..." },
-        // TODO: {"RuntimeNotInstalled_MacOsWine", "Pending WINE download."},
-        // TODO: {"InstallingRuntime_MacOsWine", "Downloading and installing WINE."},
+        { "RuntimeNotInstalled_MacOsWineRuntime", "Pending WINE download." },
+        { "InstallingRuntime_MacOsWineRuntime", "Downloading and installing WINE." },
         { "NoSelectedServer", "No server selected to play." },
         { "ReadyToLaunch", "Ready to launch: {0} ({1})" },
         { "Launching", "Launching..." },
@@ -258,7 +258,10 @@ public class PlayPanel : DockPanel
         {
             stateLoadingText += $"_{launcherProgress.AdditionalData}";
         }
-        stateLoadingText = LoadingMessages[stateLoadingText] ?? stateLoadingText;
+        if (LoadingMessages.TryGetValue(stateLoadingText, out var message))
+        {
+            stateLoadingText = message;
+        }
         if (launcherProgress.LauncherState == LauncherState.ReadyToLaunch)
         {
             var selectedServer = clientState.ServerList.SelectedEntry!;

@@ -76,7 +76,7 @@ public class ClientState {
         this.Runtimes = new List<IRuntime>()
         {
             new NativeWindowsRuntime(),
-            // TODO: macOS WINE automatic setup
+            new MacOsWineRuntime(),
             new UserInstalledWineRuntime(),
         };
         
@@ -175,6 +175,7 @@ public class ClientState {
             this.SetLauncherProgress(new LauncherProgress()
             {
                 LauncherState = LauncherState.RuntimeNotInstalled,
+                AdditionalData = runtime.GetType().Name,
             });
             return;
         }
