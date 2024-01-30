@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <RuntimeIdentifier>win-x64</RuntimeIdentifier>
         <PublishAot>true</PublishAot>
+        <ApplicationIcon>Assets/Images/NexusLegoUniverseLauncherLogo.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
