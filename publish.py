@@ -4,18 +4,15 @@ TheNexusAvenger
 Creates the binaries for distribution.
 """
 
-PROJECTS = [
-    "GUI",
-]
 PLATFORMS = [
-    ["Windows-x64","win-x64"],
-    ["macOS-x64","osx-x64"],
-    ["macOS-ARM64","osx-arm64"],
-    ["Linux-x64","linux-x64"],
+    ["Windows-x64", "win-x64"],
+    ["macOS-x64", "osx-x64"],
+    ["macOS-ARM64", "osx-arm64"],
+    ["Linux-x64", "linux-x64"],
 ]
 MACOS_PACKAGE_BUILDS = [
-    ["macOS-x64","osx-x64"],
-    ["macOS-ARM64","osx-arm64"],
+    ["macOS-x64", "osx-x64"],
+    ["macOS-ARM64", "osx-arm64"],
 ]
 
 import os
@@ -46,52 +43,45 @@ if os.path.exists("bin"):
 os.mkdir("bin")
 
 # Compile the releases.
-for project in PROJECTS:
-    for platform in PLATFORMS:
-        # Compile the project for the platform.
-        print("Exporting " + project + " for " + platform[0])
-        subprocess.call(["dotnet","publish","-r",platform[1],"-c","Release","NLUL." + project + "/NLUL." + project + ".csproj"])
+for platform in PLATFORMS:
+    # Compile the project for the platform.
+    print("Exporting for " + platform[0])
+    subprocess.call(["dotnet", "publish", "-r", platform[1], "-c", "Release", "Nexus.LU.Launcher.Gui/Nexus.LU.Launcher.Gui.csproj"])
 
-        # Clear the unwanted files of the compile.
-        dotNetVersion = os.listdir("NLUL." + project + "/bin/Release/")[0]
-        outputDirectory = "NLUL." + project + "/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish"
-        for file in os.listdir(outputDirectory):
-            if file.endswith(".pdb"):
-                os.remove(outputDirectory + "/" + file)
+    # Clear the unwanted files of the compile.
+    dotNetVersion = os.listdir("Nexus.LU.Launcher.Gui/bin/Release/")[0]
+    outputDirectory = "Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish"
+    for file in os.listdir(outputDirectory):
+        if file.endswith(".pdb"):
+            os.remove(outputDirectory + "/" + file)
+    if len(os.listdir(outputDirectory)) == 0:
+        print("Build for " + platform[0] + " failed and will not be created.")
+        continue
 
-        # Rename the GUI executables.
-        if project == "GUI":
-            linuxOutputFile = outputDirectory + "/Nexus-LU-Launcher"
-            windowsOutputFile = outputDirectory + "/Nexus-LU-Launcher.exe"
-            if os.path.exists(linuxOutputFile):
-                os.remove(linuxOutputFile)
-            elif os.path.exists(windowsOutputFile):
-                os.remove(windowsOutputFile)
-            if os.path.exists(outputDirectory + "/NLUL.GUI"):
-                os.rename(outputDirectory + "/NLUL.GUI",linuxOutputFile)
-            elif os.path.exists(outputDirectory + "/NLUL.GUI.exe"):
-                os.rename(outputDirectory + "/NLUL.GUI.exe",windowsOutputFile)
+    # Rename the GUI executables.
+    linuxOutputFile = outputDirectory + "/Nexus-LU-Launcher"
+    windowsOutputFile = outputDirectory + "/Nexus-LU-Launcher.exe"
+    if os.path.exists(linuxOutputFile):
+        os.remove(linuxOutputFile)
+    elif os.path.exists(windowsOutputFile):
+        os.remove(windowsOutputFile)
+    if os.path.exists(outputDirectory + "/Nexus.LU.Launcher.Gui"):
+        os.rename(outputDirectory + "/Nexus.LU.Launcher.Gui", linuxOutputFile)
+    elif os.path.exists(outputDirectory + "/Nexus.LU.Launcher.Gui.exe"):
+        os.rename(outputDirectory + "/Nexus.LU.Launcher.Gui.exe", windowsOutputFile)
 
-        # Create the archive.
-        shutil.make_archive("bin/NLUL-" + project + "-" + platform[0],"zip","NLUL." + project + "/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish")
-
-# Clear the existing macOS GUI release.
-if os.path.exists("bin/NLUL-GUI-macOS-x64.zip"):
-    print("Clearing the macOS x64 NLUL-GUI release.")
-    os.remove("bin/NLUL-GUI-macOS-x64.zip")
+    # Create the archive.
+    shutil.make_archive("bin/Nexus-LU-Launcher-" + platform[0], "zip", "Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish")
 
 # Package the macOS release.
-print("Packaging macOS release.")
-dotNetVersion = os.listdir("NLUL.GUI/bin/Release/")[0]
+dotNetVersion = os.listdir("Nexus.LU.Launcher.Gui/bin/Release/")[0]
 for macOsBuild in MACOS_PACKAGE_BUILDS:
-    shutil.copytree("NLUL.GUI/bin/Release/" + dotNetVersion + "/" + macOsBuild[1] + "/publish","bin/NLUL-GUI-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/MacOS")
-    os.mkdir("bin/NLUL-GUI-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Resources")
-    shutil.copy("packaging/macOS/NexusLULauncherLogo.icns","bin/NLUL-GUI-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Resources/NexusLULauncherLogo.icns")
-    shutil.copy("packaging/macOS/Info.plist","bin/NLUL-GUI-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Info.plist")
-    shutil.make_archive("bin/NLUL-GUI-" + macOsBuild[0],"zip","bin/NLUL-GUI-" + macOsBuild[0])
-    shutil.rmtree("bin/NLUL-GUI-" + macOsBuild[0])
-
-# Rename the GUI releases to be more clear.
-# The GUI releases are expected to be used by more users.
-for platform in PLATFORMS:
-    os.rename("bin/NLUL-GUI-" + platform[0] + ".zip","bin/Nexus-LU-Launcher-" + platform[0] + ".zip")
+    if len(os.listdir("Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + macOsBuild[1] + "/publish")) == 0:
+        continue
+    print("Packaging macOS release for " + macOsBuild[0] + ".")
+    shutil.copytree("Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + macOsBuild[1] + "/publish", "bin/Nexus-LU-Launcher-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/MacOS")
+    os.mkdir("bin/Nexus-LU-Launcher-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Resources")
+    shutil.copy("packaging/macOS/NexusLULauncherLogo.icns", "bin/Nexus-LU-Launcher-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Resources/NexusLULauncherLogo.icns")
+    shutil.copy("packaging/macOS/Info.plist", "bin/Nexus-LU-Launcher-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Info.plist")
+    shutil.make_archive("bin/Nexus-LU-Launcher-" + macOsBuild[0],"zip","bin/Nexus-LU-Launcher-" + macOsBuild[0])
+    shutil.rmtree("bin/Nexus-LU-Launcher-" + macOsBuild[0])
