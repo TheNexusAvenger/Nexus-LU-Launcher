@@ -69,6 +69,8 @@ public class ClientState {
         this.Patches = new List<ExtendedClientPatch>()
         {
             new ExtendedClientPatch(new ModLoaderPatch(systemInfo)),
+            new ExtendedClientPatch(new AutoTcpUdpPatch(systemInfo)),
+            new ExtendedClientPatch(new TcpUdpPatch(systemInfo)),
             new ExtendedClientPatch(new FixAssemblyVendorHologramPatch(systemInfo)),
             new ExtendedClientPatch(new FixAvantGardensSurvivalCrashPatch(systemInfo)),
             new ExtendedClientPatch(new RemoveDluPatchAd(systemInfo)),
@@ -403,7 +405,10 @@ public class ClientState {
             LauncherState = LauncherState.Launching,
             ProgressBarState = ProgressBarState.Progressing,
         });
-        // TODO
+        foreach (var patch in this.Patches)
+        {
+            await patch.OnClientRequestLaunchAsync();
+        }
         
         // Launch the client.
         Logger.Info($"Launching with {host.ServerName} ({host.ServerAddress})");

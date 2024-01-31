@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Nexus.LU.Launcher.State.Enum;
@@ -9,18 +8,18 @@ using Nexus.LU.Launcher.State.Util;
 
 namespace Nexus.LU.Launcher.State.Client.Patch;
 
-public class ModLoaderPatch : IClientPatch
+public class TcpUdpPatch : IClientPatch
 {
     /// <summary>
     /// Name of the patch.
     /// </summary>
-    public string Name => "Mod Loader";
+    public string Name => "TCP/UDP Shim";
         
     /// <summary>
     /// Description of the patch.
     /// </summary>
-    public string Description => "Allows the installation of client mods.";
-
+    public string Description => "Enables connecting to community-run LEGO Universe servers that use TCP/UDP, like Uchu. This mod prevents connecting to normal RakNet servers, like Darkflame Universe. Requires the Mod Loader to be installed. Can't be installed with Auto TCP/UDP Shim.";
+    
     /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
@@ -42,6 +41,16 @@ public class ModLoaderPatch : IClientPatch
     private readonly SystemInfo systemInfo;
 
     /// <summary>
+    /// Location of the mod folder.
+    /// </summary>
+    private string ModFolderLocation => Path.Join(this.systemInfo.ClientLocation, "mods", "raknet_replacer");
+    
+    /// <summary>
+    /// Location of the mod.
+    /// </summary>
+    private string ModLocation => Path.Join(ModFolderLocation, "mod.dll");
+
+    /// <summary>
     /// Latest tag of the mod loaders in GitHub.
     /// </summary>
     private string? latestTag;
@@ -55,7 +64,7 @@ public class ModLoaderPatch : IClientPatch
     /// Creates the patch.
     /// </summary>
     /// <param name="systemInfo">System info of the client.</param>
-    public ModLoaderPatch(SystemInfo systemInfo)
+    public TcpUdpPatch(SystemInfo systemInfo)
     {
         this.systemInfo = systemInfo;
         Task.Run(async () =>
@@ -71,7 +80,7 @@ public class ModLoaderPatch : IClientPatch
             await this.RefreshAsync();
         });
     }
-    
+
     /// <summary>
     /// Refreshes the patch state.
     /// </summary>
@@ -81,7 +90,7 @@ public class ModLoaderPatch : IClientPatch
         {
             this.State = PatchState.Loading;
         }
-        else if (!File.Exists(Path.Join(this.systemInfo.ClientLocation, "dinput8.dll")))
+        else if (!File.Exists(this.ModLocation) || this.systemInfo.GetPatchStore("AutoTcpUdp", "InstalledVersion") != null)
         {
             this.State = PatchState.NotInstalled;
         }
@@ -89,7 +98,7 @@ public class ModLoaderPatch : IClientPatch
         {
             this.State = PatchState.UpdatesCheckFailed;
         }
-        else if (this.latestTag != this.systemInfo.GetPatchStore("ModLoader", "InstalledVersion"))
+        else if (this.latestTag != this.systemInfo.GetPatchStore("TcpUdp", "InstalledVersion"))
         {
             this.State = PatchState.UpdateAvailable;
         }
@@ -100,7 +109,7 @@ public class ModLoaderPatch : IClientPatch
         this.StateChanged?.Invoke(this.State);
         return Task.CompletedTask;
     }
-    
+
     /// <summary>
     /// Installs the patch.
     /// </summary>
@@ -112,64 +121,44 @@ public class ModLoaderPatch : IClientPatch
             throw new InvalidOperationException("Latest tag does not exist.");
         }
         
-        // Download the mod loader ZIP.
+        // Throw an exception if AutoTcpUdp is installed.
+        if (this.systemInfo.GetPatchStore("AutoTcpUdp", "InstalledVersion") != null)
+        {
+            throw new InvalidOperationException("AutoTcpUdp already installed.");
+        }
+        
+        // Create the mod directory.
+        if (!Directory.Exists(this.ModFolderLocation))
+        {
+            Directory.CreateDirectory(this.ModFolderLocation);
+        }
+        
+        // Remove the existing mod.dll.
+        if (File.Exists(this.ModLocation))
+        {
+            File.Delete(this.ModLocation);
+        }
+        
+        // Download the mod.
         var client = new HttpClient();
-        var modDownloadDirectory = Path.Combine(this.systemInfo.SystemFileLocation, "modloader.zip"); 
-        var modUncompressedDirectory = Path.Combine(this.systemInfo.SystemFileLocation, "modloader");
-        await client.DownloadFileAsync("https://github.com/lcdr/raknet_shim_dll/releases/download/" + this.latestTag + "/mod.zip", modDownloadDirectory);
-        
-        // Decompress the mod loader.
-        if (Directory.Exists(modUncompressedDirectory))
-        {
-            Directory.Delete(modUncompressedDirectory, true);
-        }
-        ZipFile.ExtractToDirectory(modDownloadDirectory, modUncompressedDirectory);
-        
-        // Remove the existing dinput8.dll.
-        var dinput8Location = Path.Join(this.systemInfo.ClientLocation, "dinput8.dll");
-        if (File.Exists(dinput8Location))
-        {
-            File.Delete(dinput8Location);
-        }
+        await client.DownloadFileAsync("https://github.com/lcdr/raknet_shim_dll/releases/download/" + this.latestTag + "/mod.dll", this.ModLocation);
 
-        // Replace the dinput8.dll file.
-        var dinput8DownloadLocation = Directory.GetFiles(modUncompressedDirectory, "dinput8.dll", SearchOption.AllDirectories)[0];
-        File.Move(dinput8DownloadLocation, dinput8Location);
-        
-        // Create the mods directory if it doesn't exist.
-        var modsDirectory = Path.Join(this.systemInfo.ClientLocation, "mods");
-        if (!Directory.Exists(modsDirectory))
-        {
-            Directory.CreateDirectory(modsDirectory);
-        }
-        
         // Save installed version.
-        this.systemInfo.SetPatchStore("ModLoader", "InstalledVersion", this.latestTag);
+        this.systemInfo.SetPatchStore("TcpUdp", "InstalledVersion", this.latestTag);
         this.systemInfo.SaveSettings();
-        
-        // Clear the downloaded files.
-        File.Delete(modDownloadDirectory);
-        Directory.Delete(modUncompressedDirectory, true);
         await this.RefreshAsync();
     }
-    
+
     /// <summary>
     /// Uninstalls the patch.
     /// </summary>
     public async Task UninstallAsync()
     {
-        // Remove the mod loader DLL.
-        File.Delete(Path.Combine(this.systemInfo.ClientLocation, "dinput8.dll"));
-            
-        // Remove the mods directory if it is empty.
-        var modsDirectory = Path.Join(this.systemInfo.ClientLocation, "mods");
-        if (Directory.GetDirectories(modsDirectory).Length == 0 && Directory.GetFiles(modsDirectory).Length == 0)
-        {
-            Directory.Delete(modsDirectory);
-        }
+        // Remove the mod directory.
+        Directory.Delete(this.ModFolderLocation, true);
         
         // Save that no version is installed.
-        this.systemInfo.SetPatchStore("ModLoader", "InstalledVersion", null);
+        this.systemInfo.SetPatchStore("TcpUdp", "InstalledVersion", null);
         this.systemInfo.SaveSettings();
         await this.RefreshAsync();
     }

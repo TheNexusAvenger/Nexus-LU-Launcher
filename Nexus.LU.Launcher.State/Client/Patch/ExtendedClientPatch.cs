@@ -130,4 +130,18 @@ public class ExtendedClientPatch
             this.SetState(ExtendedPatchState.FailedToUninstall);
         }
     }
+
+    /// <summary>
+    /// Performs and operations between setting the boot.cfg and launching
+    /// the client. This will yield launching the client.
+    /// </summary>
+    public async Task OnClientRequestLaunchAsync()
+    {
+        if (!(clientPatch is IPreLaunchClientPatch preLaunchClientPatch)) return;
+        if (preLaunchClientPatch.State == PatchState.Incompatible ||
+            preLaunchClientPatch.State == PatchState.NotInstalled ||
+            preLaunchClientPatch.State == PatchState.Loading) return;
+        Logger.Info($"Performing pre-launch action for {this.clientPatch.Name}");
+        await preLaunchClientPatch.OnClientRequestLaunchAsync();
+    }
 }
