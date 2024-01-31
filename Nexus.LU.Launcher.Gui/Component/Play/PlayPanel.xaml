@@ -11,6 +11,6 @@
     <Nexus.LU.Launcher.Gui.Component.Base:RoundedButton Name="PlayButton"
                                                         Width="136" Height="42" Margin="10,0,15,0">
         <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial"
-                   FontWeight="Bold" FontSize="32" Name="PlayText">Play!</TextBlock>
+                   FontWeight="Bold" FontSize="32" Name="PlayText">Client_PlayButtonText</TextBlock>
     </Nexus.LU.Launcher.Gui.Component.Base:RoundedButton>
 </DockPanel>

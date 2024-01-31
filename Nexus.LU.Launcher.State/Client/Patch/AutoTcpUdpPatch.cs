@@ -13,16 +13,6 @@ namespace Nexus.LU.Launcher.State.Client.Patch;
 public class AutoTcpUdpPatch : IPreLaunchClientPatch
 {
     /// <summary>
-    /// Name of the patch.
-    /// </summary>
-    public string Name => "Auto TCP/UDP Shim";
-        
-    /// <summary>
-    /// Description of the patch.
-    /// </summary>
-    public string Description => "Enables connecting to community-run LEGO Universe servers that may or may not use TCP/UDP. This is automatically managed for the requested server. Requires the Mod Loader to be installed. Can't be installed with TCP/UDP Shim.";
-    
-    /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
     public bool ApplyByDefault => false;
@@ -171,7 +161,7 @@ public class AutoTcpUdpPatch : IPreLaunchClientPatch
         {
             Directory.Delete(this.ModFolderLocation, true);
         }
-        if (Directory.Exists(this.ModFolderLocation))
+        if (Directory.Exists(this.DisabledModFolderLocation))
         {
             Directory.Delete(this.DisabledModFolderLocation, true);
         }

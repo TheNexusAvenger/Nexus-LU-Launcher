@@ -45,16 +45,24 @@ public class ToggleView : Canvas
         this.playView = this.Get<PlayView>("PlayView");
         this.patchesView = this.Get<PatchesView>("PatchesView");
         this.settingsView = this.Get<SettingsView>("SettingsView");
+        var gitHubButton = this.Get<ImageTextButton>("GitHubButton");
         var playButton = this.Get<ImageTextButton>("PlayButton");
         var patchesButton = this.Get<ImageTextButton>("PatchesButton");
         var settingsButton = this.Get<ImageTextButton>("SettingsButton");
+        
+        // Apply the text.
+        var localization = Localization.Get();
+        localization.LocalizeText(gitHubButton);
+        localization.LocalizeText(playButton);
+        localization.LocalizeText(patchesButton);
+        localization.LocalizeText(settingsButton);
 
         // Set the active view.
         this.SetView(ActiveView.Play);
         
         // Connect the events.
         var clientState = ClientState.Get();
-        this.Get<ImageTextButton>("GitHubButton").ButtonPressed += (sender, args) =>
+        gitHubButton.ButtonPressed += (sender, args) =>
         {
             // Open the repository in a browser.
             var webProcess = new Process(); 

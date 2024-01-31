@@ -18,8 +18,8 @@
             </Nexus.LU.Launcher.Gui.Component.Base:RoundedButton>
             <Nexus.LU.Launcher.Gui.Component.Base:RoundedButton Name="UpdateButton" Color="#0078CD"
                                                    Width="130" Height="38" Margin="0,5,5,5">
-                <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial"
-                           FontWeight="Bold" FontSize="24" Margin="0,2,0,0">Update</TextBlock>
+                <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial" Name="UpdateButtonText"
+                           FontWeight="Bold" FontSize="24" Margin="0,2,0,0">Patch_UpdateButtonText</TextBlock>
             </Nexus.LU.Launcher.Gui.Component.Base:RoundedButton>
             <TextBlock TextAlignment="Center" Foreground="#AAAAAA" FontFamily="Arial" Name="StatusText"
                        FontSize="12" Margin="10,5,10,5"></TextBlock>

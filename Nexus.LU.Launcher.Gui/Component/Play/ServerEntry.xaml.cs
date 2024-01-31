@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Component.Prompt;
+using Nexus.LU.Launcher.Gui.Util;
 using Nexus.LU.Launcher.State.Client;
 
 namespace Nexus.LU.Launcher.Gui.Component.Play;
@@ -95,7 +96,7 @@ public class ServerEntry : Border
         };
         removeButton.ButtonPressed += (sender, args) =>
         {
-            ConfirmPrompt.OpenPrompt("Confirm removing the server \"" + this.ServerName + "\"?", () =>
+            ConfirmPrompt.OpenPrompt(string.Format(Localization.Get().GetLocalizedString("ServerMenu_ConfirmRemovingPrompt"), this.ServerName), () =>
             {
                 clientState.ServerList.RemoveEntry(this.ServerName);
             });
@@ -111,15 +112,16 @@ public class ServerEntry : Border
     /// </summary>
     private void UpdateSelectButton()
     {
+        var localization = Localization.Get();
         if (this.Selected)
         {
             this.selectButton.Color = new SolidColorBrush(new Color(0, 0, 0, 0));
-            this.selectText.Text = "Selected";
+            this.selectText.Text = localization.GetLocalizedString("ServerMenu_SelectedLabel");
         }
         else
         {
             this.selectButton.Color = new SolidColorBrush(new Color(255, 0, 120, 205));
-            this.selectText.Text = "Select";
+            this.selectText.Text = localization.GetLocalizedString("ServerMenu_SelectButtonText");
         }
     }
     

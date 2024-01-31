@@ -6,20 +6,20 @@
     <DockPanel HorizontalAlignment="Center">
         <StackPanel HorizontalAlignment="Left" MinWidth="456" Name="Inputs">
             <DockPanel HorizontalAlignment="Left">
-                <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial"
-                           FontSize="24" Margin="8,4,0,0">Name: </TextBlock>
+                <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="AddServerNameLabel"
+                           FontSize="24" Margin="8,4,0,0">ServerMenu_AddServerNameLabel</TextBlock>
                 <TextBox TextAlignment="Left" Height="24" FontSize="11" Width="300" Name="ServerNameInput" Margin="8,4,0,0"/>
             </DockPanel>
             <DockPanel HorizontalAlignment="Left">
-                <TextBlock TextAlignment="Left" Foreground="#AAAAAA" FontFamily="Arial"
-                           FontSize="18" Margin="12,4,0,0">Address: </TextBlock>
+                <TextBlock TextAlignment="Left" Foreground="#AAAAAA" FontFamily="Arial" Name="AddAddressLabel"
+                           FontSize="18" Margin="12,4,0,0">ServerMenu_AddServerAddressLabel</TextBlock>
                 <TextBox TextAlignment="Left" Height="24" FontSize="11" Width="300" Name="ServerAddressInput" Margin="8,0,0,0"/>
             </DockPanel>
         </StackPanel>
         <Nexus.LU.Launcher.Gui.Component.Base:RoundedButton Name="AddButton"
                                                             Width="110" Height="38">
-            <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial"
-                       FontWeight="Bold" FontSize="24" Margin="0,2,0,0">Add</TextBlock>
+            <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial" Name="AddServerButtonText"
+                       FontWeight="Bold" FontSize="24" Margin="0,2,0,0">ServerMenu_AddServerButtonText</TextBlock>
         </Nexus.LU.Launcher.Gui.Component.Base:RoundedButton>
         <Nexus.LU.Launcher.Gui.Component.Base:ImageButton Width="20" Height="20" Name="CancelButton"
                                                           BaseSource="/Assets/Images/TopBar/CloseNormal.png"

@@ -45,20 +45,20 @@ public class PatchEntry : Border
     };
 
     /// <summary>
-    /// Status messages for the states.
+    /// Patch states that have messages.
     /// </summary>
-    public readonly Dictionary<ExtendedPatchState, string> StatusMessages = new Dictionary<ExtendedPatchState, string>()
+    public readonly List<ExtendedPatchState> PatchStatesWithMessages = new List<ExtendedPatchState>()
     {
-        { ExtendedPatchState.Loading, "Loading..." },
-        { ExtendedPatchState.Installing, "Installing..." },
-        { ExtendedPatchState.FailedToInstall, "Failed to install." },
-        { ExtendedPatchState.Uninstalling, "Uninstalling..." },
-        { ExtendedPatchState.FailedToUninstall, "Failed to uninstall." },
-        { ExtendedPatchState.CheckingForUpdates, "Checking for updates..." },
-        { ExtendedPatchState.UpdatesCheckFailed, "Updates check failed." },
-        { ExtendedPatchState.UpdateAvailable, "Update available." },
-        { ExtendedPatchState.Updating, "Updating..." },
-        { ExtendedPatchState.FailedToUpdate, "Failed to update." },
+        ExtendedPatchState.Loading,
+        ExtendedPatchState.Installing,
+        ExtendedPatchState.FailedToInstall,
+        ExtendedPatchState.Uninstalling,
+        ExtendedPatchState.FailedToUninstall,
+        ExtendedPatchState.CheckingForUpdates,
+        ExtendedPatchState.UpdatesCheckFailed,
+        ExtendedPatchState.UpdateAvailable,
+        ExtendedPatchState.Updating,
+        ExtendedPatchState.FailedToUpdate,
     };
     
     /// <summary>
@@ -125,6 +125,10 @@ public class PatchEntry : Border
         this.updateButton = this.Get<RoundedButton>("UpdateButton");
         this.statusText = this.Get<TextBlock>("StatusText");
         
+        // Apply the text.
+        var localization = Localization.Get();
+        localization.LocalizeText(this.Get<TextBlock>("UpdateButtonText"));
+        
         // Connect changing the patch.
         this.PropertyChanged += (sender, args) =>
         {
@@ -158,9 +162,10 @@ public class PatchEntry : Border
     /// </summary>
     private void ConnectPatch()
     {
+        var localization = Localization.Get();
         var patch = this.PatchData;
-        this.patchName.Text = patch.Name;
-        this.patchDescription.Text = patch.Description;
+        this.patchName.Text = localization.GetLocalizedString($"Patch_Name_{patch.Name}");
+        this.patchDescription.Text = localization.GetLocalizedString($"Patch_Description_{patch.Name}");
         patch.StateChanged += (patchState) =>
         {
             this.Run(this.UpdateButtons);
@@ -174,18 +179,19 @@ public class PatchEntry : Border
     private void UpdateButtons()
     {
         // Update the install button.
+        var localization = Localization.Get();
         var state = this.PatchData.State;
         if (InstallButtonStates.Contains(state))
         {
             this.installButton.IsVisible = true;
             this.installButton.Color = InstallColor;
-            this.installText.Text = "Install";
+            this.installText.Text = localization.GetLocalizedString("Patch_InstallButtonText");
         }
         else if (UninstallButtonStates.Contains(state))
         {
             this.installButton.IsVisible = true;
             this.installButton.Color = UninstallColor;
-            this.installText.Text = "Uninstall";
+            this.installText.Text = localization.GetLocalizedString("Patch_UninstallButtonText");
         }
         else
         {
@@ -196,9 +202,9 @@ public class PatchEntry : Border
         this.updateButton.IsVisible = this.UpdateButtonStates.Contains(state);
 
         // Update the status text.
-        if (StatusMessages.TryGetValue(state, out var statusMessage))
+        if (PatchStatesWithMessages.Contains(state))
         {
-            this.statusText.Text = statusMessage;
+            this.statusText.Text = localization.GetLocalizedString($"Patch_Status_{state.ToString()}");
             this.statusText.IsVisible = true;
         }
         else

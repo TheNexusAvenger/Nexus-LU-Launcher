@@ -9,16 +9,6 @@ namespace Nexus.LU.Launcher.State.Client.Patch;
 public class FixAvantGardensSurvivalCrashPatch : IClientPatch
 {
     /// <summary>
-    /// Name of the patch.
-    /// </summary>
-    public string Name => "Fix Avant Gardens Survival Crash";
-        
-    /// <summary>
-    /// Description of the patch.
-    /// </summary>
-    public string Description => "Fixes a mistake in the Avant Gardens Survival script that results in players crashing in Avant Gardens Survival if they are not the first player.";
-
-    /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
     public bool ApplyByDefault => true;

@@ -11,9 +11,9 @@
         <Nexus.LU.Launcher.Gui.Component.Settings:SettingsView Name="SettingsView"/>
     </Canvas>
     <DockPanel HorizontalAlignment="Left" Margin="60,317">
-        <Nexus.LU.Launcher.Gui.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GitHubLogo.png" Name="GitHubButton" Text="GitHub" Width="120" Height="24"/>
-        <Nexus.LU.Launcher.Gui.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/WhiteLogo.png" Name="PlayButton" Text="Play" Width="120" Height="24"/>
-        <Nexus.LU.Launcher.Gui.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GearIcon.png" Name="PatchesButton" Text="Patches" Width="120" Height="24"/>
-        <Nexus.LU.Launcher.Gui.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GearIcon.png" Name="SettingsButton" Text="Settings" Width="120" Height="24"/>
+        <Nexus.LU.Launcher.Gui.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GitHubLogo.png" Name="GitHubButton" Text="BottomBar_GitHub" Width="120" Height="24"/>
+        <Nexus.LU.Launcher.Gui.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/WhiteLogo.png" Name="PlayButton" Text="BottomBar_Play" Width="120" Height="24"/>
+        <Nexus.LU.Launcher.Gui.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GearIcon.png" Name="PatchesButton" Text="BottomBar_Patches" Width="120" Height="24"/>
+        <Nexus.LU.Launcher.Gui.Component.Base:ImageTextButton Image="/Assets/Images/BottomButtons/GearIcon.png" Name="SettingsButton" Text="BottomBar_Settings" Width="120" Height="24"/>
     </DockPanel>
 </StackPanel>

@@ -24,12 +24,7 @@ public class ExtendedClientPatch
     /// <summary>
     /// Name of the patch.
     /// </summary>
-    public string Name => this.clientPatch.Name;
-        
-    /// <summary>
-    /// Description of the patch.
-    /// </summary>
-    public string Description => this.clientPatch.Description;
+    public string Name => this.clientPatch.GetType().Name;
     
     /// <summary>
     /// Whether to apply the patch by default.
@@ -88,7 +83,7 @@ public class ExtendedClientPatch
         }
         catch (Exception e)
         {
-            Logger.Error($"Failed to refresh {this.clientPatch.Name}.\n{e}");
+            Logger.Error($"Failed to refresh {this.Name}.\n{e}");
             this.SetState(ExtendedPatchState.UpdatesCheckFailed);
         }
     }
@@ -99,16 +94,16 @@ public class ExtendedClientPatch
     public async Task InstallAsync()
     {
         var updating = (this.State == ExtendedPatchState.UpdateAvailable);
-        Logger.Debug($"Applying patch {this.clientPatch.Name}.");
+        Logger.Debug($"Applying patch {this.Name}.");
         try
         {
             this.SetState(updating ? ExtendedPatchState.Updating : ExtendedPatchState.Installing);
             await this.clientPatch.InstallAsync();
-            Logger.Info($"Applied patch {this.clientPatch.Name}.");
+            Logger.Info($"Applied patch {this.Name}.");
         }
         catch (Exception e)
         {
-            Logger.Error($"Failed to install {this.clientPatch.Name}.\n{e}");
+            Logger.Error($"Failed to install {this.Name}.\n{e}");
             this.SetState(updating ? ExtendedPatchState.FailedToUpdate : ExtendedPatchState.FailedToInstall);
         }
     }
@@ -122,11 +117,11 @@ public class ExtendedClientPatch
         {
             this.SetState(ExtendedPatchState.Uninstalling);
             await this.clientPatch.UninstallAsync();
-            Logger.Info($"Removed patch {this.clientPatch.Name}.");
+            Logger.Info($"Removed patch {this.Name}.");
         }
         catch (Exception e)
         {
-            Logger.Error($"Failed to remove {this.clientPatch.Name}.\n{e}");
+            Logger.Error($"Failed to remove {this.Name}.\n{e}");
             this.SetState(ExtendedPatchState.FailedToUninstall);
         }
     }
@@ -141,7 +136,7 @@ public class ExtendedClientPatch
         if (preLaunchClientPatch.State == PatchState.Incompatible ||
             preLaunchClientPatch.State == PatchState.NotInstalled ||
             preLaunchClientPatch.State == PatchState.Loading) return;
-        Logger.Info($"Performing pre-launch action for {this.clientPatch.Name}");
+        Logger.Info($"Performing pre-launch action for {this.Name}");
         await preLaunchClientPatch.OnClientRequestLaunchAsync();
     }
 }

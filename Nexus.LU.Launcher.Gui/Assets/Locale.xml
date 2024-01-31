@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<localization>
+    <locales>
+        <locale>en_US</locale>
+    </locales>
+    <phrases>
+        <!--Server menu-->
+        <phrase id="ServerMenu_SelectButtonText">
+            <translation locale="en_US">Select</translation>
+        </phrase>
+        <phrase id="ServerMenu_SelectedLabel">
+            <translation locale="en_US">Selected</translation>
+        </phrase>
+        <phrase id="ServerMenu_AddServerButtonText">
+            <translation locale="en_US">Add</translation>
+        </phrase>
+        <phrase id="ServerMenu_AddServerNameLabel">
+            <translation locale="en_US">Name: </translation>
+        </phrase>
+        <phrase id="ServerMenu_AddServerAddressLabel">
+            <translation locale="en_US">Address: </translation>
+        </phrase>
+        <phrase id="ServerMenu_ConfirmRemovingPrompt">
+            <translation locale="en_US">Confirm removing the server "{0}"?</translation>
+        </phrase>
+        
+        <!--Client setup-->
+        <phrase id="Client_PlayButtonText">
+            <translation locale="en_US">Play!</translation>
+        </phrase>
+        <phrase id="Client_ArchiveFilePickerTitle">
+            <translation locale="en_US">Archive File</translation>
+        </phrase>
+        <phrase id="Client_ArchiveFilePickerFileType">
+            <translation locale="en_US">Client Archive</translation>
+        </phrase>
+        <phrase id="Client_Status_Uninitialized">
+            <translation locale="en_US">Loading...</translation>
+        </phrase>
+        <phrase id="Client_Status_ManualRuntimeNotInstalled_UserInstalledWineRuntime">
+            <translation locale="en_US">WINE must be installed.</translation>
+        </phrase>
+        <phrase id="Client_Status_PendingExtractSelection">
+            <translation locale="en_US">Pending client extract. An archive of the client must be downloaded.</translation>
+        </phrase>
+        <phrase id="Client_Status_ExtractingClient">
+            <translation locale="en_US">Extracting client...</translation>
+        </phrase>
+        <phrase id="Client_Status_VerifyingClient">
+            <translation locale="en_US">Verifying client...</translation>
+        </phrase>
+        <phrase id="Client_Status_ExtractFailed_InvalidArchive">
+            <translation locale="en_US">Client extract failed. Retry required.</translation>
+        </phrase>
+        <phrase id="Client_Status_ExtractFailed_ExceptionWhileExtracting">
+            <translation locale="en_US">Client extract failed. Retry required.</translation>
+        </phrase>
+        <phrase id="Client_Status_VerifyFailed">
+            <translation locale="en_US">Client extract failed. Retry required.</translation>
+        </phrase>
+        <phrase id="Client_Status_PatchingClient">
+            <translation locale="en_US">Patching client...</translation>
+        </phrase>
+        <phrase id="Client_Status_MovingClient">
+            <translation locale="en_US">Moving client to new location...</translation>
+        </phrase>
+        <phrase id="Client_Status_RuntimeNotInstalled_MacOsWineRuntime">
+            <translation locale="en_US">Pending WINE download.</translation>
+        </phrase>
+        <phrase id="Client_Status_InstallingRuntime_MacOsWineRuntime">
+            <translation locale="en_US">Downloading and installing WINE...</translation>
+        </phrase>
+        <phrase id="Client_Status_NoSelectedServer">
+            <translation locale="en_US">No server selected to play.</translation>
+        </phrase>
+        <phrase id="Client_Status_ReadyToLaunch">
+            <translation locale="en_US">Ready to launch: {0} ({1})</translation>
+        </phrase>
+        <phrase id="Client_Status_Launching">
+            <translation locale="en_US">Launching...</translation>
+        </phrase>
+        <phrase id="Client_Status_Launched">
+            <translation locale="en_US">Launched.</translation>
+        </phrase>
+        <phrase id="Client_RetrySelectArchivePrompt">
+            <translation locale="en_US">{0} Try again?</translation>
+        </phrase>
+        
+        <!--Patch buttons-->
+        <phrase id="Patch_InstallButtonText">
+            <translation locale="en_US">Install</translation>
+        </phrase>
+        <phrase id="Patch_UninstallButtonText">
+            <translation locale="en_US">Uninstall</translation>
+        </phrase>
+        <phrase id="Patch_UpdateButtonText">
+            <translation locale="en_US">Update</translation>
+        </phrase>
+        
+        <!--Patch options-->
+        <phrase id="Patch_Name_ModLoaderPatch">
+            <translation locale="en_US">Mod Loader</translation>
+        </phrase>
+        <phrase id="Patch_Description_ModLoaderPatch">
+            <translation locale="en_US">Allows the installation of client mods.</translation>
+        </phrase>
+        <phrase id="Patch_Name_AutoTcpUdpPatch">
+            <translation locale="en_US">Auto TCP/UDP Shim</translation>
+        </phrase>
+        <phrase id="Patch_Description_AutoTcpUdpPatch">
+            <translation locale="en_US">Enables connecting to community-run LEGO Universe servers that may or may not use TCP/UDP. This is automatically managed for the requested server. Requires the Mod Loader to be installed. Can't be installed with TCP/UDP Shim.</translation>
+        </phrase>
+        <phrase id="Patch_Name_TcpUdpPatch">
+            <translation locale="en_US">TCP/UDP Shim</translation>
+        </phrase>
+        <phrase id="Patch_Description_TcpUdpPatch">
+            <translation locale="en_US">Enables connecting to community-run LEGO Universe servers that use TCP/UDP, like Uchu. This mod prevents connecting to normal RakNet servers, like Darkflame Universe. Requires the Mod Loader to be installed. Can't be installed with Auto TCP/UDP Shim.</translation>
+        </phrase>
+        <phrase id="Patch_Name_FixAssemblyVendorHologramPatch">
+            <translation locale="en_US">Fix Assembly Vendor Hologram</translation>
+        </phrase>
+        <phrase id="Patch_Description_FixAssemblyVendorHologramPatch">
+            <translation locale="en_US">Fixes the Assembly vendor at Nimbus Station showing a Missing NIF error.</translation>
+        </phrase>
+        <phrase id="Patch_Name_FixAvantGardensSurvivalCrashPatch">
+            <translation locale="en_US">Fix Avant Gardens Survival Crash</translation>
+        </phrase>
+        <phrase id="Patch_Description_FixAvantGardensSurvivalCrashPatch">
+            <translation locale="en_US">Fixes a mistake in the Avant Gardens Survival script that results in players crashing in Avant Gardens Survival if they are not the first player.</translation>
+        </phrase>
+        <phrase id="Patch_Name_RemoveDluPatchAd">
+            <translation locale="en_US">Remove DLU Ad</translation>
+        </phrase>
+        <phrase id="Patch_Description_RemoveDluPatchAd">
+            <translation locale="en_US">Removes the advertisement for DLU from the zone loading screen. This is to return the localization file back to the original version.</translation>
+        </phrase>
+        
+        <!--Patch states-->
+        <phrase id="Patch_Status_Loading">
+            <translation locale="en_US">Loading...</translation>
+        </phrase>
+        <phrase id="Patch_Status_Installing">
+            <translation locale="en_US">Installing...</translation>
+        </phrase>
+        <phrase id="Patch_Status_FailedToInstall">
+            <translation locale="en_US">Failed to install.</translation>
+        </phrase>
+        <phrase id="Patch_Status_Uninstalling">
+            <translation locale="en_US">Uninstalling...</translation>
+        </phrase>
+        <phrase id="Patch_Status_FailedToUninstall">
+            <translation locale="en_US">Failed to uninstall.</translation>
+        </phrase>
+        <phrase id="Patch_Status_CheckingForUpdates">
+            <translation locale="en_US">Checking for updates...</translation>
+        </phrase>
+        <phrase id="Patch_Status_UpdatesCheckFailed">
+            <translation locale="en_US">Updates check failed.</translation>
+        </phrase>
+        <phrase id="Patch_Status_UpdateAvailable">
+            <translation locale="en_US">Update available.</translation>
+        </phrase>
+        <phrase id="Patch_Status_Updating">
+            <translation locale="en_US">Updating...</translation>
+        </phrase>
+        <phrase id="Patch_Status_FailedToUpdate">
+            <translation locale="en_US">Failed to update.</translation>
+        </phrase>
+        
+        <!--Settings-->
+        <phrase id="Settings_ShowClientLogsLabel">
+            <translation locale="en_US">Show Client Logs</translation>
+        </phrase>
+        <phrase id="Settings_LauncherFilesLabel">
+            <translation locale="en_US">Launcher Files</translation>
+        </phrase>
+        <phrase id="Settings_ChangeLocationPrompt">
+            <translation locale="en_US">Changing install locations will move any clients you have downloaded to it. Continue?</translation>
+        </phrase>
+        <phrase id="Settings_ChangeLocationFolderPickerTitle">
+            <translation locale="en_US">New Client Location</translation>
+        </phrase>
+        
+        <!--Bottom bar-->
+        <phrase id="BottomBar_GitHub">
+            <translation locale="en_US">GitHub</translation>
+        </phrase>
+        <phrase id="BottomBar_Play">
+            <translation locale="en_US">Play</translation>
+        </phrase>
+        <phrase id="BottomBar_Patches">
+            <translation locale="en_US">Patches</translation>
+        </phrase>
+        <phrase id="BottomBar_Settings">
+            <translation locale="en_US">Settings</translation>
+        </phrase>
+        
+        <!--Prompt messages-->
+        <phrase id="Prompt_CloseWhileExtracting">
+            <translation locale="en_US">Closing the launcher stops extracting the client. Confirm closing?</translation>
+        </phrase>
+        <phrase id="Prompt_CloseWhileMoving">
+            <translation locale="en_US">Closing the launcher stops moving the files. Confirm closing?</translation>
+        </phrase>
+    </phrases>
+</localization>

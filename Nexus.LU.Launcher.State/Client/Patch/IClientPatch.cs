@@ -7,16 +7,6 @@ namespace Nexus.LU.Launcher.State.Client.Patch;
 public interface IClientPatch
 {
     /// <summary>
-    /// Name of the patch.
-    /// </summary>
-    public string Name { get; }
-        
-    /// <summary>
-    /// Description of the patch.
-    /// </summary>
-    public string Description { get; }
-    
-    /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
     public bool ApplyByDefault { get; }

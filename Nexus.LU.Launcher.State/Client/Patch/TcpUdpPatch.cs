@@ -11,16 +11,6 @@ namespace Nexus.LU.Launcher.State.Client.Patch;
 public class TcpUdpPatch : IClientPatch
 {
     /// <summary>
-    /// Name of the patch.
-    /// </summary>
-    public string Name => "TCP/UDP Shim";
-        
-    /// <summary>
-    /// Description of the patch.
-    /// </summary>
-    public string Description => "Enables connecting to community-run LEGO Universe servers that use TCP/UDP, like Uchu. This mod prevents connecting to normal RakNet servers, like Darkflame Universe. Requires the Mod Loader to be installed. Can't be installed with Auto TCP/UDP Shim.";
-    
-    /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
     public bool ApplyByDefault => false;

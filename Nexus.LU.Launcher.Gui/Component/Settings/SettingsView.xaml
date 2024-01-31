@@ -4,10 +4,10 @@
             x:Class="Nexus.LU.Launcher.Gui.Component.Settings.SettingsView">
     <Border Background="#0C0D16" Width="664" Height="256" Margin="2,0" CornerRadius="7">
         <Canvas>
-            <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial"
-                       FontSize="24" Canvas.Left="10" Canvas.Top="10">Show Client Logs</TextBlock>
-            <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial"
-                       FontSize="24" Canvas.Left="10" Canvas.Top="50">Launcher Files</TextBlock>
+            <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="ShowClientLogsLabel"
+                       FontSize="24" Canvas.Left="10" Canvas.Top="10">Settings_ShowClientLogsLabel</TextBlock>
+            <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="LauncherFilesLabel"
+                       FontSize="24" Canvas.Left="10" Canvas.Top="50">Settings_LauncherFilesLabel</TextBlock>
             <Nexus.LU.Launcher.Gui.Component.Base:RoundedImageButton Width="32" Height="32" Name="LogsToggle" Color="#2A2B34"
                                                         Canvas.Top="8" Canvas.Left="210"/>
             <Nexus.LU.Launcher.Gui.Component.Base:RoundedImageButton Width="32" Height="32" Name="ChangeClientParentDirectory" Color="#2A2B34"
@@ -16,7 +16,7 @@
                                                         PressSource="/Assets/Images/BottomButtons/GearIcon.png"
                                                         Canvas.Top="48" Canvas.Left="210"/>
             <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="ClientParentDirectory"
-                       FontSize="20" Canvas.Left="250" Canvas.Top="53">Some path</TextBlock>
+                       FontSize="20" Canvas.Left="250" Canvas.Top="53">Loading</TextBlock>
         </Canvas>
     </Border>
 </StackPanel>

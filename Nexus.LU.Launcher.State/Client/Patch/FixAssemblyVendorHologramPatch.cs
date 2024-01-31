@@ -22,16 +22,6 @@ public class FixAssemblyVendorHologramPatch : IClientPatch
     private static readonly byte[] ValidAnimPath = Encoding.ASCII.GetBytes("\x01(\x00\x00\x00.\\..\\..\\mesh\\3DUI\\Assembly_Logo_Sign.nif");
     
     /// <summary>
-    /// Name of the patch.
-    /// </summary>
-    public string Name => "Fix Assembly Vendor Hologram";
-        
-    /// <summary>
-    /// Description of the patch.
-    /// </summary>
-    public string Description => "Fixes the Assembly vendor at Nimbus Station showing a Missing NIF error.";
-
-    /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
     public bool ApplyByDefault => true;

@@ -2,6 +2,7 @@
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Nexus.LU.Launcher.Gui.Component.Base;
+using Nexus.LU.Launcher.Gui.Util;
 using Nexus.LU.Launcher.State.Client;
 
 namespace Nexus.LU.Launcher.Gui.Component.Play;
@@ -60,6 +61,12 @@ public class NewServerEntry : Border
         this.serverAddressInput = this.Get<TextBox>("ServerAddressInput");
         this.addButton = this.Get<RoundedButton>("AddButton");
         this.cancelButton = this.Get<ImageButton>("CancelButton");
+        
+        // Apply the text.
+        var localization = Localization.Get();
+        localization.LocalizeText(this.Get<TextBlock>("AddServerNameLabel"));
+        localization.LocalizeText(this.Get<TextBlock>("AddAddressLabel"));
+        localization.LocalizeText(this.Get<TextBlock>("AddServerButtonText"));
 
         // Connect the inputs.
         this.addButton.ButtonPressed += (sender, args) =>

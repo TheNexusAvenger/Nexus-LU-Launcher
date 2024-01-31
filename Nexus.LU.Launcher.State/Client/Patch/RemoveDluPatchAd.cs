@@ -9,16 +9,6 @@ namespace Nexus.LU.Launcher.State.Client.Patch;
 public class RemoveDluPatchAd : IClientPatch
 {
     /// <summary>
-    /// Name of the patch.
-    /// </summary>
-    public string Name => "Remove DLU Ad";
-        
-    /// <summary>
-    /// Description of the patch.
-    /// </summary>
-    public string Description => "Removes the advertisement for DLU from the zone loading screen. This is to return the localization file back to the original version.";
-
-    /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
     public bool ApplyByDefault => true;

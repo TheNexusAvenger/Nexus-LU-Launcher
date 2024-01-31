@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -40,6 +39,11 @@ public class SettingsView : Panel
         this.parentDirectoryDisplay = this.Get<TextBlock>("ClientParentDirectory");
         this.UpdateSettings();
         
+        // Apply the text.
+        var localization = Localization.Get();
+        localization.LocalizeText(this.Get<TextBlock>("ShowClientLogsLabel"));
+        localization.LocalizeText(this.Get<TextBlock>("LauncherFilesLabel"));
+        
         // Connect the events.
         this.logsToggle.ButtonPressed += (sender, args) =>
         {
@@ -54,7 +58,7 @@ public class SettingsView : Panel
             var window = this.GetWindow()!;
             var newDirectoryTask =  window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
             {
-                Title = "New Client Location",
+                Title = Localization.Get().GetLocalizedString("Settings_ChangeLocationFolderPickerTitle"),
                 SuggestedStartLocation = window.StorageProvider.TryGetFolderFromPathAsync(this.CurrentParentDirectory).Result,
             });
 
@@ -67,8 +71,7 @@ public class SettingsView : Panel
                 var newDirectory = newDirectoryList[0].Path.AbsolutePath;
 
                 // Move the clients.
-                ConfirmPrompt.OpenPrompt(
-                    "Changing install locations will move any clients you have downloaded to it. Continue?", () =>
+                ConfirmPrompt.OpenPrompt(Localization.Get().GetLocalizedString("Settings_ChangeLocationPrompt"), () =>
                     {
                         this.parentDirectoryDisplay.Text = newDirectory.Replace(
                             Path.DirectorySeparatorChar == '/' ? '\\' : '/', Path.DirectorySeparatorChar);

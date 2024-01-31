@@ -60,11 +60,12 @@ public class TopBar : Panel
             else
             {
                 // Determine the message.
-                var message = "Closing the launcher stops extracting the client. Confirm closing?";
+                var message = "Prompt_CloseWhileExtracting";
                 if (launcherState == LauncherState.MovingClient)
                 {
-                    message = "Closing the launcher stops moving the files. Confirm closing?";
+                    message = "Prompt_CloseWhileMoving";
                 }
+                message = Localization.Get().GetLocalizedString(message);
 
                 // Show the prompt.
                 ConfirmPrompt.OpenPrompt(message, () =>

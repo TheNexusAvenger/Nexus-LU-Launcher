@@ -12,16 +12,6 @@ namespace Nexus.LU.Launcher.State.Client.Patch;
 public class ModLoaderPatch : IClientPatch
 {
     /// <summary>
-    /// Name of the patch.
-    /// </summary>
-    public string Name => "Mod Loader";
-        
-    /// <summary>
-    /// Description of the patch.
-    /// </summary>
-    public string Description => "Allows the installation of client mods.";
-
-    /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
     public bool ApplyByDefault => false;

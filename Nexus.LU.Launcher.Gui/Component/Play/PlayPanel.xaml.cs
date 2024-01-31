@@ -17,29 +17,6 @@ namespace Nexus.LU.Launcher.Gui.Component.Play;
 public class PlayPanel : DockPanel
 {
     /// <summary>
-    /// Messages to display for the loading text.
-    /// </summary>
-    public Dictionary<string, string> LoadingMessages = new Dictionary<string, string>()
-    {
-        { "Uninitialized", "Loading..." },
-        { "ManualRuntimeNotInstalled_UserInstalledWineRuntime", "WINE must be installed." },
-        { "PendingExtractSelection", "Pending client extract. An archive of the client must be downloaded." },
-        { "ExtractingClient", "Extracting client..." },
-        { "VerifyingClient", "Verifying client..." },
-        { "ExtractFailed_InvalidArchive", "Client extract failed. Retry required." },
-        { "ExtractFailed_ExceptionWhileExtracting", "Client extract failed. Retry required." },
-        { "VerifyFailed", "Client extract failed. Retry required." },
-        { "PatchingClient", "Patching client..." },
-        { "MovingClient", "Moving client to new location..." },
-        { "RuntimeNotInstalled_MacOsWineRuntime", "Pending WINE download." },
-        { "InstallingRuntime_MacOsWineRuntime", "Downloading and installing WINE." },
-        { "NoSelectedServer", "No server selected to play." },
-        { "ReadyToLaunch", "Ready to launch: {0} ({1})" },
-        { "Launching", "Launching..." },
-        { "Launched", "Launched." },
-    };
-
-    /// <summary>
     /// Launcher states that the play button is active.
     /// </summary>
     public List<LauncherState> PlayButtonActiveStates = new List<LauncherState>()
@@ -95,6 +72,10 @@ public class PlayPanel : DockPanel
         AvaloniaXamlLoader.Load(this);
         this.loadingText = this.Get<TextBlock>("LoadingText");
         this.playButton = this.Get<RoundedButton>("PlayButton");
+        
+        // Apply the text.
+        var localization = Localization.Get();
+        localization.LocalizeText(this.Get<TextBlock>("PlayText"));
 
         // Create the dots.
         var loadingBarContainer = this.Get<DockPanel>("LoadingDotsContainer");
@@ -180,11 +161,12 @@ public class PlayPanel : DockPanel
     private void PromptExtract()
     {
         // Prompt for the file.
+        var localization = Localization.Get();
         var window = this.GetWindow()!;
         var openFileTask =  window.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions()
         {
-            Title = "Archive File",
-            FileTypeFilter = new List<FilePickerFileType>() { new FilePickerFileType("Client Archive")
+            Title = localization.GetLocalizedString("Client_ArchiveFilePickerTitle"),
+            FileTypeFilter = new List<FilePickerFileType>() { new FilePickerFileType(localization.GetLocalizedString("Client_ArchiveFilePickerFileType"))
                 {
                     Patterns = new List<string>() { "*.zip", "*.rar" },
                 },
@@ -252,16 +234,14 @@ public class PlayPanel : DockPanel
         }
 
         // Update the text.
+        var localization = Localization.Get();
         var clientState = ClientState.Get();
         var stateLoadingText = launcherProgress.LauncherState.ToString();
         if (launcherProgress.AdditionalData != null)
         {
             stateLoadingText += $"_{launcherProgress.AdditionalData}";
         }
-        if (LoadingMessages.TryGetValue(stateLoadingText, out var message))
-        {
-            stateLoadingText = message;
-        }
+        stateLoadingText = localization.GetLocalizedString($"Client_Status_{stateLoadingText}");
         if (launcherProgress.LauncherState == LauncherState.ReadyToLaunch)
         {
             var selectedServer = clientState.ServerList.SelectedEntry!;
@@ -284,7 +264,8 @@ public class PlayPanel : DockPanel
         // Prompt to re-try extracting if it failed.
         if (launcherProgress.LauncherState == LauncherState.ExtractFailed || launcherProgress.LauncherState == LauncherState.VerifyFailed)
         {
-            ConfirmPrompt.OpenPrompt( $"{stateLoadingText} Try again?", this.PromptExtract);
+            var promptMessage = string.Format(localization.GetLocalizedString("Client_RetrySelectArchivePrompt"), stateLoadingText);
+            ConfirmPrompt.OpenPrompt( promptMessage, this.PromptExtract);
         }
     }
 
