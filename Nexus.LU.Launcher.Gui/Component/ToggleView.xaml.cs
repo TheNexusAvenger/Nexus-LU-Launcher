@@ -71,7 +71,7 @@ public class ToggleView : Canvas
         };
         clientState.LauncherStateChanged += (state) =>
         {
-            this.Run(() =>
+            this.RunMainThread(() =>
             {
                 playButton.IsVisible = (state != LauncherState.Launched);
                 patchesButton.IsVisible = (state != LauncherState.Launched);

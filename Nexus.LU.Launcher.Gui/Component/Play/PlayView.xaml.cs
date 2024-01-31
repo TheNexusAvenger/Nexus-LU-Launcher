@@ -45,7 +45,7 @@ public class PlayView : Panel
             clientState.ServerList.ServerListChanged += this.UpdateServerList;
             clientState.LauncherStateChanged += (state) =>
             {
-                this.Run(() =>
+                this.RunMainThread(() =>
                 {
                     var outputVisible = SystemInfo.GetDefault().Settings.LogsEnabled && state == LauncherState.Launched;
                     playContainer.IsVisible = !outputVisible;

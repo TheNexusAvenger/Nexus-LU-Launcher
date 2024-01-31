@@ -51,7 +51,7 @@ public class PatchesView : StackPanel
             this.patchEntries.Add(patchPanel);
             patch.StateChanged += (state) =>
             {
-                this.Run(UpdateList);
+                this.RunMainThread(UpdateList);
             };
         }
         this.UpdateList();
@@ -59,7 +59,7 @@ public class PatchesView : StackPanel
         // Connect updating the patches visibility.
         clientState.LauncherStateChanged += (state) =>
         {
-            this.Run(this.UpdateVisibility);
+            this.RunMainThread(this.UpdateVisibility);
         };
         this.UpdateVisibility();
     }

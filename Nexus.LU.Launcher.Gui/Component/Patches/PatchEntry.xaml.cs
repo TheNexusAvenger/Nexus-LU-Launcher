@@ -133,7 +133,7 @@ public class PatchEntry : Border
         this.PropertyChanged += (sender, args) =>
         {
             if (args.Property != PatchDataProperty) return;
-            this.Run(this.ConnectPatch);
+            this.RunMainThread(this.ConnectPatch);
         };
         
         // Connect the buttons.
@@ -168,7 +168,7 @@ public class PatchEntry : Border
         this.patchDescription.Text = localization.GetLocalizedString($"Patch_Description_{patch.Name}");
         patch.StateChanged += (patchState) =>
         {
-            this.Run(this.UpdateButtons);
+            this.RunMainThread(this.UpdateButtons);
         };
         this.UpdateButtons();
     }

@@ -90,7 +90,7 @@ public class PlayPanel : DockPanel
         var clientState = ClientState.Get();
         clientState.LauncherProgressChanged += (progress) =>
         {
-            this.Run(() =>
+            this.RunMainThread(() =>
             {
                 this.OnLauncherProgress(progress);
             });
@@ -107,32 +107,33 @@ public class PlayPanel : DockPanel
     /// <param name="percent">Percent to fill.</param>
     private void SetLoadingBar(double percent)
     {
-        for (var i = 0; i < this.loadingDots.Count; i++)
+        this.RunMainThread(() =>
         {
-            // Get the dot and the start and end value for the dot.
-            var dot = this.loadingDots[i];
-            var startValue = (double)i / this.loadingDots.Count;
-            var endValue = (double)(i + 1) / this.loadingDots.Count;
+            for (var i = 0; i < this.loadingDots.Count; i++)
+            {
+                // Get the dot and the start and end value for the dot.
+                var dot = this.loadingDots[i];
+                var startValue = (double)i / this.loadingDots.Count;
+                var endValue = (double)(i + 1) / this.loadingDots.Count;
 
-            // Set the fill of the dot.
-            if (startValue > percent)
-            {
-                // Set the dot as unfilled if the percent is before the dot's range.
-                dot.SetThreadSafe("FillPercent", 0);
-                dot.FillPercent = 0;
+                // Set the fill of the dot.
+                if (startValue > percent)
+                {
+                    // Set the dot as unfilled if the percent is before the dot's range.
+                    dot.FillPercent = 0;
+                }
+                else if (endValue < percent)
+                {
+                    // Set the dot as filled if the percent is after the dot's range.
+                    dot.FillPercent = 1;
+                }
+                else
+                {
+                    // Fill the dot based on the percentage between the ranges.
+                    dot.FillPercent = (percent - startValue) / (endValue - startValue);
+                }
             }
-            else if (endValue < percent)
-            {
-                // Set the dot as filled if the percent is after the dot's range.
-                dot.SetThreadSafe("FillPercent", 1);
-                dot.FillPercent = 1;
-            }
-            else
-            {
-                // Fill the dot based on the percentage between the ranges.
-                dot.SetThreadSafe("FillPercent", (percent - startValue) / (endValue - startValue));
-            }
-        }
+        });
     }
 
     /// <summary>
@@ -143,16 +144,19 @@ public class PlayPanel : DockPanel
     /// <param name="percent">Percent to fill.</param>
     private void SetLoadingAnimation(double percent)
     {
-        for (var i = 0; i < this.loadingDots.Count; i++)
+        this.RunMainThread(() =>
         {
-            // Get the dot and the start and end value for the dot.
-            var dot = this.loadingDots[i];
-            var value = (i + 0.5) / this.loadingDots.Count;
-            var distanceToValue = Math.Abs(percent - value);
+            for (var i = 0; i < this.loadingDots.Count; i++)
+            {
+                // Get the dot and the start and end value for the dot.
+                var dot = this.loadingDots[i];
+                var value = (i + 0.5) / this.loadingDots.Count;
+                var distanceToValue = Math.Abs(percent - value);
 
-            // Set the fill of the dot.
-            dot.SetThreadSafe("FillPercent", Math.Clamp(1 - (distanceToValue * 5), 0, 1));
-        }
+                // Set the fill of the dot.
+                dot.FillPercent = Math.Clamp(1 - (distanceToValue * 5), 0, 1);
+            }
+        });
     }
 
     /// <summary>
@@ -293,7 +297,7 @@ public class PlayPanel : DockPanel
                 // The launch may get delayed by pre-launch patches.
                 if (!SystemInfo.GetDefault().Settings.LogsEnabled)
                 {
-                    this.Run(() =>
+                    this.RunMainThread(() =>
                     {
                         this.GetWindow()?.Close();
                     });
@@ -304,7 +308,7 @@ public class PlayPanel : DockPanel
                 this.ClientOutputScroll!.ScrollChanged += (sender, args) =>
                 {
                     if (args.ExtentDelta.Y == 0) return;
-                    this.ClientOutputScroll.Run(this.ClientOutputScroll.ScrollToEnd);
+                    this.ClientOutputScroll.RunMainThread(this.ClientOutputScroll.ScrollToEnd);
                 };
 
                 // Copy the output to the view.
@@ -313,7 +317,11 @@ public class PlayPanel : DockPanel
                 {
                     var line = await process.StandardOutput.ReadLineAsync();
                     output += (output == "" ? "" : "\n") + line;
-                    this.ClientOutput!.SetThreadSafe("Text", output);
+                    var currentOutput = output;
+                    this.RunMainThread(() =>
+                    {
+                        this.ClientOutput!.Text = currentOutput;
+                    });
                 }
             });
         }
