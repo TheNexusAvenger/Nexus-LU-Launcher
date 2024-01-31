@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Xml;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using Nexus.LU.Launcher.Gui.Component.Base;
 
 namespace Nexus.LU.Launcher.Gui.Util;
 
@@ -65,6 +66,42 @@ public class Localization
     }
 
     /// <summary>
+    /// Returns the text for an object.
+    /// This is done manually without reflection in order to allow building with .NET AOT.
+    /// </summary>
+    /// <param name="textObject">Text object to get the text of.</param>
+    /// <returns>Text of the object to return.</returns>
+    private static string? GetText(object textObject)
+    {
+        return textObject switch
+        {
+            TextBlock textBlock => textBlock.Text,
+            ImageTextButton imageTextButton => imageTextButton.Text,
+            _ => throw new InvalidOperationException($"GetText does not support {textObject.GetType().Name}")
+        };
+    }
+
+    /// <summary>
+    /// Set the text for an object.
+    /// This is done manually without reflection in order to allow building with .NET AOT.
+    /// </summary>
+    /// <param name="textObject">Text object to set the text of.</param>
+    /// <param name="text">Text to set for the object.</param>
+    private static void SetText(object textObject, string text)
+    {
+        switch (textObject)
+        {
+            case TextBlock textBlock:
+                textBlock.Text = text;
+                return;
+            case ImageTextButton imageTextButton:
+                imageTextButton.Text = text;
+                return;
+        }
+        throw new InvalidOperationException($"SetText does not support {textObject.GetType().Name}");
+    }
+
+    /// <summary>
     /// Returns the localization string for a key.
     /// </summary>
     /// <param name="key">Key to get the localized string of.</param>
@@ -82,15 +119,13 @@ public class Localization
     /// Localizes a text object.
     /// </summary>
     /// <param name="textObject">Text object to localize.</param>
-    public void LocalizeText(Control textObject)
+    public void LocalizeText(object textObject)
     {
         // Get the localization id.
-        var textProperty = textObject.GetType()?.GetProperty("Text");
-        if (textProperty == null) return;
-        var localizationId = (string) textProperty.GetValue(textObject)!;
+        var localizationId = GetText(textObject)!;
         
         // Set the text and connect the language changing.
-        LanguageChanged += (language) => textProperty.SetValue(textObject, this.GetLocalizedString(localizationId));
-        textProperty.SetValue(textObject, this.GetLocalizedString(localizationId));
+        LanguageChanged += (language) => SetText(textObject, this.GetLocalizedString(localizationId));
+        SetText(textObject, this.GetLocalizedString(localizationId));
     }
 }
