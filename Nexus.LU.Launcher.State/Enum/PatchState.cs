@@ -6,5 +6,6 @@ public enum PatchState
     Incompatible,
     NotInstalled,
     Installed,
-    UpdateAvailable
+    UpdateAvailable,
+    UpdatesCheckFailed,
 }

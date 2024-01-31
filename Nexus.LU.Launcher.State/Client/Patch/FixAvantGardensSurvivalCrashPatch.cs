@@ -91,8 +91,6 @@ public class FixAvantGardensSurvivalCrashPatch : IClientPatch
         await File.WriteAllTextAsync(this.SurvivalScriptFileLocation,
             (await File.ReadAllTextAsync(this.SurvivalScriptFileLocation))
                 .Replace("    onPlayerReady(self)", "    PlayerReady(self)"));
-        this.State = PatchState.NotInstalled;
-        this.StateChanged?.Invoke(this.State);
         await this.RefreshAsync();
     }
 }

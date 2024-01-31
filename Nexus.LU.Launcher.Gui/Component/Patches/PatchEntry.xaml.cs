@@ -49,6 +49,7 @@ public class PatchEntry : Border
     /// </summary>
     public readonly Dictionary<ExtendedPatchState, string> StatusMessages = new Dictionary<ExtendedPatchState, string>()
     {
+        { ExtendedPatchState.Loading, "Loading..." },
         { ExtendedPatchState.Installing, "Installing..." },
         { ExtendedPatchState.FailedToInstall, "Failed to install." },
         { ExtendedPatchState.Uninstalling, "Uninstalling..." },

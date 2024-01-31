@@ -68,8 +68,10 @@ public class ClientState {
         var systemInfo = SystemInfo.GetDefault();
         this.Patches = new List<ExtendedClientPatch>()
         {
+            new ExtendedClientPatch(new ModLoaderPatch(systemInfo)),
             new ExtendedClientPatch(new FixAssemblyVendorHologramPatch(systemInfo)),
             new ExtendedClientPatch(new FixAvantGardensSurvivalCrashPatch(systemInfo)),
+            new ExtendedClientPatch(new RemoveDluPatchAd(systemInfo)),
         };
         
         // Build the runtimes list.

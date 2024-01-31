@@ -38,19 +38,14 @@ public class LauncherSettings
     public string? ClientParentLocation { get; set; }
     
     /// <summary>
-    /// Gets the server entry for the given name.
-    /// </summary>
-    /// <param name="serverName">Server name to check for.</param>
-    /// <returns>The server entry for the given name.</returns>
-    public ServerEntry? GetServerEntry(string serverName)
-    {
-        return this.Servers.FirstOrDefault(server => server.ServerName == serverName);
-    }
-        
-    /// <summary>
     /// Whether to display logs after launching.
     /// </summary>
     public bool LogsEnabled { get; set; }
+    
+    /// <summary>
+    /// General storage for tag information.
+    /// </summary>
+    public Dictionary<string, Dictionary<string, string>> PatchStore { get; set; } = new Dictionary<string, Dictionary<string, string>>();
 }
 
 [JsonSerializable(typeof(LauncherSettings))]
@@ -108,6 +103,40 @@ public class SystemInfo
             }
         }
         this.Settings ??= new LauncherSettings();
+    }
+    
+    /// <summary>
+    /// Returns the value of a key for a patch store.
+    /// </summary>
+    /// <param name="patchName">Name of the patch to store for.</param>
+    /// <param name="key">Key to get.</param>
+    /// <returns>Value of the store, if it exists.</returns>
+    public string? GetPatchStore(string patchName, string key)
+    {
+        return !this.Settings.PatchStore.TryGetValue(patchName, out var patchStore) ? null : patchStore.GetValueOrDefault(key);
+    }
+
+    /// <summary>
+    /// Sets the value of a key in a patch store.
+    /// </summary>
+    /// <param name="patchName">Name of the patch to store for.</param>
+    /// <param name="key">Key to set.</param>
+    /// <param name="value">Value to set.</param>
+    public void SetPatchStore(string patchName, string key, string? value)
+    {
+        if (!Settings.PatchStore.TryGetValue(patchName, out var patchStore))
+        {
+            patchStore = new Dictionary<string, string>();
+            this.Settings.PatchStore[patchName] = patchStore;
+        }
+        if (value == null)
+        {
+            patchStore.Remove(key);
+        }
+        else
+        {
+            patchStore[key] = value;
+        }
     }
     
     /// <summary>

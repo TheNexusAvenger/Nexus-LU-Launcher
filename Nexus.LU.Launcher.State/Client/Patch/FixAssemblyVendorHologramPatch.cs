@@ -89,7 +89,6 @@ public class FixAssemblyVendorHologramPatch : IClientPatch
     public async Task InstallAsync()
     {
         ReplaceByteContents(this.AssemblySignFileLocation, InvalidAnimPath, ValidAnimPath);
-        this.State = PatchState.Installed;
         await this.RefreshAsync();
     }
     
@@ -99,8 +98,6 @@ public class FixAssemblyVendorHologramPatch : IClientPatch
     public async Task UninstallAsync()
     {
         ReplaceByteContents(this.AssemblySignFileLocation, ValidAnimPath, InvalidAnimPath);
-        this.State = PatchState.NotInstalled;
-        this.StateChanged?.Invoke(this.State);
         await this.RefreshAsync();
     }
     

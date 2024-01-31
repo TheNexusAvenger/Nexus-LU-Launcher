@@ -18,6 +18,7 @@ public class ExtendedClientPatch
             {PatchState.NotInstalled, ExtendedPatchState.NotInstalled},
             {PatchState.Installed, ExtendedPatchState.Installed},
             {PatchState.UpdateAvailable, ExtendedPatchState.UpdateAvailable},
+            {PatchState.UpdatesCheckFailed, ExtendedPatchState.UpdatesCheckFailed},
         };
     
     /// <summary>

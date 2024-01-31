@@ -8,6 +8,7 @@ public enum ExtendedPatchState
     NotInstalled,
     Installed,
     UpdateAvailable,
+    UpdatesCheckFailed,
     
     // Extended states.
     Installing,
@@ -15,7 +16,6 @@ public enum ExtendedPatchState
     Uninstalling,
     FailedToUninstall,
     CheckingForUpdates,
-    UpdatesCheckFailed,
     Updating,
     FailedToUpdate,
 }
