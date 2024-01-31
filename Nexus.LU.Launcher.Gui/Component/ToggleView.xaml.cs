@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Nexus.LU.Launcher.Gui.Component.Base;
@@ -11,29 +12,12 @@ using Nexus.LU.Launcher.State.Enum;
 
 namespace Nexus.LU.Launcher.Gui.Component;
 
-public enum ActiveView
-{
-    Play,
-    Patches,
-    Settings,
-}
-
 public class ToggleView : Canvas
 {
     /// <summary>
-    /// View of the server list.
+    /// Panels that can be toggled.
     /// </summary>
-    private readonly PlayView playView;
-    
-    /// <summary>
-    /// View of the patches.
-    /// </summary>
-    private readonly PatchesView patchesView;
-    
-    /// <summary>
-    /// View of the settings.
-    /// </summary>
-    private readonly SettingsView settingsView;
+    private readonly List<Panel> panels;
     
     /// <summary>
     /// Creates a toggle view panel.
@@ -42,9 +26,12 @@ public class ToggleView : Canvas
     {
         // Load the XAML.
         AvaloniaXamlLoader.Load(this);
-        this.playView = this.Get<PlayView>("PlayView");
-        this.patchesView = this.Get<PatchesView>("PatchesView");
-        this.settingsView = this.Get<SettingsView>("SettingsView");
+        this.panels = new List<Panel>()
+        {
+            this.Get<PlayView>("PlayView"),
+            this.Get<PatchesView>("PatchesView"),
+            this.Get<SettingsView>("SettingsView"),
+        };
         var gitHubButton = this.Get<ImageTextButton>("GitHubButton");
         var playButton = this.Get<ImageTextButton>("PlayButton");
         var patchesButton = this.Get<ImageTextButton>("PatchesButton");
@@ -58,7 +45,7 @@ public class ToggleView : Canvas
         localization.LocalizeText(settingsButton);
 
         // Set the active view.
-        this.SetView(ActiveView.Play);
+        this.SetView("PlayView");
         
         // Connect the events.
         var clientState = ClientState.Get();
@@ -72,15 +59,15 @@ public class ToggleView : Canvas
         };
         playButton.ButtonPressed += (sender, args) =>
         {
-            this.SetView(ActiveView.Play);
+            this.SetView("PlayView");
         };
         patchesButton.ButtonPressed += (sender, args) =>
         {
-            this.SetView(ActiveView.Patches);
+            this.SetView("PatchesView");
         };
         settingsButton.ButtonPressed += (sender, args) =>
         {
-            this.SetView(ActiveView.Settings);
+            this.SetView("SettingsView");
         };
         clientState.LauncherStateChanged += (state) =>
         {
@@ -97,11 +84,12 @@ public class ToggleView : Canvas
     /// Sets the view to use.
     /// </summary>
     /// <param name="view">View to use.</param>
-    private void SetView(ActiveView view)
+    private void SetView(string view)
     {
         // Update the visibility.
-        this.playView.IsVisible = (view == ActiveView.Play);
-        this.patchesView.IsVisible = (view == ActiveView.Patches);
-        this.settingsView.IsVisible = (view == ActiveView.Settings);
+        foreach (var panel in this.panels)
+        {
+            panel.IsVisible = (panel.Name == view);
+        }
     }
 }
