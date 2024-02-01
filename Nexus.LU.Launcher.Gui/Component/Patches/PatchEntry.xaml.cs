@@ -202,14 +202,6 @@ public class PatchEntry : Border
         this.updateButton.IsVisible = this.UpdateButtonStates.Contains(state);
 
         // Update the status text.
-        if (PatchStatesWithMessages.Contains(state))
-        {
-            this.statusText.Text = localization.GetLocalizedString($"Patch_Status_{state.ToString()}");
-            this.statusText.IsVisible = true;
-        }
-        else
-        {
-            this.statusText.IsVisible = false;
-        }
+        this.statusText.Text = PatchStatesWithMessages.Contains(state) ? localization.GetLocalizedString($"Patch_Status_{state.ToString()}") : "";
     }
 }
