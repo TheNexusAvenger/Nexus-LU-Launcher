@@ -54,13 +54,13 @@ for platform in PLATFORMS:
     for file in os.listdir(outputDirectory):
         if file.endswith(".pdb"):
             os.remove(outputDirectory + "/" + file)
-    linuxOutputFile = outputDirectory + "/Nexus-LU-Launcher"
-    windowsOutputFile = outputDirectory + "/Nexus-LU-Launcher.exe"
-    if len(os.listdir(outputDirectory)) == 0 or (not os.path.exists(linuxOutputFile) and not os.path.exists(windowsOutputFile)):
+    if len(os.listdir(outputDirectory)) == 0 or (not os.path.exists(outputDirectory + "/Nexus.LU.Launcher.Gui") and not os.path.exists(outputDirectory + "/Nexus.LU.Launcher.Gui.exe")):
         print("Build for " + platform[0] + " failed and will not be created.")
         continue
 
     # Rename the GUI executables.
+    linuxOutputFile = outputDirectory + "/Nexus-LU-Launcher"
+    windowsOutputFile = outputDirectory + "/Nexus-LU-Launcher.exe"
     if os.path.exists(linuxOutputFile):
         os.remove(linuxOutputFile)
     elif os.path.exists(windowsOutputFile):
