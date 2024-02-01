@@ -145,7 +145,8 @@ public class SystemInfo
     private static SystemInfo GetDefaultInstance()
     {
         // Get the base system info.
-        var baseNlulHome = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".nlul");
+        var dataDirectory = Environment.GetEnvironmentVariable("XDG_DATA_HOME") ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var baseNlulHome = Path.Combine(dataDirectory, ".nlul");
         var launcherFileLocation = Path.Combine(baseNlulHome, "launcher.json");
         var systemInfo = new SystemInfo(launcherFileLocation);
             
