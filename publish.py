@@ -54,13 +54,13 @@ for platform in PLATFORMS:
     for file in os.listdir(outputDirectory):
         if file.endswith(".pdb"):
             os.remove(outputDirectory + "/" + file)
-    if len(os.listdir(outputDirectory)) == 0:
+    linuxOutputFile = outputDirectory + "/Nexus-LU-Launcher"
+    windowsOutputFile = outputDirectory + "/Nexus-LU-Launcher.exe"
+    if len(os.listdir(outputDirectory)) == 0 or (not os.path.exists(linuxOutputFile) and not os.path.exists(windowsOutputFile)):
         print("Build for " + platform[0] + " failed and will not be created.")
         continue
 
     # Rename the GUI executables.
-    linuxOutputFile = outputDirectory + "/Nexus-LU-Launcher"
-    windowsOutputFile = outputDirectory + "/Nexus-LU-Launcher.exe"
     if os.path.exists(linuxOutputFile):
         os.remove(linuxOutputFile)
     elif os.path.exists(windowsOutputFile):
@@ -76,7 +76,7 @@ for platform in PLATFORMS:
 # Package the macOS release.
 dotNetVersion = os.listdir("Nexus.LU.Launcher.Gui/bin/Release/")[0]
 for macOsBuild in MACOS_PACKAGE_BUILDS:
-    if len(os.listdir("Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + macOsBuild[1] + "/publish")) == 0:
+    if not os.path.exists("Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + macOsBuild[1] + "/publish/Nexus-LU-Launcher"):
         continue
     print("Packaging macOS release for " + macOsBuild[0] + ".")
     shutil.copytree("Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + macOsBuild[1] + "/publish", "bin/Nexus-LU-Launcher-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/MacOS")
