@@ -299,7 +299,7 @@ public class ClientState {
             if (!patch.ApplyByDefault)
             {
                 Logger.Debug($"Patch {patch.Name} is ignored since it is not applied by default.");
-                return;
+                continue;
             }
             if (patch.State != ExtendedPatchState.NotInstalled)
             {
