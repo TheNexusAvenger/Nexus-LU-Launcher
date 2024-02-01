@@ -306,7 +306,6 @@ public class ClientState {
                 Logger.Debug($"Patch {patch.Name} is ignored because it is {patch.State}.");
             }
             await patch.InstallAsync();
-            Logger.Info($"Applied patch {patch.Name}.");
         }
         
         // Re-initialize the state.
