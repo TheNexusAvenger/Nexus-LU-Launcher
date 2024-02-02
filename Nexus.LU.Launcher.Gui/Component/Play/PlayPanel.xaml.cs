@@ -186,7 +186,7 @@ public class PlayPanel : DockPanel
             var archiveLocation = archiveLocations[0];
 
             // Start the extract.
-            await ClientState.Get().ExtractAsync(archiveLocation.Path.AbsolutePath);
+            await ClientState.Get().ExtractAsync(archiveLocation.Path.LocalPath);
         });
     }
 

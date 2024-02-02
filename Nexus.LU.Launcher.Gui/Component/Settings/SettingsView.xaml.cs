@@ -67,8 +67,8 @@ public class SettingsView : Panel
                 // Get the new directory.
                 // Can't be awaited directly with ShowAsync because of a multithreading crash on macOS.
                 var newDirectoryList = await newDirectoryTask;
-                if (newDirectoryList.Count == 0 || newDirectoryList[0].Path.AbsolutePath == this.CurrentParentDirectory) return;
-                var newDirectory = newDirectoryList[0].Path.AbsolutePath;
+                if (newDirectoryList.Count == 0 || newDirectoryList[0].Path.LocalPath == this.CurrentParentDirectory) return;
+                var newDirectory = newDirectoryList[0].Path.LocalPath;
 
                 // Move the clients.
                 ConfirmPrompt.OpenPrompt(Localization.Get().GetLocalizedString("Settings_ChangeLocationPrompt"), () =>
