@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Nexus LU Launcher
+Comment=Launcher for LEGO Universe
+Icon=io.thenexusavenger.Nexus-LU-Launcher
+Exec=Nexus-LU-Launcher
+Categories=Game;
