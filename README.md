@@ -24,8 +24,7 @@ The goals of the launcher is the following:
 The following aren't current goals of the launcher, but could
 be made at some point:
 * Provide a method to change the locale.
-  * This feature could be worked on but requires work on the client to enable
-    localization. The primary blocker for this is translations for the client.
+  * Looking for additional translations to be provided before this is implemented.
 * Unpacking the client for use with server hosting.
 * Automate installing WINE for non-Windows and non-macOS installs.
 
@@ -34,7 +33,7 @@ By default, Nexus LU Launcher will download files to a directory named
 `.nlul` in your user directory. This can be changed in the "Settings" tab.
 
 # Building
-Nexus LEGO Universe Launcher requires .NET 5.0 to be installed
+Nexus LEGO Universe Launcher requires .NET 8.0 to be installed
 since it allows packaging as single files without the requirement of
 decompressing files. After cloning the repository **with the submodules**,
 building can be done with the `dotnet build`:
