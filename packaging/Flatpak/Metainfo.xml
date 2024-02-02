@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>io.thenexusavenger.Nexus-LU-Launcher</id>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>MIT</project_license>
+	<name>Nexus LU Launcher</name>
+	<summary>Launcher for LEGO Universe</summary>
+	<description>
+		<p>Nexus LU (LEGO Universe) Launcher is a custom, cross-platform user interface for installing and launching LEGO Universe for community-run LEGO Universe servers.</p>
+	</description>
+	<developer_name>TheNexusAvenger</developer_name>
+	<categories>
+		<category>Game</category>
+	</categories>
+	<url type="homepage">https://github.com/TheNexusAvenger/Nexus-LU-Launcher</url>
+	<url type="help">https://github.com/TheNexusAvenger/Nexus-LU-Launcher</url>
+	<url type="contribute">https://github.com/TheNexusAvenger/Nexus-LU-Launcher</url>
+	<url type="bugtracker">https://github.com/TheNexusAvenger/Nexus-LU-Launcher/issues</url>
+	<screenshots>
+	  <screenshot type="default">
+		<image type="source" width="674" height="470">https://github.com/TheNexusAvenger/Nexus-LU-Launcher/blob/master/images/launcher.png?raw=true</image>
+			<caption>Nexus LU Launcher example server list</caption>
+	  </screenshot>
+	</screenshots>
+	<releases>
+		<release version="V.2.0.0" date="2024-02-01">
+			<description>
+				<ul>
+					<li>Completely rewrote the internal state management to be easier to understand and maintain.</li>
+					<li>Changed patches state management to allow background loading, which improves launcher start times.</li>
+					<li>Migrated to .NET 8 with ahead-of-time (AOT), which improves launcher start times and the binary file size.</li>
+					<li>Added internal support for localization. No toggle is provided yet. It will be added in a future update if German translations are provided.</li>
+					<li>Added internal logging.</li>
+					<li>Added Flatpak support for Linux.</li>
+					<li>Updated macOS WINE automatic download.</li>
+					<li>Breaking change: The format for storing versions of installed patches has changed. Mod Loader, Tcp/Udp Shim, and Auto Tcp/Udp Shim will show as having an update when they are already up to date.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.1.1.0" date="2023-01-20">
+			<description>
+				<ul>
+					<li>Fixed failing to extract and verify certain archives.</li>
+					<li>Removed "Auto TcpUdp" from default patches for Darkflame Universe and Uchu no longer being contributed to.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.1.0.1" date="2022-03-15">
+			<description>
+				<ul>
+					<li>A new "WINE Prefix" is now created automatically instead of using the system default. (#4)</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.1.0.0" date="2022-01-01">
+			<description>
+				<ul>
+					<li>Updated to .NET 6. Added macOS ARM64 / "M1" release.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.4.0" date="2021-12-20">
+			<description>
+				<ul>
+					<li>Removed automatic downloads of the client. Due to legal reasons, public mirrors of LEGO Universe are not provided anymore.</li>
+					<li>Added prompting for client archive files. zip and rar files are supported since they were the previous formats the client archive mirrors used.</li>
+					<li>Added a progress bar for extracting the client files.</li>
+					<li>The "Remove DLU Ad" patch has been hidden. It will be run when extracting a client and can't be undone.</li>
+					<li>Fixed the progress bar not animating when verifying the extracted client.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.3.4" date="2021-09-27">
+			<description>
+				<ul>
+					<li>Fixed clients not moving when changing to different volumes/drives.</li>
+					<li>Changed close warning message when moving clients.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.3.3" date="2021-09-09">
+			<description>
+				<ul>
+					<li>Fixed LEGO Universe not launching on macOS 10.14 and older due to wine32on64 not working on those versions.</li>
+					<li>The server name is now set when launching and now appears at the bottom of the client. (#1)</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.3.2" date="2021-09-05">
+			<description>
+				<ul>
+					<li>Fixed crash with macOS when changing parent directories.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.3.1" date="2021-08-31">
+			<description>
+				<ul>
+					<li>Fixed pre-launch patches applying when not installed, resulting in a prompt about failing to load auto_raknet_replacer when Auto TCP/UDP is uninstalled.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.3.0" date="2021-08-22">
+			<description>
+				<ul>
+					<li>Removed CLI code. Only GUI builds are provided now.</li>
+					<li>Removed server building and running code. GUI support is no longer planned.</li>
+					<li>Added settings view.</li>
+					<li>Added configuration for showing logs.</li>
+					<li>Added configuration for choosing the client source.</li>
+					<li>Added configuration for choosing download locations.</li>
+					<li>NLULHome is deprecated now. If it was used before, the custom home will be set once, but changes to NLULHome will be ignored.</li>
+					<li>Added client sources instead of hard-coded download location. GitHub will be polled for a download list. If it fails, a local list will be used.</li>
+					<li>Added option to display client logs.</li>
+					<li>Added confirmation prompts.</li>
+					<li>Added confirmation prompts to remove servers.</li>
+					<li>Added confirmation prompts for closing while downloading.</li>
+					<li>Added confirmation prompts for some settings.</li>
+					<li>Added patch for Avant Gardens Survival crash with multi-player. DLU already provides this fix.</li>
+					<li>Disabled patching clients if the client isn't downloaded.</li>
+					<li>Fixed macOS WINE download.</li>
+					<li>Prepared for packed client downloads. Currently not supported at the moment. May require a re-download if a zip is not used to distribute it.</li>
+					<li>Prepared publishing for macOS ARM64 (Apple Silicon). Will enable with .NET 6.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.2.5" date="2021-03-31">
+			<description>
+				<ul>
+					<li>Added patch for fixing the hologram of the Assembly vendor in Nimbus Station. Currently, it shows "Missing NIF" due to the path being incorrect.</li>
+					<li>Fixed the launcher not opening if the launcher information file is empty.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.2.4" date="2021-03-27">
+			<description>
+				<ul>
+					<li>Improved mod loader download resolving in case the dinput8.dll file changes directories, as it did for the latest release.</li>
+					<li>Fixed the Auto TCP/UDP mod not uninstalling if the last connected server doesn't use TCP/UDP or was offline.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.2.3" date="2021-03-13">
+			<description>
+				<ul>
+					<li>Fixed mod loader install failing on latest release.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.2.2" date="2021-03-08">
+			<description>
+				<ul>
+					<li>Custom download locations, set with NLULHome, no longer create a .nlul directory in the set home. If you are updating from V.0.2.1 and had this set up, your files with automatically be moved.</li>
+					<li>Added patch for removing the "DLU is coming" ad from the client.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.2.1" date="2021-03-04">
+			<description>
+				<ul>
+					<li>The Launcher distributables are now named "Nexus-LU-Launcher" instead of "NLUL.GUI".</li>
+					<li>Added support for changing the client download location by setting NLULHome in your system environment.</li>
+					<li>Currently, this will create a .nlul directory in the specified home. This will change in the next release to use the directory directly. No action will be required on update, but the files will move up 1 directory.</li>
+					<li>Added verification that the client is extracted correctly. This should resolve white screens on launch.</li>
+					<li>Added Auto TCP/UDP patch option. TCP/UDP is still an option, but Auto TCP/UDP is default now.</li>
+					<li>Auto TCP/UDP will attempt to enable or disable the TCP/UDP patch depending on the server being connected to. This should allow for connecting to servers that use TCP/UDP, like Uchu servers, as well as servers that don't, like OpCrux and WLUS, without having to change anything manually. Installs with older versions will still use TCP/UDP unless you go to the Patches tab, uninstall TCP/UDP, and install Auto TCP/UDP.</li>
+					<li>Fixed crash on download error.</li>
+					<li>Fixed patches showing as uninstalled after downloading the client.</li>
+					<li>Fixed closing the window now stopping the download.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.2.0" date="2021-03-02">
+			<description>
+				<ul>
+					<li>The Linux and macOS builds are compiled on Linux and will have the correct file permissions for executing. No additional commands are required before running.</li>
+					<li>Nexus LU Launcher's macOS build is now packaged as an app instead of ZIP with the executables and libraries. The CLI has not changed.</li>
+					<li>The macOS build now automatically installs WINE since the WINE setup is more complicated due to macOS Catalina and newer not working with the old 32-bit WINE builds. If wine is in your PATH, it will override this. If wine isn't working, such as an old build from a pre-Catalina install, the game will not launch.</li>
+					<li>The ZIP version of the client is no longer saved after being used. This file is >4GB.</li>
+					<li>Updated Uchu's default setup for the CLI. dev is used by default instead of master. Redis is now disabled by default. SQLite is now used by default, as part of the current dev build of Uchu. PostgreSQL is not checked or used by default. .NET 5.0 is now used by default.</li>
+					<li>Fix the server list entries having a gap on the right when the scroll bar isn't present.</li>
+				</ul>
+			</description>
+		</release>
+		<release version="V.0.1.0" date="2020-12-30">
+			<description>
+				<ul>
+					<li>Initial release.</li>
+				</ul>
+			</description>
+		</release>
+	</releases>
+	<content_rating type="oars-1.1">
+		<content_attribute id="violence-cartoon">moderate</content_attribute>
+	</content_rating>
+</component>
