@@ -184,9 +184,25 @@ public class PlayPanel : DockPanel
             var archiveLocations = await openFileTask;
             if (archiveLocations.Count == 0) return;
             var archiveLocation = archiveLocations[0];
-
-            // Start the extract.
-            await ClientState.Get().ExtractAsync(archiveLocation.Path.LocalPath);
+            
+            // Verify the signature.
+            var clientState = ClientState.Get();
+            var archivePath = archiveLocation.Path.LocalPath;
+            var signatureValid = await clientState.CheckSignatureAsync(archivePath);
+            if (!signatureValid)
+            {
+                // Prompt to continue the extract.
+                var promptMessage = localization.GetLocalizedString("Client_ArchiveSignatureInvalidContinuePrompt");
+                ConfirmPrompt.OpenPrompt(promptMessage, () => Task.Run(async () =>
+                {
+                    await clientState.ExtractAsync(archiveLocation.Path.LocalPath);
+                }), this.PromptExtract);
+            }
+            else
+            {
+                // Start the extract.
+                await clientState.ExtractAsync(archiveLocation.Path.LocalPath);
+            }
         });
     }
 
@@ -269,7 +285,7 @@ public class PlayPanel : DockPanel
         if (launcherProgress.LauncherState == LauncherState.ExtractFailed || launcherProgress.LauncherState == LauncherState.VerifyFailed)
         {
             var promptMessage = string.Format(localization.GetLocalizedString("Client_RetrySelectArchivePrompt"), stateLoadingText);
-            ConfirmPrompt.OpenPrompt( promptMessage, this.PromptExtract);
+            ConfirmPrompt.OpenPrompt(promptMessage, this.PromptExtract);
         }
     }
 

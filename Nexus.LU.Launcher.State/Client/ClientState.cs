@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using InfectedRose.Core;
 using Nexus.LU.Launcher.State.Client.Archive;
@@ -14,7 +15,25 @@ using Nexus.LU.Launcher.State.Util;
 
 namespace Nexus.LU.Launcher.State.Client;
 
-public class ClientState {
+public class ClientState
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public static readonly List<string> KnownGoodSignatures = new List<string>()
+    {
+        // Packed client, rar compressed.
+        "8f6c7e84eca3bab93232132a88c4ae6f8367227d7eafeaa0ef9c40e86c14edf5",
+        // Packed client, includes extra locales, rar compressed.
+        "c1531bf9401426042e8bab2de04ba1b723042dc01d9907c2635033d417de9e05",
+        // Unpacked client, includes extra locales, rar compressed.
+        "0d862f71eedcadc4494c4358261669721b40b2131101cbd6ef476c5a6ec6775b",
+        // Unpacked client, zip compressed.
+        // This is not documented by Darkflame Universe as it realistically should not be findable.
+        // It is kept around for testing purposes, but it is the reason why the RemoveDluAdPatch exists.
+        "f0a67205f82165c27c673b5ba9472536d48a3697ae016889ab891b68922947ef",
+    };
+    
     /// <summary>
     /// Current state of the launcher.
     /// </summary>
@@ -199,6 +218,39 @@ public class ClientState {
                 LauncherState = LauncherState.ReadyToLaunch,
             });
         }
+    }
+
+    /// <summary>
+    /// Checks the signature of an archive.
+    /// </summary>
+    /// <param name="archivePath">Path of the archive to check.</param>
+    /// <returns>Whether the signature is valid or not.</returns>
+    public async Task<bool> CheckSignatureAsync(string archivePath)
+    {
+        // Set the state as checking the signature.
+        Logger.Info($"Check signature of \"{archivePath}\".");
+        this.SetLauncherProgress(new LauncherProgress()
+        {
+            LauncherState = LauncherState.CheckingSignature,
+            ProgressBarState = ProgressBarState.Progressing,
+        });
+        
+        // Get the signature.
+        var sha256 = SHA256.Create();
+        var checksum = await sha256.ComputeHashAsync(File.OpenRead(archivePath));
+        var hash = BitConverter.ToString(checksum).Replace("-", string.Empty).ToLower();
+        Logger.Info($"Signature is \"{hash}\".");
+        if (!KnownGoodSignatures.Contains(hash))
+        {
+            Logger.Warn("Signature is not known.");
+        }
+        
+        // Reset the state and return the result.
+        this.SetLauncherProgress(new LauncherProgress()
+        {
+            LauncherState = LauncherState.PendingExtractSelection,
+        });
+        return KnownGoodSignatures.Contains(hash);
     }
     
     /// <summary>

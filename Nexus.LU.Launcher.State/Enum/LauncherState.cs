@@ -8,6 +8,7 @@ public enum LauncherState {
 
     // Client extracting.
     PendingExtractSelection,
+    CheckingSignature,
     ExtractingClient,
     VerifyingClient,
     ExtractFailed,

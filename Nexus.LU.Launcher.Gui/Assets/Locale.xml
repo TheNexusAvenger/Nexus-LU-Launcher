@@ -43,6 +43,9 @@
         <phrase id="Client_Status_PendingExtractSelection">
             <translation locale="en_US">Pending client extract. An archive of the client must be downloaded.</translation>
         </phrase>
+        <phrase id="Client_Status_CheckingSignature">
+            <translation locale="en_US">Checking client archive signature...</translation>
+        </phrase>
         <phrase id="Client_Status_ExtractingClient">
             <translation locale="en_US">Extracting client...</translation>
         </phrase>
@@ -84,6 +87,9 @@
         </phrase>
         <phrase id="Client_RetrySelectArchivePrompt">
             <translation locale="en_US">{0} Try again?</translation>
+        </phrase>
+        <phrase id="Client_ArchiveSignatureInvalidContinuePrompt">
+            <translation locale="en_US">The signature of the archive did not match a known signature. It may be an invalid client. Continue?</translation>
         </phrase>
         
         <!--Patch buttons-->
