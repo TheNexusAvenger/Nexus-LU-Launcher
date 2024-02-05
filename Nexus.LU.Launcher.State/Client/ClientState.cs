@@ -229,7 +229,7 @@ public class ClientState {
         
         // Extract the files.
         Logger.Info($"Extracting client using {archive.GetType().Name}.");
-        var clientLocation = SystemInfo.GetDefault().ClientLocation;
+        var clientLocation = SystemInfo.GetDefault().SystemFileLocation;
         archive.ExtractProgress += (progress) =>
         {
             if (this.CurrentLauncherState != LauncherState.ExtractingClient) return;
