@@ -41,6 +41,14 @@ public class LauncherSettings
     /// Whether to display logs after launching.
     /// </summary>
     public bool LogsEnabled { get; set; }
+
+    /// <summary>
+    /// Number of threads to use when extracting the client.
+    /// Right now, this is considered experimental, and will default to 1 in all cases with no UI to change it.
+    /// It should be left at 1 on hard drive-based installs, and should be kept low on slow CPUs, systems with low RAM,
+    /// and systems that do not have >=2Gbps storage devices.
+    /// </summary>
+    public int ExtractThreads { get; set; } = 1;
     
     /// <summary>
     /// General storage for tag information.

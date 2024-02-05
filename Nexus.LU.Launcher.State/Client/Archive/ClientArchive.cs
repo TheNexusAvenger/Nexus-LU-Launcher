@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Nexus.LU.Launcher.State.Model;
 
 namespace Nexus.LU.Launcher.State.Client.Archive;
 
@@ -10,7 +13,7 @@ public class ClientArchive
     /// <summary>
     /// Required difference since the last ExtractProgress call to raise the event.
     /// </summary>
-    public const float ReportedProgressBuffer = 0.01f;
+    public const float ReportedProgressBuffer = 0.001f;
     
     /// <summary>
     /// Methods for getting the archive file entries.
@@ -28,6 +31,11 @@ public class ClientArchive
     public event Action<float>? ExtractProgress;
 
     /// <summary>
+    /// Path of the archive.
+    /// </summary>
+    private readonly string archiveLocation;
+
+    /// <summary>
     /// Entries for the archive to write.
     /// </summary>
     private readonly Dictionary<string, IClientArchiveEntry> entries;
@@ -40,9 +48,11 @@ public class ClientArchive
     /// <summary>
     /// Creates a client archive.
     /// </summary>
+    /// <param name="archiveLocation">Path of the archive.</param>
     /// <param name="entries">Entries to write.</param>
-    private ClientArchive(Dictionary<string, IClientArchiveEntry> entries)
+    private ClientArchive(string archiveLocation, Dictionary<string, IClientArchiveEntry> entries)
     {
+        this.archiveLocation = archiveLocation;
         this.entries = entries;
     }
 
@@ -98,7 +108,7 @@ public class ClientArchive
                 }
                 
                 // Create and return the archive.
-                return new ClientArchive(filteredEntries);
+                return new ClientArchive(archiveLocation, filteredEntries);
             }
             catch (Exception e)
             {
@@ -130,27 +140,59 @@ public class ClientArchive
     /// <param name="targetLocation">Location to extract to</param>
     public void ExtractTo(string targetLocation)
     {
+        // Split the entries to extract in a round-robin method.
+        var totalExtractThreads = Math.Max(1, SystemInfo.GetDefault().Settings.ExtractThreads);
+        var rawEntries = new List<Dictionary<string, IClientArchiveEntry>>() { this.entries };
+        var roundRobinEntries = new List<Dictionary<string, IClientArchiveEntry>>() { new Dictionary<string, IClientArchiveEntry>() };
+        for (var i = 1; i < totalExtractThreads; i++)
+        {
+            rawEntries.Add(GetArchive(this.archiveLocation)!.entries);
+            roundRobinEntries.Add(new Dictionary<string, IClientArchiveEntry>());
+        }
+        var currentThreadIndex = 0;
+        foreach (var (relativePath, _) in this.entries)
+        {
+            roundRobinEntries[currentThreadIndex][relativePath] = rawEntries[currentThreadIndex][relativePath];
+            currentThreadIndex = (currentThreadIndex + 1) % totalExtractThreads;
+        }
+        
         // Extract the files.
         float totalFiles = this.entries.Count;
         float completedFiles = 0;
+        var reportProgressLock = new SemaphoreSlim(1);
+        var extractTasks = new List<Task>();
         this.ReportExtractingProgress(0);
-        foreach (var (relativePath, entry) in this.entries)
+        foreach (var threadEntries in roundRobinEntries)
         {
-            // Determine the destination file path.
-            var newPath = Path.Combine(targetLocation, relativePath);
-            var newParentPath = Path.GetDirectoryName(newPath);
-            
-            // Extract the file.
-            if (newParentPath != null && !Directory.Exists(newParentPath))
+            extractTasks.Add(Task.Run(() =>
             {
-                Directory.CreateDirectory(newParentPath);
-            }
-            entry.WriteToFile(newPath);
-            Logger.Debug($"Extracted file {newPath}");
-            
-            // Report the progress.
-            completedFiles += 1;
-            this.ReportExtractingProgress(completedFiles / totalFiles);
+                foreach (var (relativePath, entry) in threadEntries)
+                {
+                    // Determine the destination file path.
+                    var newPath = Path.Combine(targetLocation, relativePath);
+                    var newParentPath = Path.GetDirectoryName(newPath);
+                
+                    // Extract the file.
+                    if (newParentPath != null && !Directory.Exists(newParentPath))
+                    {
+                        Directory.CreateDirectory(newParentPath);
+                    }
+                    entry.WriteToFile(newPath);
+                    Logger.Debug($"Extracted file {newPath}");
+                
+                    // Report the progress.
+                    reportProgressLock.Wait();
+                    completedFiles += 1;
+                    this.ReportExtractingProgress(completedFiles / totalFiles);
+                    reportProgressLock.Release();
+                }
+            }));
+        }
+        
+        // Wait for the tasks to complete.
+        foreach (var task in extractTasks)
+        {
+            task.Wait();
         }
     }
     
