@@ -9,6 +9,7 @@ using Avalonia.Platform.Storage;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Component.Prompt;
 using Nexus.LU.Launcher.Gui.Util;
+using Nexus.LU.Launcher.State;
 using Nexus.LU.Launcher.State.Client;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
@@ -332,7 +333,14 @@ public class PlayPanel : DockPanel
                 // Combine the log outputs.
                 var combinedOutput = new CombinedOutput();
                 var outputCancellationTokenSource = new CancellationTokenSource();
-                combinedOutput.AddOutput(process.StandardOutput, outputCancellationTokenSource.Token);
+                try
+                {
+                    combinedOutput.AddOutput(process.StandardOutput, outputCancellationTokenSource.Token);
+                }
+                catch (InvalidOperationException e)
+                {
+                    Logger.Error($"Client standard output could not be read.\n{e}");
+                }
                 combinedOutput.AddOutput(StoredLogOutput.Instance);
 
                 // Display the output.
