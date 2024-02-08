@@ -309,7 +309,6 @@ public class PlayPanel : DockPanel
             {
                 // Start the process.
                 var process = await clientState.LaunchAsync();
-                if (process == null) return;
                 
                 // Close the window if the output is not enabled.
                 // Close the window after the launch is complete.
@@ -333,13 +332,16 @@ public class PlayPanel : DockPanel
                 // Combine the log outputs.
                 var combinedOutput = new CombinedOutput();
                 var outputCancellationTokenSource = new CancellationTokenSource();
-                try
+                if (process != null)
                 {
-                    combinedOutput.AddOutput(process.StandardOutput, outputCancellationTokenSource.Token);
-                }
-                catch (InvalidOperationException e)
-                {
-                    Logger.Error($"Client standard output could not be read.\n{e}");
+                    try
+                    {
+                        combinedOutput.AddOutput(process.StandardOutput, outputCancellationTokenSource.Token);
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        Logger.Error($"Client standard output could not be read.\n{e}");
+                    }
                 }
                 combinedOutput.AddOutput(StoredLogOutput.Instance);
 
@@ -356,8 +358,11 @@ public class PlayPanel : DockPanel
                 };
                 
                 // Wait for the client to exit and stop reading the output.
-                await process.WaitForExitAsync();
-                await outputCancellationTokenSource.CancelAsync();
+                if (process != null)
+                {
+                    await process.WaitForExitAsync();
+                    await outputCancellationTokenSource.CancelAsync();
+                }
             });
         }
     }

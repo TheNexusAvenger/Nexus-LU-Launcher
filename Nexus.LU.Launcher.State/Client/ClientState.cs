@@ -463,22 +463,25 @@ public class ClientState
         
         // Launch the client.
         Logger.Info($"Launching with {host.ServerName} ({host.ServerAddress})");
-        var clientProcess = runtime.RunApplication(Path.Combine(systemInfo.ClientLocation, "legouniverse.exe"), systemInfo.ClientLocation);
         try
         {
+            var clientProcess = runtime.RunApplication(Path.Combine(systemInfo.ClientLocation, "legouniverse.exe"), systemInfo.ClientLocation);
             clientProcess.Start();
+            this.SetLauncherProgress(new LauncherProgress()
+            {
+                LauncherState = LauncherState.Launched,
+            });
+            return clientProcess;
         }
         catch (Exception e)
         {
             Logger.Error($"Launching the client failed.\n{e}");
+            this.SetLauncherProgress(new LauncherProgress()
+            {
+                LauncherState = LauncherState.Launched,
+            });
+            return null;
         }
-        this.SetLauncherProgress(new LauncherProgress()
-        {
-            LauncherState = LauncherState.Launched,
-        });
-        
-        // Return the output.
-        return clientProcess;
     }
 
     /// <summary>
