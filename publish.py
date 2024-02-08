@@ -4,21 +4,40 @@ TheNexusAvenger
 Creates the binaries for distribution.
 """
 
-PLATFORMS = [
-    ["Windows-x64", "win-x64"],
-    ["macOS-x64", "osx-x64"],
-    ["macOS-ARM64", "osx-arm64"],
-    ["Linux-x64", "linux-x64"],
-]
+import os
+import platform
+import shutil
+import subprocess
+
 MACOS_PACKAGE_BUILDS = [
     ["macOS-x64", "osx-x64"],
     ["macOS-ARM64", "osx-arm64"],
 ]
 
-import os
-import shutil
-import subprocess
-import sys
+# Set the platforms.
+if platform.system() == "Windows":
+    print("Building for Windows.")
+    buildMode = "Windows"
+    PLATFORMS = [
+        ["Windows-x64", "win-x64"],
+    ]
+elif platform.system() == "Darwin":
+    print("Building for macOS.")
+    buildMode = "macOS"
+    PLATFORMS = [
+        ["macOS-x64", "osx-x64"],
+        ["macOS-ARM64", "osx-arm64"],
+    ]
+elif platform.system() == "Linux":
+    print("Building for Linux.")
+    buildMode = "Linux"
+    PLATFORMS = [
+        ["Linux-x64", "linux-x64"],
+    ]
+else:
+    print("Unsupported platform: " + platform.system())
+    exit(1)
+print("")
 
 
 """
@@ -29,13 +48,6 @@ def cleanDirectory(directory):
         if file.endswith(".pdb"):
             os.remove(directory + "/" + file)
 
-
-
-# Display a warning for Windows runs.
-if os.name == "nt":
-    sys.stderr.write("Windows was detected. Linux and macOS binaries will be missing the permissions to run.\n")
-else:
-    sys.stderr.write("Windows was not detected. Windows binaries will create a command prompt window when opening.\n")
 
 # Create the directory.
 if os.path.exists("bin"):
@@ -85,3 +97,13 @@ for macOsBuild in MACOS_PACKAGE_BUILDS:
     shutil.copy("packaging/macOS/Info.plist", "bin/Nexus-LU-Launcher-" + macOsBuild[0] + "/Nexus LU Launcher.app/Contents/Info.plist")
     shutil.make_archive("bin/Nexus-LU-Launcher-" + macOsBuild[0],"zip","bin/Nexus-LU-Launcher-" + macOsBuild[0])
     shutil.rmtree("bin/Nexus-LU-Launcher-" + macOsBuild[0])
+
+# Write any files about limitations.
+if buildMode == "macOS":
+    with open("bin/requirements-maxos.txt", "w") as file:
+        file.write("The following macOS version was used and will be the minimum version that will work with this relase:\n")
+        file.write(platform.mac_ver()[0])
+elif buildMode == "Linux":
+    with open("bin/requirements-linux.txt", "w") as file:
+        file.write("The following glibc version was used and will be the minimum version that will work with this relase:\n")
+        file.write(subprocess.check_output(["ldd",  "--version"]).decode())
