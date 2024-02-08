@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -11,6 +12,7 @@ using Nexus.LU.Launcher.Gui.Util;
 using Nexus.LU.Launcher.State.Client;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
+using Nexus.LU.Launcher.State.Util;
 
 namespace Nexus.LU.Launcher.Gui.Component.Play;
 
@@ -326,19 +328,28 @@ public class PlayPanel : DockPanel
                     if (args.ExtentDelta.Y == 0) return;
                     this.ClientOutputScroll.RunMainThread(this.ClientOutputScroll.ScrollToEnd);
                 };
+                
+                // Combine the log outputs.
+                var combinedOutput = new CombinedOutput();
+                var outputCancellationTokenSource = new CancellationTokenSource();
+                combinedOutput.AddOutput(process.StandardOutput, outputCancellationTokenSource.Token);
+                combinedOutput.AddOutput(StoredLogOutput.Instance);
 
-                // Copy the output to the view.
-                var output = "";
-                while (!process.StandardOutput.EndOfStream)
+                // Display the output.
+                this.RunMainThread(() =>
                 {
-                    var line = await process.StandardOutput.ReadLineAsync();
-                    output += (output == "" ? "" : "\n") + line;
-                    var currentOutput = output;
+                    this.ClientOutput!.Text = combinedOutput.Output;
+                });
+                combinedOutput.OutputUpdated += (newOutput) => {
                     this.RunMainThread(() =>
                     {
-                        this.ClientOutput!.Text = currentOutput;
+                        this.ClientOutput!.Text = newOutput;
                     });
-                }
+                };
+                
+                // Wait for the client to exit and stop reading the output.
+                await process.WaitForExitAsync();
+                await outputCancellationTokenSource.CancelAsync();
             });
         }
     }

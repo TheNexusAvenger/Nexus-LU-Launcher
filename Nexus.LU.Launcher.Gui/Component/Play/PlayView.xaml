@@ -4,7 +4,7 @@
             x:Class="Nexus.LU.Launcher.Gui.Component.Play.PlayView">
     <Canvas>
         <ScrollViewer Name="ClientOutputScroll" Width="664" Height="300" Canvas.Top="4" Canvas.Left="4" IsVisible="False">
-            <TextBox IsReadOnly="True" Name="ClientOutput"/>
+            <TextBox IsReadOnly="True" FontFamily="Courier New" Name="ClientOutput"/>
         </ScrollViewer>
         <StackPanel Name="PlayContainer">
             <Border Background="#0C0D16" Width="664" Height="256" Margin="2,0" CornerRadius="7">

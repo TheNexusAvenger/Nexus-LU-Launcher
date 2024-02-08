@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Nexus.Logging.Attribute;
 using Nexus.Logging.Output;
+using Nexus.LU.Launcher.State.Util;
 
 namespace Nexus.LU.Launcher.State;
 
@@ -23,6 +24,7 @@ public class Logger
             NamespaceWhitelist = new List<string>() { "Nexus.LU.Launcher" },
             MinimumLevel = LogLevel.Debug,
         });
+        NexusLogger.Outputs.Add(StoredLogOutput.Instance);
     }
     
     /// <summary>
