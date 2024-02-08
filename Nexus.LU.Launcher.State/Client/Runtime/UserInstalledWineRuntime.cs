@@ -42,8 +42,8 @@ public class UserInstalledWineRuntime : IRuntime
                 RedirectStandardOutput = true,
             }
         };
-        clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "dinput8.dll=n,b");
-        clientProcess.StartInfo.EnvironmentVariables.Add("WINEPREFIX", Path.Combine(workingDirectory, "..", "WinePrefix"));
+        clientProcess.StartInfo.EnvironmentVariables["WINEDLLOVERRIDES"] = "dinput8.dll=n,b";
+        clientProcess.StartInfo.EnvironmentVariables["WINEPREFIX"] = Path.Combine(workingDirectory, "..", "WinePrefix");
         return clientProcess;
     }
 }

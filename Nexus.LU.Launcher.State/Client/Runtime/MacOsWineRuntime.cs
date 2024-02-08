@@ -107,7 +107,7 @@ public class MacOsWineRuntime : IRuntime
                 CreateNoWindow = true,
             }
         };
-        clientProcess.StartInfo.EnvironmentVariables.Add("WINEDLLOVERRIDES", "dinput8.dll=n,b");
+        clientProcess.StartInfo.EnvironmentVariables["WINEDLLOVERRIDES"] = "dinput8.dll=n,b";
         return clientProcess;
     }
 }
