@@ -76,6 +76,10 @@ public class ToggleView : Canvas
                 playButton.IsVisible = (state != LauncherState.Launched);
                 patchesButton.IsVisible = (state != LauncherState.Launched);
                 settingsButton.IsVisible = (state != LauncherState.Launched);
+                if (state == LauncherState.Launched)
+                {
+                    this.SetView("PlayView");
+                }
             });
         };
     }
