@@ -1,0 +1,10 @@
+FROM registry.access.redhat.com/ubi8/dotnet-80
+
+# Prepare the build dependences.
+USER root
+RUN microdnf install clang zlib-devel python3
+
+# Copy the launcher build files and run the publish.
+WORKDIR /build
+COPY . .
+RUN python3 ./publish.py
