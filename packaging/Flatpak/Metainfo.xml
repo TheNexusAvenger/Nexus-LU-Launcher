@@ -26,8 +26,8 @@
 		<release version="V.2.1.0" date="2024-02-09">
 			<description>
 				<ul>
-					<li>Added checking archive signatures for known good clients. It should be left at 1 on hard drive-based installs, and should be kept low on slow CPUs, systems with low RAM, and systems that do not have &gt;=2Gbps storage devices.</li>
-					<li>Added experimental parallel extract option. It is disabled by default and can only be changed in the launcher.json file.</li>
+					<li>Added checking archive signatures for known good clients.</li>
+					<li>Added experimental parallel extract option. It is disabled by default and can only be changed in the launcher.json file. It should be left at 1 on hard drive-based installs, and should be kept low on slow CPUs, systems with low RAM, and systems that do not have &gt;=2Gbps storage devices.</li>
 					<li>Added launcher logs to client logs after client starts.</li>
 					<li>Fixed packed clients crashing on start due to not copying version files.</li>
 					<li>Fixed launcher being stuck in the launching state when the client fails to start.</li>
