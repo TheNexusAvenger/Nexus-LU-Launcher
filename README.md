@@ -11,6 +11,30 @@ for community-run LEGO Universe servers.
 
 ![Launcher example](images/launcher.png)
 
+## Running
+For all platforms, a LEGO Universe client archive is required.
+Instructions on how to get one are not provided.
+
+### Windows
+[Download and extract `Nexus-LU-Launcher-Windows-x64.zip` from the releases and run the executable.](https://github.com/TheNexusAvenger/Nexus-LU-Launcher/releases/latest)
+Compatibility for Windows 8.1 and older is not guarenteed.
+
+### macOS
+[Download and extract `Nexus-LU-Launcher-macOS-x64.zip` from the releases and run the application.](https://github.com/TheNexusAvenger/Nexus-LU-Launcher/releases/latest)
+macOS 10.15 or newer is required.
+
+### Linux
+Linux releases are provided under the releases, [but the Flatpak is recommended](https://flathub.org/apps/io.thenexusavenger.Nexus-LU-Launcher).
+It includes WINE and creates a desktop entry for launching.
+
+```bash
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install io.thenexusavenger.Nexus-LU-Launcher
+```
+
+#### Valve Steam Deck
+LEGO Universe has no support for gamepads. [There is a request for comment for recommended bindings](https://github.com/TheNexusAvenger/Nexus-LU-Launcher/issues/7).
+
 ## Goals
 The goals of the launcher is the following:
 * Allow for launching the client on Windows, macOS, and Linux.
@@ -27,6 +51,7 @@ be made at some point:
   * Looking for additional translations to be provided before this is implemented.
 * Unpacking the client for use with server hosting.
 * Automate installing WINE for non-Windows and non-macOS installs.
+  * The Flatpak release handles this for Linux.
 
 ## Custom Download Location
 By default, Nexus LU Launcher will download files to a directory named
@@ -46,14 +71,18 @@ dotnet publish
 ```
 
 For creating the distributables in, there is a Python script that builds the
-CLI and GUI projects for win-x64, osx-x64, and linux-x64:
+launcher releases for win-x64, osx-x64, and linux-x64:
 ```bash
 python publish.py
 cd bin/ # The ZIP files of the distributables will be in bin/ of the repository.
 ```
 
-**For distributing non-Windows builds, make sure to run the script on
-macOS or Linux.** Otherwise, the executable permissions will be missing.
+Each release needs to be created for their platform.
+- **For macOS**, the version of macOS compiled on is the minimum version
+  of macOS the release will work on.
+- **For Linux**, the version of `glibc` on the system will become the minimum
+  version of `glibc` the release will work on. If you have Docker, `python3 publish-docker.py`
+  will perform a build with RedHat UBI8 (uses `glibc` 2.28).
 
 # Additions
 ## Patches
