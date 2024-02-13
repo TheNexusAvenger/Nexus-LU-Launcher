@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
@@ -51,12 +53,13 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
     {
         // Get the location of Steam.
         this.steamLocation = null;
-        var windowsSteamPath = @"C:\Program Files (x86)\Steam";
-        if (Directory.Exists(windowsSteamPath))
+        var potentialSteamPaths = new List<string>()
         {
-            this.steamLocation = windowsSteamPath;
-        }
-        // TODO: Get Linux path.
+            @"C:\Program Files (x86)\Steam",
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share", "Steam"), // Arch Linux (Steam Deck)
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".steam", "debian-installation"), // Debian
+        };
+        this.steamLocation = potentialSteamPaths.FirstOrDefault(path => Directory.Exists(path));
         
         // Set the patch as unsupported if Steam is not found.
         if (this.steamLocation == null)
