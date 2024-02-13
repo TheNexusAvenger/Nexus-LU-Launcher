@@ -127,7 +127,7 @@ public class ExtendedClientPatch
     }
 
     /// <summary>
-    /// Performs and operations between setting the boot.cfg and launching
+    /// Performs operations between setting the boot.cfg and launching
     /// the client. This will yield launching the client.
     /// </summary>
     public async Task OnClientRequestLaunchAsync()
