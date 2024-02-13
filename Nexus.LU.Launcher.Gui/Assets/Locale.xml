@@ -104,6 +104,13 @@
         </phrase>
         
         <!--Patch options-->
+        <phrase id="Patch_Name_SteamOneClickPatch">
+            <translation locale="en_US">Steam One-Click</translation>
+        </phrase>
+        <phrase id="Patch_Description_SteamOneClickPatch">
+            <translation locale="en_US">Attempts to set up the launcher for Steam for the Steam Deck.</translation>
+        </phrase>
+        
         <phrase id="Patch_Name_ModLoaderPatch">
             <translation locale="en_US">Mod Loader</translation>
         </phrase>
