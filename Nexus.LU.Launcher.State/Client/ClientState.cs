@@ -87,6 +87,7 @@ public class ClientState
         var systemInfo = SystemInfo.GetDefault();
         this.Patches = new List<ExtendedClientPatch>()
         {
+            new ExtendedClientPatch(new SteamOneClickPatch(systemInfo)),
             new ExtendedClientPatch(new ModLoaderPatch(systemInfo)),
             new ExtendedClientPatch(new AutoTcpUdpPatch(systemInfo)),
             new ExtendedClientPatch(new TcpUdpPatch(systemInfo)),
