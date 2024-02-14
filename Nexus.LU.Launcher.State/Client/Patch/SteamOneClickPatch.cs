@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
 
@@ -83,7 +84,12 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
     public async Task InstallAsync()
     {
         // Add the launcher as a non-Steam application.
-        // TODO: How does this work for Flatpaks?
+        var executable = Environment.ProcessPath;
+        var flatpakId = Environment.GetEnvironmentVariable("FLATPAK_ID");
+        if (flatpakId != null)
+        {
+            executable = $"flatpak run {flatpakId}";
+        }
         // TODO: Add to shortcuts.vdf
         
         // Prompt setting the controller layout.
@@ -117,15 +123,58 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
     /// </summary>
     public Task OnClientRequestLaunchAsync()
     {
-        // TODO: Testing environment variables with Flatpak.
-        Logger.Debug($"Process: {Environment.ProcessPath}");
-        foreach (var key in Environment.GetEnvironmentVariables().Keys)
+        // Return if the patch is not active.
+        if (this.systemInfo.GetPatchStore("SteamOneClick", "State") != "PendingSettingsChange")
         {
-            
-            Logger.Debug($"{key}: {Environment.GetEnvironmentVariable((string) key)}");
+            Logger.Debug("Settings file not changed because the state was not set to do so.");
+            return Task.CompletedTask;
         }
-        // TODO: Return if settings not found (WINE Prefix or Windows).
-        // TODO: Set settings to fullscreen windowed if settings exists and not run before.
+
+        // Find the LEGO Universe settings file.
+        var settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LEGO Software", "LEGO Universe", "lwo.xml");
+        var winePrefixUsersPath = Path.Combine(this.systemInfo.SystemFileLocation, "WinePrefix", "drive_c", "users");
+        if (Directory.Exists(winePrefixUsersPath)) {
+            foreach (var winePrefixUserPath in Directory.GetDirectories(winePrefixUsersPath))
+            {
+                var winePrefixSettingsPath = Path.Combine(winePrefixUserPath, "AppData", "Local", "LEGO Software", "LEGO Universe", "lwo.xml");
+                if (!File.Exists(winePrefixSettingsPath)) continue;
+                settingsPath = winePrefixSettingsPath;
+            }
+        }
+        
+        // Return if the settings file does not exist.
+        if (!File.Exists(settingsPath))
+        {
+            Logger.Warn("Settings file not found. This is normal if this is the first launch of the game.");
+            return Task.CompletedTask;
+        }
+        
+        try
+        {
+            // Change the settings.
+            var settingsDocument = XDocument.Load(settingsPath);
+            foreach (var element in settingsDocument.Descendants("ConfigurableOption"))
+            {
+                var nameAttribute = element.Attribute("name");
+                if (nameAttribute == null) continue;
+                if (nameAttribute.Value != "WINDOWED" && nameAttribute.Value != "WINDOW_MAXIMIZED") continue;
+                var valueElement = element.Descendants("Value").FirstOrDefault();
+                if (valueElement == null) continue;
+                valueElement.Value = "1"; // For WINDOWED, this makes it not full screen. For WINDOW_MAXIMIZED, this makes it maximized.
+            }
+
+            // Save the settings.
+            settingsDocument.Save(settingsPath);
+            Logger.Info("Updated settings to not be in full screen.");
+            
+            // Set the state as completed.
+            this.systemInfo.SetPatchStore("SteamOneClick", "State", "SettingsChanged");
+            this.systemInfo.SaveSettings();
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Failed to update client settings.\n{e}");
+        }
         return Task.CompletedTask;
     }
 }
