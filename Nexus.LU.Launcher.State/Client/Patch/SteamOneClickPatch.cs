@@ -153,6 +153,7 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
 
             if (flatpakId == null)
             {
+                // Stop the Steam process.
                 Logger.Info("Shutting down Steam.");
                 foreach (var steamProcess in Process.GetProcessesByName("steam"))
                 {
@@ -163,15 +164,26 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
             }
             else
             {
+                // Store the last time the log had "Shutdown".
+                // It is assumed that if the line is different, then a new shutdown was performed by the user.
                 Logger.Warn("Unable to restart Steam from a Flatpak. A manual restart will be required.");
+                var bootstrapLogPath = Path.Combine(this.steamLocation!, "logs", "bootstrap_log.txt");
+                if (File.Exists(bootstrapLogPath))
+                {
+                    var lastShutdownLine = "";
+                    foreach (var line in await File.ReadAllLinesAsync(bootstrapLogPath))
+                    {
+                        if (!line.Contains("Shutdown")) continue;
+                        lastShutdownLine = line;
+                    }
+                    this.systemInfo.SetPatchStore("SteamOneClick", "LastSteamShutdownLine", lastShutdownLine);
+                    this.systemInfo.SaveSettings();
+                }
             }
         }
         
         // Prompt setting the controller layout.
-        var webProcess = new Process(); 
-        webProcess.StartInfo.FileName = "steam://controllerconfig/2672019776/3160129134";
-        webProcess.StartInfo.UseShellExecute = true;
-        webProcess.Start();
+        await this.PromptControllerLayoutAsync();
         
         // Set the patch as installed and ready for the settings change.
         if (this.systemInfo.GetPatchStore("SteamOneClick", "State") == null)
@@ -251,5 +263,33 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
             Logger.Error($"Failed to update client settings.\n{e}");
         }
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Prompts to set the controller layout.
+    /// </summary>
+    private async Task PromptControllerLayoutAsync()
+    {
+        // Return if the last shutdown line is the same.
+        var previousLastShutdownTime = this.systemInfo.GetPatchStore("SteamOneClick", "LastSteamShutdownLine");
+        if (previousLastShutdownTime != null)
+        {
+            var lastShutdownLine = "";
+            var bootstrapLogPath = Path.Combine(this.steamLocation!, "logs", "bootstrap_log.txt");
+            foreach (var line in await File.ReadAllLinesAsync(bootstrapLogPath))
+            {
+                if (!line.Contains("Shutdown")) continue;
+                lastShutdownLine = line;
+            }
+            if (lastShutdownLine == previousLastShutdownTime) return;
+            this.systemInfo.SetPatchStore("SteamOneClick", "LastSteamShutdownLine", null);
+            this.systemInfo.SaveSettings();
+        }
+        
+        // Prompt to change the layout.
+        var webProcess = new Process(); 
+        webProcess.StartInfo.FileName = "steam://controllerconfig/2672019776/3160129134";
+        webProcess.StartInfo.UseShellExecute = true;
+        webProcess.Start();
     }
 }
