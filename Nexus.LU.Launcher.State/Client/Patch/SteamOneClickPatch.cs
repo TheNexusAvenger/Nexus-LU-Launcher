@@ -91,9 +91,14 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         var flatpakId = Environment.GetEnvironmentVariable("FLATPAK_ID");
         if (flatpakId != null)
         {
-            executable = "/usr/bin/flatpak"; // TODO: Find in PATH.
-            startDirectory = "/usr/bin"; // TODO: Find in PATH.
-            launchOptions = $"\"run\" \"{flatpakId}\"";
+            var pathVariable = Environment.GetEnvironmentVariable("PATH");
+            var flatpakDirectory = pathVariable?.Split(':').FirstOrDefault(path => File.Exists(Path.Combine(path, "flatpak")));
+            if (flatpakDirectory != null)
+            {
+                executable = Path.Combine(flatpakDirectory, "flatpak");
+                startDirectory = flatpakDirectory;
+                launchOptions = $"\"run\" \"{flatpakId}\"";
+            }
         }
 
         var entryAdded = false;
