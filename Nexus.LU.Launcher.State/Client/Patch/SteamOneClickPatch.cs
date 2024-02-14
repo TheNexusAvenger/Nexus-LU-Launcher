@@ -282,7 +282,8 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
             }
             if (lastShutdownLine == previousLastShutdownTime)
             {
-                Logger.Warn("Controller layout prompt is pending, but a restart of Steam was not detected.");   
+                Logger.Warn("Controller layout prompt is pending, but a restart of Steam was not detected.");
+                return;
             }
             this.systemInfo.SetPatchStore("SteamOneClick", "LastSteamShutdownLine", null);
             this.systemInfo.SaveSettings();
