@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Nexus.LU.Launcher.State.Client.Patch.Valve;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
 
@@ -85,12 +86,62 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
     {
         // Add the launcher as a non-Steam application.
         var executable = Environment.ProcessPath;
+        var startDirectory = Environment.CurrentDirectory;
+        var launchOptions = "";
         var flatpakId = Environment.GetEnvironmentVariable("FLATPAK_ID");
         if (flatpakId != null)
         {
-            executable = $"flatpak run {flatpakId}";
+            executable = "/usr/bin/flatpak"; // TODO: Find in PATH.
+            startDirectory = "/usr/bin"; // TODO: Find in PATH.
+            launchOptions = $"\"run\" \"{flatpakId}\"";
         }
-        // TODO: Add to shortcuts.vdf
+
+        var entryAdded = false;
+        foreach (var userPath in Directory.GetDirectories(Path.Combine(this.steamLocation!, "userdata")))
+        {
+            // Ignore the shortcuts file if it doesn't exist or Nexus LU Launcher already exists.
+            var shortcutsPath = Path.Combine(userPath, "config", "shortcuts.vdf");
+            if (!File.Exists(shortcutsPath)) continue;
+            var shortcutsFile = ValveDataFormatShortcutsFile.FromFile(shortcutsPath);
+            if (shortcutsFile.Values.Select(pair => pair.Value)
+                .FirstOrDefault(entry => entry.TryGetHeader("AppName") == "Nexus LU Launcher") != null) continue;
+            
+            // Add the shortcut and save the file.
+            Logger.Info($"Adding shortcut to {shortcutsPath}");
+            shortcutsFile.AddEntry(new ValveDataFormatEntryList()
+            {
+                new TextValveDataFormatEntry("appid"),
+                new HeaderValveDataFormatEntry("AppName", "Nexus LU Launcher"),
+                new HeaderValveDataFormatEntry("Exe", $"\"{executable}\""),
+                new HeaderValveDataFormatEntry("StartDir", $"\"{startDirectory}\""),
+                new HeaderValveDataFormatEntry("icon", ""), // TODO: Add icon.
+                new HeaderValveDataFormatEntry("ShortcutPath", ""),
+                new HeaderValveDataFormatEntry("LaunchOptions", launchOptions),
+                new TextValveDataFormatEntry("IsHidden"),
+                new TextValveDataFormatEntry("AllowDesktopConfig", new byte[] {1, 0, 0, 0}),
+                new TextValveDataFormatEntry("AllowOverlay", new byte[] {1, 0, 0, 0}),
+                new TextValveDataFormatEntry("OpenVR"),
+                new TextValveDataFormatEntry("Devkit"),
+                new HeaderValveDataFormatEntry("DevkitGameID", ""),
+                new TextValveDataFormatEntry("DevkitOverrideAppId"),
+                new TextValveDataFormatEntry("LastPlayTime"),
+                new SetValveDataFormatEntry<string>("tags"),
+            });
+            shortcutsFile.Write(shortcutsPath);
+            entryAdded = true;
+        }
+        
+        // Shut down Steam if an entry was added.
+        // The call to add the controller config will restart Steam.
+        if (entryAdded)
+        {
+            Logger.Debug("Shutting down Steam.");
+            foreach (var steamProcess in Process.GetProcessesByName("steam"))
+            {
+                steamProcess.Kill();
+                await steamProcess.WaitForExitAsync();
+            }
+        }
         
         // Prompt setting the controller layout.
         var webProcess = new Process(); 
