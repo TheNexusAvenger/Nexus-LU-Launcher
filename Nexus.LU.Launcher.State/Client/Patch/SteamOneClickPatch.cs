@@ -144,7 +144,6 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         // The call to add the controller config will restart Steam.
         if (entryAdded)
         {
-
             if (flatpakId == null)
             {
                 // Stop the Steam process.
