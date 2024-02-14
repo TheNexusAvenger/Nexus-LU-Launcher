@@ -108,7 +108,7 @@
             <translation locale="en_US">Steam One-Click</translation>
         </phrase>
         <phrase id="Patch_Description_SteamOneClickPatch">
-            <translation locale="en_US">Attempts to set up the launcher for Steam for the Steam Deck.</translation>
+            <translation locale="en_US">Attempts to set up the launcher for Steam for the Steam Deck by adding the launcher to Steam, prompting to change the controller layout, and disabling fullscreen. NOTE: For Linux users (specifically Flatpak users), after applying, if there is no prompt for the controller layout, it will be prompted later after a manual start of Steam.</translation>
         </phrase>
         
         <phrase id="Patch_Name_ModLoaderPatch">
