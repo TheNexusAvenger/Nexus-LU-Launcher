@@ -150,12 +150,20 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         // The call to add the controller config will restart Steam.
         if (entryAdded)
         {
-            Logger.Info("Shutting down Steam.");
-            foreach (var steamProcess in Process.GetProcessesByName("steam"))
+
+            if (flatpakId == null)
             {
-                Logger.Debug($"Stopping process id {steamProcess.Id}.");
-                steamProcess.Kill();
-                await steamProcess.WaitForExitAsync();
+                Logger.Info("Shutting down Steam.");
+                foreach (var steamProcess in Process.GetProcessesByName("steam"))
+                {
+                    Logger.Debug($"Stopping process id {steamProcess.Id}.");
+                    steamProcess.Kill();
+                    await steamProcess.WaitForExitAsync();
+                }
+            }
+            else
+            {
+                Logger.Warn("Unable to restart Steam from a Flatpak. A manual restart will be required.");
             }
         }
         
