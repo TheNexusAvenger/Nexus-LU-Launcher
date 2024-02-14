@@ -33,7 +33,20 @@ flatpak install io.thenexusavenger.Nexus-LU-Launcher
 ```
 
 #### Valve Steam Deck
-LEGO Universe has no support for gamepads. [There is a request for comment for recommended bindings](https://github.com/TheNexusAvenger/Nexus-LU-Launcher/issues/7).
+There is an optional patch named "Steam One-Click" as of version 2.2.0. It
+will attempt to:
+- Add Nexus LU Launcher to Steam.
+- Prompt to change the controller layout.
+- Turn off fullscreen, since it can cause the mouse cursor to disappear in game mode.
+
+**A manual restart of Steam (such as changing from desktop to game mode) is
+required for the controller layout prompt to appear,** or Nexus LU Launcher
+must already be added to Steam. **Turning off fullscreen is also done after the
+first launch of the client** due to the settings file not being there. Consider
+doing the first launch in desktop mode, and then switch to game mode.
+
+No artwork is currently provided for the launcher, and uninstalling the patch will
+have no effect.
 
 ## Goals
 The goals of the launcher is the following:
