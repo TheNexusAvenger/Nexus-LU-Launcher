@@ -280,12 +280,16 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
                 if (!line.Contains("Shutdown")) continue;
                 lastShutdownLine = line;
             }
-            if (lastShutdownLine == previousLastShutdownTime) return;
+            if (lastShutdownLine == previousLastShutdownTime)
+            {
+                Logger.Warn("Controller layout prompt is pending, but a restart of Steam was not detected.");   
+            }
             this.systemInfo.SetPatchStore("SteamOneClick", "LastSteamShutdownLine", null);
             this.systemInfo.SaveSettings();
         }
         
         // Prompt to change the layout.
+        Logger.Debug("Prompting for controller layout.");
         var webProcess = new Process(); 
         webProcess.StartInfo.FileName = "steam://controllerconfig/2672019776/3160129134";
         webProcess.StartInfo.UseShellExecute = true;
