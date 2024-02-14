@@ -99,10 +99,20 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         var entryAdded = false;
         foreach (var userPath in Directory.GetDirectories(Path.Combine(this.steamLocation!, "userdata")))
         {
-            // Ignore the shortcuts file if it doesn't exist or Nexus LU Launcher already exists.
+            // Ignore the shortcuts file if Nexus LU Launcher already exists.
             var shortcutsPath = Path.Combine(userPath, "config", "shortcuts.vdf");
-            if (!File.Exists(shortcutsPath)) continue;
-            var shortcutsFile = ValveDataFormatShortcutsFile.FromFile(shortcutsPath);
+            ValveDataFormatShortcutsFile shortcutsFile;
+            if (File.Exists(shortcutsPath))
+            {
+                shortcutsFile = ValveDataFormatShortcutsFile.FromFile(shortcutsPath);
+            }
+            else
+            {
+                shortcutsFile = new ValveDataFormatShortcutsFile()
+                {
+                    Name = "shortcuts",
+                };
+            }
             if (shortcutsFile.Values.Select(pair => pair.Value)
                 .FirstOrDefault(entry => entry.TryGetHeader("AppName") == "Nexus LU Launcher") != null) continue;
             
