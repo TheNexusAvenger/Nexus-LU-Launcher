@@ -110,7 +110,7 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
             Logger.Info($"Adding shortcut to {shortcutsPath}");
             shortcutsFile.AddEntry(new ValveDataFormatEntryList()
             {
-                new TextValveDataFormatEntry("appid"),
+                new TextValveDataFormatEntry("appid", new byte[] {64, 201, 67, 159}),
                 new HeaderValveDataFormatEntry("AppName", "Nexus LU Launcher"),
                 new HeaderValveDataFormatEntry("Exe", $"\"{executable}\""),
                 new HeaderValveDataFormatEntry("StartDir", $"\"{startDirectory}\""),
