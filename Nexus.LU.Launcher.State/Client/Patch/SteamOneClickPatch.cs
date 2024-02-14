@@ -202,13 +202,19 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
     /// Performs operations between setting the boot.cfg and launching
     /// the client. This will yield launching the client.
     /// </summary>
-    public Task OnClientRequestLaunchAsync()
+    public async Task OnClientRequestLaunchAsync()
     {
+        // Prompt to set the controller layout.
+        if (this.systemInfo.GetPatchStore("SteamOneClick", "LastSteamShutdownLine") != null)
+        {
+            await this.PromptControllerLayoutAsync();
+        }
+        
         // Return if the patch is not active.
         if (this.systemInfo.GetPatchStore("SteamOneClick", "State") != "PendingSettingsChange")
         {
             Logger.Debug("Settings file not changed because the state was not set to do so.");
-            return Task.CompletedTask;
+            return;
         }
 
         // Find the LEGO Universe settings file.
@@ -227,7 +233,7 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         if (!File.Exists(settingsPath))
         {
             Logger.Warn("Settings file not found. This is normal if this is the first launch of the game.");
-            return Task.CompletedTask;
+            return;
         }
         
         try
@@ -256,7 +262,6 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         {
             Logger.Error($"Failed to update client settings.\n{e}");
         }
-        return Task.CompletedTask;
     }
 
     /// <summary>
