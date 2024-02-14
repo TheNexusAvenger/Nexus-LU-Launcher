@@ -160,24 +160,36 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
             {
                 // Store the last time the log had "Shutdown".
                 // It is assumed that if the line is different, then a new shutdown was performed by the user.
+                // For Flatpak, the Steam process is not accessible due to the sandbox.
                 var bootstrapLogPath = Path.Combine(this.steamLocation!, "logs", "bootstrap_log.txt");
                 if (File.Exists(bootstrapLogPath))
                 {
+                    // Iterate over the log file to find the startup and shutdown lines.
+                    var lastStartupLineIndex = -2;
+                    var lastShutdownLineIndex = -1;
                     var lastShutdownLine = "";
                     var bootstrapLogLines = await File.ReadAllLinesAsync(bootstrapLogPath);
-                    if (bootstrapLogLines.Length >= 1 && bootstrapLogLines[^1].Contains("Shutdown"))
+                    for (var i = 0; i < bootstrapLogLines.Length; i++)
+                    {
+                        var line = bootstrapLogLines[i];
+                        if (line.Contains("Shutdown"))
+                        {
+                            lastShutdownLineIndex = i;
+                            lastShutdownLine = line;
+                        } else if (line.Contains("Startup"))
+                        {
+                            lastStartupLineIndex = i;
+                        }
+                    }
+                    
+                    // Determine if Steam is up based on if a startup log appears after a shutdown log.
+                    if (lastStartupLineIndex < lastShutdownLineIndex)
                     {
                         Logger.Info("Steam is not active and does not need to be restarted.");
                     }
                     else
                     {
                         Logger.Warn("Unable to restart Steam from a Flatpak. A manual restart will be required.");
-                        foreach (var line in bootstrapLogLines)
-                        {
-                            if (!line.Contains("Shutdown")) continue;
-                            lastShutdownLine = line;
-                        }
-
                         this.systemInfo.SetPatchStore("SteamOneClick", "LastSteamShutdownLine", lastShutdownLine);
                         this.systemInfo.SaveSettings();
                     }
