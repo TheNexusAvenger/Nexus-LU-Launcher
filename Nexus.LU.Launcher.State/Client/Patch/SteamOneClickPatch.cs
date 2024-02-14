@@ -150,9 +150,10 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         // The call to add the controller config will restart Steam.
         if (entryAdded)
         {
-            Logger.Debug("Shutting down Steam.");
+            Logger.Info("Shutting down Steam.");
             foreach (var steamProcess in Process.GetProcessesByName("steam"))
             {
+                Logger.Debug($"Stopping process id {steamProcess.Id}.");
                 steamProcess.Kill();
                 await steamProcess.WaitForExitAsync();
             }
