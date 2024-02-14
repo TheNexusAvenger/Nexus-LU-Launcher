@@ -96,6 +96,7 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         if (this.systemInfo.GetPatchStore("SteamOneClick", "State") == null)
         {
             this.systemInfo.SetPatchStore("SteamOneClick", "State", "PendingSettingsChange");
+            this.systemInfo.SaveSettings();
         }
         await this.RefreshAsync();
     }
@@ -106,6 +107,7 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
     public async Task UninstallAsync()
     {
         this.systemInfo.SetPatchStore("SteamOneClick", "State", null);
+        this.systemInfo.SaveSettings();
         await this.RefreshAsync();
     }
 
