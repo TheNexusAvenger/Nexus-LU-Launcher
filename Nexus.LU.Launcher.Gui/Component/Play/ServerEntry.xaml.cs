@@ -101,7 +101,10 @@ public class ServerEntry : Border
                 clientState.ServerList.RemoveEntry(this.ServerName);
             });
         };
-        clientState.ServerList.ServerListChanged += this.UpdateSelectButton;
+        clientState.ServerList.ServerListChanged += () =>
+        {
+            this.RunMainThread(this.UpdateSelectButton);
+        };
         
         // Update the initial button.
         this.UpdateSelectButton();

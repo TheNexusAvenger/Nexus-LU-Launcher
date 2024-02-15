@@ -53,6 +53,16 @@ public class ServerList
     /// <param name="entry">Entry to add.</param>
     public void AddEntry(ServerEntry entry)
     {
+        // Update the entry if it exists already.
+        var existingEntry = this.GetServerEntry(entry.ServerName);
+        if (existingEntry != null)
+        {
+            existingEntry.ServerAddress = entry.ServerAddress;
+            this.systemInfo.SaveSettings();
+            this.ServerListChanged?.Invoke();
+            return;
+        }
+        
         // Add the entry and set it as active if no entry is active.
         this.ServerEntries.Add(entry);
         if (this.SelectedEntry == null)

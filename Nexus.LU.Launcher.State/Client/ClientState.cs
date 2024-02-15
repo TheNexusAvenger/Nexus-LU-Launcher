@@ -107,7 +107,7 @@ public class ClientState
         };
         foreach (var archivePatch in systemInfo.Settings.ArchivePatches)
         {
-            this.Patches.Add(new ExtendedClientPatch(new LocalArchivePatch(systemInfo, archivePatch)));
+            this.Patches.Add(new ExtendedClientPatch(new LocalArchivePatch(systemInfo, this.ServerList, archivePatch)));
         }
         
         // Build the runtimes list.

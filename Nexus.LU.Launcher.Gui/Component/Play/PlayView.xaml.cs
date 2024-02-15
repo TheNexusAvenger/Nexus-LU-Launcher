@@ -42,7 +42,10 @@ public class PlayView : Panel
             var clientState = ClientState.Get();
             var playContainer = this.Get<StackPanel>("PlayContainer");
             var clientOutputScroll = this.Get<ScrollViewer>("ClientOutputScroll");
-            clientState.ServerList.ServerListChanged += this.UpdateServerList;
+            clientState.ServerList.ServerListChanged += () =>
+            {
+                this.RunMainThread(this.UpdateServerList);
+            };
             clientState.LauncherStateChanged += (state) =>
             {
                 this.RunMainThread(() =>

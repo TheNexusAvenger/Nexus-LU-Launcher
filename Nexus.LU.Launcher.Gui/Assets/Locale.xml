@@ -214,5 +214,11 @@
         <phrase id="Prompt_CloseWhileMoving">
             <translation locale="en_US">Closing the launcher stops moving the files. Confirm closing?</translation>
         </phrase>
+        <phrase id="Prompt_LocalArchivePatch_PackedClientRequired">
+            <translation locale="en_US">The patch requires a packed client, but an unpacked client was detected.</translation>
+        </phrase>
+        <phrase id="Prompt_LocalArchivePatch_UnpackedClientRequired">
+            <translation locale="en_US">The patch requires an unpacked client, but a packed client was detected.</translation>
+        </phrase>
     </phrases>
 </localization>
