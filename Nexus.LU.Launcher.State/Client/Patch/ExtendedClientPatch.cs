@@ -80,6 +80,7 @@ public class ExtendedClientPatch
         {
             this.SetState(ExtendedPatchState.CheckingForUpdates);
             await this.ClientPatch.RefreshAsync();
+            this.SetState(PatchStateLookup[this.ClientPatch.State]);
         }
         catch (Exception e)
         {
