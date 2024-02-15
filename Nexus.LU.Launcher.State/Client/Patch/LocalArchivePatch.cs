@@ -17,7 +17,7 @@ public class LocalArchivePatch : IClientPatch
     /// <summary>
     /// State of the patch.
     /// </summary>
-    public PatchState State => this.ArchivePatch.Installed ? PatchState.Installed : PatchState.NotInstalled;
+    public PatchState State { get; private set; } = PatchState.Loading;
 
     /// <summary>
     /// Event for the state changing.
@@ -55,6 +55,7 @@ public class LocalArchivePatch : IClientPatch
         this.systemInfo = systemInfo;
         this.serverList = serverList;
         this.ArchivePatch = archivePatch;
+        this.RefreshAsync().Wait();
     }
 
     /// <summary>
@@ -83,7 +84,18 @@ public class LocalArchivePatch : IClientPatch
     /// </summary>
     public Task RefreshAsync()
     {
-        // Nothing to refresh.
+        if (!this.systemInfo.Settings.ArchivePatches.Contains(this.ArchivePatch))
+        {
+            // Set the state as incompatible if the patch was removed.
+            this.State = PatchState.Incompatible;
+        }
+        else
+        {
+            // Read the state from the installed state.
+            // Reading the contents of files is not done to save I/O operations.
+            this.State = this.ArchivePatch.Installed ? PatchState.Installed : PatchState.NotInstalled;
+        }
+        this.StateChanged?.Invoke(this.State);
         return Task.CompletedTask;
     }
 
@@ -101,7 +113,8 @@ public class LocalArchivePatch : IClientPatch
         {
             Directory.CreateDirectory(originalFilesPath);
         }
-        foreach (var entry in ZipFile.OpenRead(this.ArchivePath).Entries)
+        using var archive = ZipFile.OpenRead(this.ArchivePath);
+        foreach (var entry in archive.Entries)
         {
             if (entry.FullName.EndsWith('/')) continue;
             if (entry.FullName == "patch.json") continue;
@@ -162,7 +175,8 @@ public class LocalArchivePatch : IClientPatch
     {
         // Revert the files.
         var originalFilesPath = Path.Combine(this.systemInfo.ClientLocation, "originalFiles");
-        foreach (var entry in ZipFile.OpenRead(this.ArchivePath).Entries)
+        using var archive = ZipFile.OpenRead(this.ArchivePath);
+        foreach (var entry in archive.Entries)
         {
             if (entry.FullName.EndsWith('/')) continue;
             if (entry.FullName == "patch.json" || entry.FullName == "boot.cfg") continue;
@@ -185,5 +199,19 @@ public class LocalArchivePatch : IClientPatch
         this.systemInfo.SaveSettings();
         this.StateChanged?.Invoke(PatchState.NotInstalled);
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Removes the patch.
+    /// </summary>
+    public void Remove()
+    {
+        this.systemInfo.Settings.ArchivePatches.Remove(this.ArchivePatch);
+        if (File.Exists(this.ArchivePath))
+        {
+            File.Delete(this.ArchivePath);
+        }
+        this.systemInfo.SaveSettings();
+        this.RefreshAsync().Wait();
     }
 }

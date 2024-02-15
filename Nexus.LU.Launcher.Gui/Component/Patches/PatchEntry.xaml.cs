@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Nexus.LU.Launcher.Gui.Component.Base;
+using Nexus.LU.Launcher.Gui.Component.Prompt;
 using Nexus.LU.Launcher.Gui.Util;
 using Nexus.LU.Launcher.State.Client.Patch;
 using Nexus.LU.Launcher.State.Enum;
@@ -107,6 +108,11 @@ public class PatchEntry : Border
     private readonly RoundedButton updateButton;
         
     /// <summary>
+    /// Remove button of the patch.
+    /// </summary>
+    private readonly RoundedButton removeButton;
+        
+    /// <summary>
     /// Status text of the patch.
     /// </summary>
     private readonly TextBlock statusText;
@@ -123,11 +129,13 @@ public class PatchEntry : Border
         this.installButton = this.Get<RoundedButton>("InstallButton");
         this.installText = this.Get<TextBlock>("InstallText");
         this.updateButton = this.Get<RoundedButton>("UpdateButton");
+        this.removeButton = this.Get<RoundedButton>("RemoveButton");
         this.statusText = this.Get<TextBlock>("StatusText");
         
         // Apply the text.
         var localization = Localization.Get();
         localization.LocalizeText(this.Get<TextBlock>("UpdateButtonText"));
+        localization.LocalizeText(this.Get<TextBlock>("RemoveButtonText"));
         
         // Connect changing the patch.
         this.PropertyChanged += (sender, args) =>
@@ -150,10 +158,16 @@ public class PatchEntry : Border
         });
         this.updateButton.ButtonPressed += ((sender, args) =>
         {
-            if (UpdateButtonStates.Contains(this.PatchData.State))
-            {
-                Task.Run(this.PatchData.InstallAsync);
-            }
+            if (!UpdateButtonStates.Contains(this.PatchData.State)) return;
+            Task.Run(this.PatchData.InstallAsync);
+        });
+        this.removeButton.ButtonPressed += ((sender, args) =>
+        {
+            if (this.PatchData.ClientPatch is not LocalArchivePatch localArchivePatch) return;
+            if (this.PatchData.State != ExtendedPatchState.NotInstalled) return;
+            
+            var promptMessage = string.Format(localization.GetLocalizedString("Prompt_LocalArchivePatch_ConfirmRemove"), this.patchName.Text);
+            ConfirmPrompt.OpenPrompt(promptMessage, () => Task.Run(localArchivePatch.Remove));
         });
     }
 
@@ -208,6 +222,9 @@ public class PatchEntry : Border
         
         // Update the update button.
         this.updateButton.IsVisible = this.UpdateButtonStates.Contains(state);
+        
+        // Update the remove button.
+        this.removeButton.IsVisible = (this.PatchData.ClientPatch is LocalArchivePatch && this.PatchData.State == ExtendedPatchState.NotInstalled);
 
         // Update the status text.
         this.statusText.Text = PatchStatesWithMessages.Contains(state) ? localization.GetLocalizedString($"Patch_Status_{state.ToString()}") : "";

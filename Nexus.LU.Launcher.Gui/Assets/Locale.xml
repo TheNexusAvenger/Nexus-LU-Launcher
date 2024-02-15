@@ -102,6 +102,9 @@
         <phrase id="Patch_UpdateButtonText">
             <translation locale="en_US">Update</translation>
         </phrase>
+        <phrase id="Patch_RemoveButtonText">
+            <translation locale="en_US">Remove</translation>
+        </phrase>
         
         <!--Patch options-->
         <phrase id="Patch_Name_SteamOneClickPatch">
@@ -219,6 +222,9 @@
         </phrase>
         <phrase id="Prompt_LocalArchivePatch_UnpackedClientRequired">
             <translation locale="en_US">The patch requires an unpacked client, but a packed client was detected.</translation>
+        </phrase>
+        <phrase id="Prompt_LocalArchivePatch_ConfirmRemove">
+            <translation locale="en_US">Confirm removing patch "{0}"?</translation>
         </phrase>
     </phrases>
 </localization>
