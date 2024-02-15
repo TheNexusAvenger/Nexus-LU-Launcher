@@ -95,6 +95,10 @@ public class ClientState
             new ExtendedClientPatch(new FixAvantGardensSurvivalCrashPatch(systemInfo)),
             new ExtendedClientPatch(new RemoveDluPatchAd(systemInfo)),
         };
+        foreach (var archivePatch in systemInfo.Settings.ArchivePatches)
+        {
+            this.Patches.Add(new ExtendedClientPatch(new LocalArchivePatch(systemInfo, archivePatch)));
+        }
         
         // Build the runtimes list.
         this.Runtimes = new List<IRuntime>()

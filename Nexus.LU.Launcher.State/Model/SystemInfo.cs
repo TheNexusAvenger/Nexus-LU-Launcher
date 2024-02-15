@@ -19,6 +19,34 @@ public class ServerEntry
     /// </summary>
     public string ServerAddress = null!;
 }
+
+public class ArchivePatch
+{
+    /// <summary>
+    /// Whether the patch is installed.
+    /// </summary>
+    public bool Installed { get; set; } = false;
+
+    /// <summary>
+    /// Name of the archive file.
+    /// </summary>
+    public string ArchiveName { get; set; } = null!;
+
+    /// <summary>
+    /// Name of the patch by localization.
+    /// </summary>
+    public Dictionary<string, string> Name { get; set; } = null!;
+    
+    /// <summary>
+    /// Description of the patch by localization.
+    /// </summary>
+    public Dictionary<string, string> Description { get; set; } = null!;
+    
+    /// <summary>
+    /// Optional requirements in order for the patch to be applied.
+    /// </summary>
+    public List<string>? Requirements { get; set; }
+}
     
 public class LauncherSettings
 {
@@ -54,6 +82,11 @@ public class LauncherSettings
     /// General storage for tag information.
     /// </summary>
     public Dictionary<string, Dictionary<string, string>> PatchStore { get; set; } = new Dictionary<string, Dictionary<string, string>>();
+
+    /// <summary>
+    /// Patches supplied by the user using archives.
+    /// </summary>
+    public List<ArchivePatch> ArchivePatches { get; set; } = new List<ArchivePatch>();
 }
 
 [JsonSerializable(typeof(LauncherSettings))]

@@ -24,12 +24,12 @@ public class ExtendedClientPatch
     /// <summary>
     /// Name of the patch.
     /// </summary>
-    public string Name => this.clientPatch.GetType().Name;
+    public string Name => this.ClientPatch.GetType().Name;
     
     /// <summary>
     /// Whether to apply the patch by default.
     /// </summary>
-    public bool ApplyByDefault => this.clientPatch.ApplyByDefault;
+    public bool ApplyByDefault => this.ClientPatch.ApplyByDefault;
 
     /// <summary>
     /// State of the patch.
@@ -44,7 +44,7 @@ public class ExtendedClientPatch
     /// <summary>
     /// Patch the extended client patch controls.
     /// </summary>
-    private readonly IClientPatch clientPatch;
+    public readonly IClientPatch ClientPatch;
 
     /// <summary>
     /// Creates an extended client patch.
@@ -52,9 +52,9 @@ public class ExtendedClientPatch
     /// <param name="clientPatch">Patch to extend.</param>
     public ExtendedClientPatch(IClientPatch clientPatch)
     {
-        this.clientPatch = clientPatch;
-        this.State = PatchStateLookup[this.clientPatch.State];
-        this.clientPatch.StateChanged += (newState) =>
+        this.ClientPatch = clientPatch;
+        this.State = PatchStateLookup[this.ClientPatch.State];
+        this.ClientPatch.StateChanged += (newState) =>
         {
             this.SetState(PatchStateLookup[newState]);
         };
@@ -79,7 +79,7 @@ public class ExtendedClientPatch
         try
         {
             this.SetState(ExtendedPatchState.CheckingForUpdates);
-            await this.clientPatch.RefreshAsync();
+            await this.ClientPatch.RefreshAsync();
         }
         catch (Exception e)
         {
@@ -98,7 +98,7 @@ public class ExtendedClientPatch
         try
         {
             this.SetState(updating ? ExtendedPatchState.Updating : ExtendedPatchState.Installing);
-            await this.clientPatch.InstallAsync();
+            await this.ClientPatch.InstallAsync();
             Logger.Info($"Applied patch {this.Name}.");
         }
         catch (Exception e)
@@ -116,7 +116,7 @@ public class ExtendedClientPatch
         try
         {
             this.SetState(ExtendedPatchState.Uninstalling);
-            await this.clientPatch.UninstallAsync();
+            await this.ClientPatch.UninstallAsync();
             Logger.Info($"Removed patch {this.Name}.");
         }
         catch (Exception e)
@@ -132,7 +132,7 @@ public class ExtendedClientPatch
     /// </summary>
     public async Task OnClientRequestLaunchAsync()
     {
-        if (!(clientPatch is IPreLaunchClientPatch preLaunchClientPatch)) return;
+        if (!(ClientPatch is IPreLaunchClientPatch preLaunchClientPatch)) return;
         if (preLaunchClientPatch.State == PatchState.Incompatible ||
             preLaunchClientPatch.State == PatchState.NotInstalled ||
             preLaunchClientPatch.State == PatchState.Loading) return;

@@ -164,8 +164,16 @@ public class PatchEntry : Border
     {
         var localization = Localization.Get();
         var patch = this.PatchData;
-        this.patchName.Text = localization.GetLocalizedString($"Patch_Name_{patch.Name}");
-        this.patchDescription.Text = localization.GetLocalizedString($"Patch_Description_{patch.Name}");
+        if (patch.ClientPatch is LocalArchivePatch localArchivePatch)
+        {
+            this.patchName.Text = localArchivePatch.ArchivePatch.Name.GetValueOrDefault(localization.CurrentLanguage) ?? $"Patch_Name_{localization.CurrentLanguage}_{localArchivePatch.ArchivePatch.ArchiveName}";
+            this.patchDescription.Text = localArchivePatch.ArchivePatch.Description.GetValueOrDefault(localization.CurrentLanguage) ?? $"Patch_Description_{localization.CurrentLanguage}_{localArchivePatch.ArchivePatch.ArchiveName}";
+        }
+        else
+        {
+            this.patchName.Text = localization.GetLocalizedString($"Patch_Name_{patch.Name}");
+            this.patchDescription.Text = localization.GetLocalizedString($"Patch_Description_{patch.Name}");
+        }
         patch.StateChanged += (patchState) =>
         {
             this.RunMainThread(this.UpdateButtons);
