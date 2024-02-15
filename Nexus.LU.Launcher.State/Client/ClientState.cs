@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using InfectedRose.Core;
 using Nexus.LU.Launcher.State.Client.Archive;
 using Nexus.LU.Launcher.State.Client.Patch;
 using Nexus.LU.Launcher.State.Client.Runtime;
@@ -83,6 +82,17 @@ public class ClientState
     /// Creates the client state.
     /// </summary>
     private ClientState() {
+        // Create the server list.
+        this.ServerList = new ServerList();
+        this.ServerList.ServerListChanged += () =>
+        {
+            if (this.CurrentLauncherState != LauncherState.NoSelectedServer && this.CurrentLauncherState != LauncherState.ReadyToLaunch) return;
+            this.SetLauncherProgress(new LauncherProgress()
+            {
+                LauncherState = (this.ServerList.SelectedEntry == null ? LauncherState.NoSelectedServer : LauncherState.ReadyToLaunch),
+            });
+        };
+        
         // Build the patch list.
         var systemInfo = SystemInfo.GetDefault();
         this.Patches = new List<ExtendedClientPatch>()
@@ -106,17 +116,6 @@ public class ClientState
             new NativeWindowsRuntime(),
             new MacOsWineRuntime(),
             new UserInstalledWineRuntime(),
-        };
-        
-        // Create the server list.
-        this.ServerList = new ServerList();
-        this.ServerList.ServerListChanged += () =>
-        {
-            if (this.CurrentLauncherState != LauncherState.NoSelectedServer && this.CurrentLauncherState != LauncherState.ReadyToLaunch) return;
-            this.SetLauncherProgress(new LauncherProgress()
-            {
-                LauncherState = (this.ServerList.SelectedEntry == null ? LauncherState.NoSelectedServer : LauncherState.ReadyToLaunch),
-            });
         };
         
         // Initialize the state.
@@ -444,15 +443,15 @@ public class ClientState
         LegoDataDictionary bootConfig = null!;
         try
         {
-            bootConfig = LegoDataDictionary.FromString((await File.ReadAllTextAsync(bootConfigLocation)).Trim().Replace("\n", ""), ',');
+            bootConfig = await LegoDataDictionary.FromFileAsync(bootConfigLocation);
         }
         catch (FormatException)
         {
-            bootConfig = LegoDataDictionary.FromString((await File.ReadAllTextAsync(Path.Combine(systemInfo.ClientLocation, "boot_backup.cfg"))).Trim().Replace("\n", ""), ',');
+            bootConfig = await LegoDataDictionary.FromFileAsync(Path.Combine(systemInfo.ClientLocation, "boot_backup.cfg"));
         }
-        bootConfig["SERVERNAME"] = host.ServerName;
-        bootConfig["AUTHSERVERIP"] = host.ServerAddress;
-        await File.WriteAllTextAsync(bootConfigLocation,bootConfig.ToString(","));
+        bootConfig.Set("SERVERNAME", host.ServerName);
+        bootConfig.Set("AUTHSERVERIP", host.ServerAddress);
+        await File.WriteAllTextAsync(bootConfigLocation,bootConfig.ToString());
         
         // Apply any pre-launch patches.
         Logger.Info("Preparing pre-launch patches.");

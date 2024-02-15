@@ -3,7 +3,6 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading.Tasks;
-using InfectedRose.Core;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
 using Nexus.LU.Launcher.State.Util;
@@ -179,8 +178,8 @@ public class AutoTcpUdpPatch : IPreLaunchClientPatch
     public async Task OnClientRequestLaunchAsync()
     {
         // Determine the host to check.
-        var bootConfig = LegoDataDictionary.FromString((await File.ReadAllTextAsync(Path.Combine(this.systemInfo.ClientLocation, "boot.cfg").Replace("\n", ""))).Trim(), ',');
-        var host = (string) bootConfig["AUTHSERVERIP"];
+        var bootConfig = await LegoDataDictionary.FromFileAsync(Path.Combine(this.systemInfo.ClientLocation, "boot.cfg"));
+        var host = bootConfig.Get<string>("AUTHSERVERIP");
         Logger.Info($"Check for TCP/UDP for: {host}");
         
         // Assume TCP/UDP if any port is specified.
