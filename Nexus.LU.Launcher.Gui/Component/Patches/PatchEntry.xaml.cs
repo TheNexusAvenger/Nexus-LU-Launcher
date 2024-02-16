@@ -84,6 +84,16 @@ public class PatchEntry : Border
     public static readonly StyledProperty<ExtendedClientPatch> PatchDataProperty = AvaloniaProperty.Register<Window, ExtendedClientPatch>(nameof(PatchData));
 
     /// <summary>
+    /// Container for the text contents.
+    /// </summary>
+    private readonly StackPanel contentsContainer;
+    
+    /// <summary>
+    /// Container for the buttons.
+    /// </summary>
+    private readonly StackPanel buttonsContainer;
+    
+    /// <summary>
     /// Name of the patch.
     /// </summary>
     private readonly TextBlock patchName;
@@ -125,6 +135,8 @@ public class PatchEntry : Border
     {
         // Load the XAML.
         AvaloniaXamlLoader.Load(this);
+        this.contentsContainer = this.Get<StackPanel>("ContentsContainer");
+        this.buttonsContainer = this.Get<StackPanel>("ButtonsContainer");
         this.patchName = this.Get<TextBlock>("PatchName");
         this.patchDescription = this.Get<TextBlock>("PatchDescription");
         this.installButton = this.Get<RoundedButton>("InstallButton");
@@ -243,5 +255,13 @@ public class PatchEntry : Border
 
         // Update the status text.
         this.statusText.Text = PatchStatesWithMessages.Contains(state) ? localization.GetLocalizedString($"Patch_Status_{state.ToString()}") : "";
+        
+        // Update the width.
+        var buttonWidth = localization.GetLocalizedSize("Patch_ActionButton");
+        this.contentsContainer.Width = 635 - buttonWidth;
+        this.buttonsContainer.Width = buttonWidth + 5;
+        this.installButton.Width = buttonWidth;
+        this.updateButton.Width = buttonWidth;
+        this.removeButton.Width = buttonWidth;
     }
 }

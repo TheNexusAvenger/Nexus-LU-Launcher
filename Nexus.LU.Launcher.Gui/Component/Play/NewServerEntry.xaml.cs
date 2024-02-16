@@ -1,6 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Util;
 using Nexus.LU.Launcher.State.Client;
@@ -18,6 +20,16 @@ public class NewServerEntry : Border
     /// Color for the button being disabled.
     /// </summary>
     private static readonly Color ButtonDisabledColor = new Color(255, 44, 44, 50);
+    
+    /// <summary>
+    /// Whether the list has a scroll bar.
+    /// </summary>
+    public bool ScrollBarActive
+    {
+        get => GetValue(ScrollBarActiveProperty);
+        set => SetValue(ScrollBarActiveProperty, value);
+    }
+    public static readonly StyledProperty<bool> ScrollBarActiveProperty = AvaloniaProperty.Register<Window, bool>(nameof(ScrollBarActive), false);
     
     /// <summary>
     /// Stack panel of the inputs.
@@ -117,6 +129,15 @@ public class NewServerEntry : Border
         {
             this.Update();
         };
+        this.PropertyChanged += (sender, args) =>
+        {
+            if (args.Property != ScrollBarActiveProperty) return;
+            this.Update();
+        };
+        localization.LanguageChanged += (_) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(this.Update);
+        };
 
         // Update the initial display.
         this.Update();
@@ -155,15 +176,12 @@ public class NewServerEntry : Border
             this.addButton.Active = true;
             this.addButton.Color = new SolidColorBrush(ButtonEnabledColor);
         }
-    }
-    
-    /// <summary>
-    /// Updates the width.
-    /// </summary>
-    /// <param name="hasScrollBar">Whether there is a scrollbar.</param>
-    public void UpdateWidth(bool hasScrollBar)
-    {
-        this.MinWidth = hasScrollBar ? 626 : 654;
-        this.inputs.MinWidth = hasScrollBar ? 456 : 484;
+        
+        // Update the width.
+        var localization = Localization.Get();
+        var buttonWidth = localization.GetLocalizedSize("ServerMenu_AddButton");
+        this.MinWidth = this.ScrollBarActive ? 626 : 654;
+        this.inputs.MinWidth = 594 - buttonWidth;
+        this.addButton.Width = buttonWidth;
     }
 }

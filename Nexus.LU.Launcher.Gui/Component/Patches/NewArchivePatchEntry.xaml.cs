@@ -23,10 +23,12 @@ public class NewArchivePatchEntry : Border
         
         // Apply the text.
         var localization = Localization.Get();
+        var addButton = this.Get<RoundedButton>("AddArchivePatchButton");
         localization.LocalizeText(this.Get<TextBlock>("AddArchivePatchButtonText"));
+        localization.LocalizeWidth(addButton, "Patch_AddButton");
         
         // Connect the button.
-        this.Get<RoundedButton>("AddArchivePatchButton").ButtonPressed += (sender, args) =>
+        addButton.ButtonPressed += (sender, args) =>
         {
             // Prompt for the file.
             var window = this.GetWindow()!;

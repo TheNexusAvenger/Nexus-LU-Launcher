@@ -43,6 +43,16 @@ public class ServerEntry : Border
     public static readonly StyledProperty<bool> SelectedProperty = AvaloniaProperty.Register<Window, bool>(nameof(Selected), false);
 
     /// <summary>
+    /// Whether the list has a scroll bar.
+    /// </summary>
+    public bool ScrollBarActive
+    {
+        get => GetValue(ScrollBarActiveProperty);
+        set => SetValue(ScrollBarActiveProperty, value);
+    }
+    public static readonly StyledProperty<bool> ScrollBarActiveProperty = AvaloniaProperty.Register<Window, bool>(nameof(ScrollBarActive), false);
+
+    /// <summary>
     /// Background of the server entry.
     /// </summary>
     private readonly StackPanel backgroundPanel;
@@ -75,7 +85,7 @@ public class ServerEntry : Border
         var clientState = ClientState.Get();
         this.PropertyChanged += (sender, args) =>
         {
-            if (args.Property == SelectedProperty)
+            if (args.Property == SelectedProperty || args.Property == ScrollBarActiveProperty)
             {
                 // Update the selected button.
                 this.UpdateSelectButton();
@@ -120,6 +130,7 @@ public class ServerEntry : Border
     /// </summary>
     private void UpdateSelectButton()
     {
+        // Update the text.
         var localization = Localization.Get();
         if (this.Selected)
         {
@@ -131,14 +142,10 @@ public class ServerEntry : Border
             this.selectButton.Color = new SolidColorBrush(new Color(255, 0, 120, 205));
             this.selectText.Text = localization.GetLocalizedString("ServerMenu_SelectButtonText");
         }
-    }
-    
-    /// <summary>
-    /// Updates the width.
-    /// </summary>
-    /// <param name="hasScrollBar">Whether there is a scroll bar.</param>
-    public void UpdateWidth(bool hasScrollBar)
-    {
-        this.backgroundPanel.MinWidth = hasScrollBar ? 456 : 484;
+        
+        // Update the size.
+        var buttonWidth = localization.GetLocalizedSize("ServerMenu_SelectButton");
+        this.backgroundPanel.MinWidth = 594 - buttonWidth;
+        this.selectButton.Width = buttonWidth;
     }
 }

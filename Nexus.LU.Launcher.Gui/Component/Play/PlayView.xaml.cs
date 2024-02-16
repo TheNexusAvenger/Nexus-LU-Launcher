@@ -80,13 +80,13 @@ public class PlayView : Panel
                 
                 // Set the entry.
                 var entryDisplay = this.serverEntries[i];
-                entryDisplay.UpdateWidth((serverList.ServerEntries.Count + 1) >= 4);
                 var entry = serverList.ServerEntries[i];
+                entryDisplay.ScrollBarActive = ((serverList.ServerEntries.Count + 1) >= 4);
                 entryDisplay.ServerName = entry.ServerName;
                 entryDisplay.ServerAddress = entry.ServerAddress;
                 entryDisplay.Selected = (selectedServer == entry);
             }
-            this.newServerEntry.UpdateWidth((serverList.ServerEntries.Count + 1) >= 4);
+            this.newServerEntry.ScrollBarActive = ((serverList.ServerEntries.Count + 1) >= 4);
             
             // Remove the old entries.
             for (var i = serverList.ServerEntries.Count; i < this.serverEntries.Count; i++)

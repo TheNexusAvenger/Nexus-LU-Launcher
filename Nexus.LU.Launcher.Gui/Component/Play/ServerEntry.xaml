@@ -11,15 +11,15 @@
                        FontSize="18" Margin="12,4,0,0"></TextBlock>
         </StackPanel>
         <Nexus.LU.Launcher.Gui.Component.Base:RoundedButton Name="SelectButton"
-                                                        Width="110" Height="38">
+                                                            Width="110" Height="38">
             <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial" Name="SelectText"
                        FontWeight="Bold" FontSize="24" Margin="0,2,0,0">Select</TextBlock>
         </Nexus.LU.Launcher.Gui.Component.Base:RoundedButton>
         <Nexus.LU.Launcher.Gui.Component.Base:ImageButton Width="20" Height="20" Name="RemoveButton"
-                                                      BaseSource="/Assets/Images/TopBar/CloseNormal.png"
-                                                      HoverSource="/Assets/Images/TopBar/CloseHover.png"
-                                                      PressSource="/Assets/Images/TopBar/ClosePress.png"
-                                                      Margin="20,0"
+                                                          BaseSource="/Assets/Images/TopBar/CloseNormal.png"
+                                                          HoverSource="/Assets/Images/TopBar/CloseHover.png"
+                                                          PressSource="/Assets/Images/TopBar/ClosePress.png"
+                                                          Margin="20,0"
         />
     </DockPanel>
 </Border>

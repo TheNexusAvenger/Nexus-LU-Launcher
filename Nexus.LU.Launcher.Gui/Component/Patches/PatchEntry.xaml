@@ -4,13 +4,13 @@
         x:Class="Nexus.LU.Launcher.Gui.Component.Patches.PatchEntry"
         MinHeight="58" Margin="5,5,5,0" Background="#1A1B24" CornerRadius="3">
     <DockPanel HorizontalAlignment="Right">
-        <StackPanel HorizontalAlignment="Left" Width="505">
+        <StackPanel HorizontalAlignment="Left" Name="ContentsContainer" Width="505">
             <TextBlock TextAlignment="Left" Foreground="#FFFFFF" FontFamily="Arial" Name="PatchName"
-                       FontSize="24" Margin="8,4,0,0"></TextBlock>
+                       FontSize="24" TextWrapping="Wrap" Margin="8,4,0,0"></TextBlock>
             <TextBlock TextAlignment="Left" Foreground="#AAAAAA" FontFamily="Arial" Name="PatchDescription"
                        FontSize="16" TextWrapping="Wrap" Margin="12,4,0,6"></TextBlock>
         </StackPanel>
-        <StackPanel VerticalAlignment="Top" Width="135">
+        <StackPanel VerticalAlignment="Top" Name="ButtonsContainer" Width="135">
             <Nexus.LU.Launcher.Gui.Component.Base:RoundedButton Name="InstallButton"
                                                    Width="130" Height="38" Margin="0,5,5,0">
                 <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial" Name="InstallText"

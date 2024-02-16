@@ -5,272 +5,371 @@
         <locale>de_DE</locale>
         <locale>en_GB</locale>
     </locales>
+    <sizes>
+        <!--Server menu-->
+        <size id="ServerMenu_SelectButton" default="110">
+            <override locale="de_DE">150</override>
+        </size>
+        <size id="ServerMenu_AddButton" default="110">
+            <override locale="de_DE">150</override>
+        </size>
+        
+        <!--Patch list-->
+        <size id="Patch_ActionButton" default="130">
+            <override locale="de_DE">170</override>
+        </size>
+        <size id="Patch_AddButton" default="110">
+            <override locale="de_DE">150</override>
+        </size>
+    </sizes>
     <phrases>
         <!--Server menu-->
         <phrase id="ServerMenu_SelectButtonText">
             <translation locale="en_US">Select</translation>
+            <translation locale="de_DE">Auswählen</translation>
         </phrase>
         <phrase id="ServerMenu_SelectedLabel">
             <translation locale="en_US">Selected</translation>
+            <translation locale="de_DE">Ausgewählt</translation>
         </phrase>
         <phrase id="ServerMenu_AddServerButtonText">
             <translation locale="en_US">Add</translation>
+            <translation locale="de_DE">Hinzufügen</translation>
         </phrase>
         <phrase id="ServerMenu_AddServerNameLabel">
             <translation locale="en_US">Name: </translation>
+            <translation locale="de_DE">Name: </translation>
         </phrase>
         <phrase id="ServerMenu_AddServerAddressLabel">
             <translation locale="en_US">Address: </translation>
+            <translation locale="de_DE">Adresse: </translation>
         </phrase>
         <phrase id="ServerMenu_ConfirmRemovingPrompt">
             <translation locale="en_US">Confirm removing the server "{0}"?</translation>
+            <translation locale="de_DE">Entfernen des Servers "{0}" bestätigen?</translation>
         </phrase>
         
         <!--Client setup-->
         <phrase id="Client_PlayButtonText">
             <translation locale="en_US">Play!</translation>
+            <translation locale="de_DE">Spielen!</translation>
         </phrase>
         <phrase id="Client_ArchiveFilePickerTitle">
             <translation locale="en_US">Archive File</translation>
+            <translation locale="de_DE">Archivdatei</translation>
         </phrase>
         <phrase id="Client_ArchiveFilePickerFileType">
             <translation locale="en_US">Client Archive</translation>
+            <translation locale="de_DE">Client-Archiv</translation>
         </phrase>
         <phrase id="Client_Status_Uninitialized">
             <translation locale="en_US">Loading...</translation>
+            <translation locale="de_DE">Lädt...</translation>
         </phrase>
         <phrase id="Client_Status_ManualRuntimeNotInstalled_UserInstalledWineRuntime">
             <translation locale="en_US">WINE must be installed.</translation>
+            <translation locale="de_DE">WINE muss installiert werden.</translation>
         </phrase>
         <phrase id="Client_Status_PendingExtractSelection">
             <translation locale="en_US">Pending client extract. An archive of the client must be downloaded.</translation>
+            <translation locale="de_DE">Client-Extrahierung ausstehend. Ein Archiv des Clients muss heruntergeladen werden.</translation>
         </phrase>
         <phrase id="Client_Status_CheckingSignature">
             <translation locale="en_US">Checking client archive signature...</translation>
+            <translation locale="de_DE">Überprüfe Client-Archiv Signatur...</translation>
         </phrase>
         <phrase id="Client_Status_ExtractingClient">
             <translation locale="en_US">Extracting client...</translation>
+            <translation locale="de_DE">Extrahiere Client...</translation>
         </phrase>
         <phrase id="Client_Status_VerifyingClient">
             <translation locale="en_US">Verifying client...</translation>
+            <translation locale="de_DE">Verifiziere Client...</translation>
         </phrase>
         <phrase id="Client_Status_ExtractFailed_InvalidArchive">
             <translation locale="en_US">Client extract failed. Retry required.</translation>
+            <translation locale="de_DE">Client-Extrahierung fehlgeschlagen. Neuversuch benötigt.</translation>
         </phrase>
         <phrase id="Client_Status_ExtractFailed_ExceptionWhileExtracting">
             <translation locale="en_US">Client extract failed. Retry required.</translation>
+            <translation locale="de_DE">Client-Extrahierung fehlgeschlagen. Neuversuch benötigt.</translation>
         </phrase>
         <phrase id="Client_Status_VerifyFailed">
             <translation locale="en_US">Client extract failed. Retry required.</translation>
+            <translation locale="de_DE">Client-Extrahierung fehlgeschlagen. Neuversuch benötigt.</translation>
         </phrase>
         <phrase id="Client_Status_PatchingClient">
             <translation locale="en_US">Patching client...</translation>
+            <translation locale="de_DE">Patche Client...</translation>
         </phrase>
         <phrase id="Client_Status_MovingClient">
             <translation locale="en_US">Moving client to new location...</translation>
+            <translation locale="de_DE">Verschiebe Client zu neuem Ort...</translation>
         </phrase>
         <phrase id="Client_Status_RuntimeNotInstalled_MacOsWineRuntime">
             <translation locale="en_US">Pending WINE download.</translation>
+            <translation locale="de_DE">WINE Download ausstehend.</translation>
         </phrase>
         <phrase id="Client_Status_InstallingRuntime_MacOsWineRuntime">
             <translation locale="en_US">Downloading and installing WINE...</translation>
+            <translation locale="de_DE">WINE herunterladen und installieren...</translation>
         </phrase>
         <phrase id="Client_Status_NoSelectedServer">
             <translation locale="en_US">No server selected to play.</translation>
+            <translation locale="de_DE">Kein Server zu spielen ausgewählt.</translation>
         </phrase>
         <phrase id="Client_Status_ReadyToLaunch">
             <translation locale="en_US">Ready to launch: {0} ({1})</translation>
+            <translation locale="de_DE">Bereit zu starten: {0} ({1})</translation>
         </phrase>
         <phrase id="Client_Status_Launching">
             <translation locale="en_US">Launching...</translation>
+            <translation locale="de_DE">Starte...</translation>
         </phrase>
         <phrase id="Client_Status_Launched">
             <translation locale="en_US">Launched.</translation>
+            <translation locale="de_DE">Gestartet.</translation>
         </phrase>
         <phrase id="Client_RetrySelectArchivePrompt">
             <translation locale="en_US">{0} Try again?</translation>
+            <translation locale="de_DE">{0} Erneut versuchen?</translation>
         </phrase>
         <phrase id="Client_ArchiveSignatureInvalidContinuePrompt">
             <translation locale="en_US">The signature of the archive did not match a known signature. It may be an invalid client. Continue?</translation>
+            <translation locale="de_DE">Die Signatur des Archivs passt zu keiner bekannten Signatur. Es könnte ein ungültiger Client sein. Fortfahren?</translation>
         </phrase>
         
         <!--Patch buttons-->
         <phrase id="Patch_InstallButtonText">
             <translation locale="en_US">Install</translation>
+            <translation locale="de_DE">Installieren</translation>
         </phrase>
         <phrase id="Patch_UninstallButtonText">
             <translation locale="en_US">Uninstall</translation>
+            <translation locale="de_DE">Deinstallieren</translation>
         </phrase>
         <phrase id="Patch_UpdateButtonText">
             <translation locale="en_US">Update</translation>
+            <translation locale="de_DE">Aktualisieren</translation>
         </phrase>
         <phrase id="Patch_RemoveButtonText">
             <translation locale="en_US">Remove</translation>
+            <translation locale="de_DE">Entfernen</translation>
         </phrase>
         <phrase id="Patch_AddArchivePatchButtonText">
             <translation locale="en_US">Add</translation>
+            <translation locale="de_DE">Hinzufügen</translation>
         </phrase>
         <phrase id="Patch_ArchiveFilePickerTitle">
             <translation locale="en_US">Archive File</translation>
+            <translation locale="de_DE">Archivdatei</translation>
         </phrase>
         <phrase id="Patch_ArchiveFilePickerFileType">
             <translation locale="en_US">Patch Archive</translation>
+            <translation locale="de_DE">Patch-Archiv</translation>
         </phrase>
         
         <!--Patch prompts-->
         <phrase id="Patch_LocalArchivePatch_AlreadyExistsPrompt">
             <translation locale="en_US">A patch with this archive name already exists. Uninstall and remove the existing one before replacing.</translation>
+            <translation locale="de_DE">Ein Patch mit diesem Archiv-Namen existiert bereits. Deinstallieren und entferne den exisiterenden vor dem Ersetzen.</translation>
         </phrase>
         <phrase id="Patch_LocalArchivePatch_ArchiveFileNotReadablePrompt">
             <translation locale="en_US">The patch archive could not be read. Make sure it is a valid ZIP file.</translation>
+            <translation locale="de_DE">Das Patch-Archiv konnte nicht gelesen werden. Stelle sicher, dass es eine gültige ZIP-Datei ist.</translation>
         </phrase>
         <phrase id="Patch_LocalArchivePatch_PatchFileNotFoundPrompt">
             <translation locale="en_US">The patch archive does not contain patch.json. The file must not be contained in a subfolder.</translation>
+            <translation locale="de_DE">Das Patch-Archiv beinhaltet nicht patch.json. Die Datei darf nicht in einem Unterordner sein.</translation>
         </phrase>
         <phrase id="Patch_LocalArchivePatch_PatchFileNotReadablePrompt">
             <translation locale="en_US">The patch archive's patch.json was could not be read correctly.</translation>
+            <translation locale="de_DE">Das patch.json des Patch-Archivs konnte nicht richtig gelesen werden.</translation>
         </phrase>
         <phrase id="Patch_LocalArchivePatch_PatchFileInvalidPrompt">
             <translation locale="en_US">The patch archive's patch.json was found but has missing data.</translation>
+            <translation locale="de_DE">Das patch.json des Patch-Archivs konnte gefunden werden, aber hat fehlende Dateien.</translation>
         </phrase>
         <phrase id="Patch_LocalArchivePatch_PackedClientRequiredPrompt">
             <translation locale="en_US">The patch requires a packed client, but an unpacked client was detected.</translation>
+            <translation locale="de_DE">Der Patch benötigt einen verpackten Client, aber ein entpackter Client wurde gefunden.</translation>
         </phrase>
         <phrase id="Patch_LocalArchivePatch_UnpackedClientRequiredPrompt">
             <translation locale="en_US">The patch requires an unpacked client, but a packed client was detected.</translation>
+            <translation locale="de_DE">Der Patch benötigt einen entpackten Client, aber ein verpackter Client wurde gefunden.</translation>
         </phrase>
         <phrase id="Patch_LocalArchivePatch_ConfirmInstallOnAddPrompt">
             <translation locale="en_US">Archive patch added. Do you want to install it now?</translation>
+            <translation locale="de_DE">Archiv-Patch hinzugefügt. Jetzt installieren?</translation>
         </phrase>
         <phrase id="Patch_LocalArchivePatch_ConfirmRemovePrompt">
             <translation locale="en_US">Confirm removing patch "{0}"?</translation>
+            <translation locale="de_DE">Entfernen des Patches "{0}" bestätigen?</translation>
         </phrase>
         
         <!--Patch options-->
         <phrase id="Patch_Name_SteamOneClickPatch">
             <translation locale="en_US">Steam One-Click</translation>
+            <translation locale="de_DE">Steam 1-Klick-Einrichtung</translation>
         </phrase>
         <phrase id="Patch_Description_SteamOneClickPatch">
             <translation locale="en_US">Attempts to set up the launcher for Steam for the Steam Deck by adding the launcher to Steam, prompting to change the controller layout, and disabling fullscreen. NOTE: For Linux users (specifically Flatpak users), after applying, if there is no prompt for the controller layout, it will be prompted later after a manual start of Steam.</translation>
+            <translation locale="de_DE">Versucht den Launcher für Steam für das Steam Deck einzurichten, indem der Launcher zu Steam hinzugefügt wird, zur Änderung des Controller-Layouts aufgefordert wird, und der Vollbildmodus deaktiviert wird. BEACHTE: Für Linux-Nutzer (insbesondere Flatpak-Nutzer), falls nach dem Anwenden keine Aufforderung zur Änderung des Controller-Layouts erscheint, wird später nach einem manuellen Start von Steam dazu aufgefordert.</translation>
         </phrase>
         <phrase id="Patch_Name_ModLoaderPatch">
             <translation locale="en_US">Mod Loader</translation>
+            <translation locale="de_DE">Mod-Loader</translation>
         </phrase>
         <phrase id="Patch_Description_ModLoaderPatch">
             <translation locale="en_US">Allows the installation of client mods.</translation>
+            <translation locale="de_DE">Ermöglicht das Installieren von Client-Mods.</translation>
         </phrase>
         <phrase id="Patch_Name_AutoTcpUdpPatch">
             <translation locale="en_US">Auto TCP/UDP Shim</translation>
+            <translation locale="de_DE">Auto TCP/UDP Shim</translation>
         </phrase>
         <phrase id="Patch_Description_AutoTcpUdpPatch">
             <translation locale="en_US">Enables connecting to community-run LEGO Universe servers that may or may not use TCP/UDP. This is automatically managed for the requested server. Requires the Mod Loader to be installed. Can't be installed with TCP/UDP Shim.</translation>
+            <translation locale="de_DE">Ermöglich das Verbinden mit von der Community betriebene LEGO Universe Servern, welche vielleicht oder vielleicht nicht TCP/UDP verwenden. Dies wird automatisch für den angeforderten Server verwaltet. Benötigt die Installation des Mod-Loaders. Kann nicht zusammen mit TCP/UDP Shim installiert werden.</translation>
         </phrase>
         <phrase id="Patch_Name_TcpUdpPatch">
             <translation locale="en_US">TCP/UDP Shim</translation>
         </phrase>
         <phrase id="Patch_Description_TcpUdpPatch">
             <translation locale="en_US">Enables connecting to community-run LEGO Universe servers that use TCP/UDP, like Uchu. This mod prevents connecting to normal RakNet servers, like Darkflame Universe. Requires the Mod Loader to be installed. Can't be installed with Auto TCP/UDP Shim.</translation>
+            <translation locale="de_DE">Ermöglich das Verbinden mit von der Community betriebene LEGO Universe Servern, welche TCP/UDP verwenden, wie Uchu. Dieser Mod verhindert des Verbinden mit normalen RekNet Servern, wie Darkflame Universe. Benötigt die Installation des Mod-Loaders.  Kann nicht zusammen mit Auto TCP/UDP Shim installiert werden.</translation>
         </phrase>
         <phrase id="Patch_Name_FixAssemblyVendorHologramPatch">
             <translation locale="en_US">Fix Assembly Vendor Hologram</translation>
+            <translation locale="de_DE">Behebe Erbauer-Verkäufer Hologram</translation>
         </phrase>
         <phrase id="Patch_Description_FixAssemblyVendorHologramPatch">
-            <translation locale="en_US">Fixes the Assembly vendor at Nimbus Station showing a Missing NIF error.</translation>
+            <translation locale="en_US">Fixes the Assembly vendor at Nimbus Station showing a NIF Missing error.</translation>
+            <translation locale="de_DE">Behebt, dass der Verkäufer von der Erbauer-Fraktion eine NIF Missing Fehlermeldung anzeigt.</translation>
         </phrase>
         <phrase id="Patch_Name_FixAvantGardensSurvivalCrashPatch">
             <translation locale="en_US">Fix Avant Gardens Survival Crash</translation>
+            <translation locale="de_DE">Behebe Abstürzen auf dem Avantgarten-Schlachtfeld</translation>
         </phrase>
         <phrase id="Patch_Description_FixAvantGardensSurvivalCrashPatch">
             <translation locale="en_US">Fixes a mistake in the Avant Gardens Survival script that results in players crashing in Avant Gardens Survival if they are not the first player.</translation>
+            <translation locale="de_DE">Behebt einen Fehler im Avantgarten-Schlachtfeld Skript, der dafür sorgt, dass der Spieler auf dem Avantgarten-Schlachtfeld abstürzt, wenn er nicht der erste Spieler ist.</translation>
         </phrase>
         <phrase id="Patch_Name_RemoveDluPatchAd">
             <translation locale="en_US">Remove DLU Ad</translation>
+            <translation locale="de_DE">Entferne DLU Werbung</translation>
         </phrase>
         <phrase id="Patch_Description_RemoveDluPatchAd">
             <translation locale="en_US">Removes the advertisement for DLU from the zone loading screen. This is to return the localization file back to the original version.</translation>
+            <translation locale="de_DE">Entfernt die Werbeanzeige für DLU vom Zonenladebildschirm. Dies wird getan, um die Lokalisationsdatei zu ihrer ursprünglichen Version zurückzusetzen.</translation>
         </phrase>
         
         <!--Patch states-->
         <phrase id="Patch_Status_Loading">
             <translation locale="en_US">Loading...</translation>
+            <translation locale="de_DE">Lädt...</translation>
         </phrase>
         <phrase id="Patch_Status_Installing">
             <translation locale="en_US">Installing...</translation>
+            <translation locale="de_DE">Installiere...</translation>
         </phrase>
         <phrase id="Patch_Status_FailedToInstall">
             <translation locale="en_US">Failed to install.</translation>
+            <translation locale="de_DE">Installation fehlgeschlagen.</translation>
         </phrase>
         <phrase id="Patch_Status_Uninstalling">
             <translation locale="en_US">Uninstalling...</translation>
+            <translation locale="de_DE">Deinstalliere...</translation>
         </phrase>
         <phrase id="Patch_Status_FailedToUninstall">
             <translation locale="en_US">Failed to uninstall.</translation>
+            <translation locale="de_DE">Deinstallation fehlgeschlagen.</translation>
         </phrase>
         <phrase id="Patch_Status_CheckingForUpdates">
             <translation locale="en_US">Checking for updates...</translation>
+            <translation locale="de_DE">Prüfe auf Aktualisierungen...</translation>
         </phrase>
         <phrase id="Patch_Status_UpdatesCheckFailed">
             <translation locale="en_US">Updates check failed.</translation>
+            <translation locale="de_DE">Prüfen auf Aktualisierungen fehlgeschlagen.</translation>
         </phrase>
         <phrase id="Patch_Status_UpdateAvailable">
             <translation locale="en_US">Update available.</translation>
+            <translation locale="de_DE">Aktualisierungen verfügbar.</translation>
         </phrase>
         <phrase id="Patch_Status_Updating">
             <translation locale="en_US">Updating...</translation>
+            <translation locale="de_DE">Aktualisiere...</translation>
         </phrase>
         <phrase id="Patch_Status_FailedToUpdate">
             <translation locale="en_US">Failed to update.</translation>
+            <translation locale="de_DE">Aktualisierung fehlgeschlagen.</translation>
         </phrase>
         
         <!--Settings-->
         <phrase id="Settings_ShowClientLogsLabel">
             <translation locale="en_US">Show Client Logs</translation>
+            <translation locale="de_DE">Zeige Client-Log</translation>
         </phrase>
         <phrase id="Settings_LauncherFilesLabel">
             <translation locale="en_US">Launcher Files</translation>
+            <translation locale="de_DE">Launcherdateien</translation>
         </phrase>
         <phrase id="Settings_LanguageLabel">
             <translation locale="en_US">Language</translation>
+            <translation locale="de_DE">Sprache</translation>
         </phrase>
         <phrase id="Settings_ChangeLocationBlockedFlatpak">
             <translation locale="en_US">Changing install locations is not supported with the Flatpak version of Nexus LU Launcher.</translation>
+            <translation locale="de_DE">Ändern des Installationsortes wird nicht auf der Flatpak-Version von Nexus LU Launcher unterstützt.</translation>
         </phrase>
         <phrase id="Settings_ChangeLocationPrompt">
             <translation locale="en_US">Changing install locations will move any clients you have downloaded to it. Continue?</translation>
+            <translation locale="de_DE">Ändern des Installationsortes wird alle heruntergeladenen Clients dorthin verschieben. Fortfahren?</translation>
         </phrase>
         <phrase id="Settings_ChangeLocationFolderPickerTitle">
             <translation locale="en_US">New Client Location</translation>
+            <translation locale="de_DE">Neuer Client-Ort</translation>
         </phrase>
         <phrase id="Settings_Language_en_US">
             <translation locale="en_US">English (United States)</translation>
+            <translation locale="de_DE">Englisch (Vereinigte Staaten)</translation>
         </phrase>
         <phrase id="Settings_Language_de_DE">
             <translation locale="en_US">German</translation>
+            <translation locale="de_DE">Deutsch</translation>
         </phrase>
         <phrase id="Settings_Language_en_GB">
             <translation locale="en_US">English (British)</translation>
+            <translation locale="de_DE">Englisch (Britisch)</translation>
         </phrase>
         
         <!--Bottom bar-->
         <phrase id="BottomBar_GitHub">
             <translation locale="en_US">GitHub</translation>
+            <translation locale="de_DE">GitHub</translation>
         </phrase>
         <phrase id="BottomBar_Play">
             <translation locale="en_US">Play</translation>
+            <translation locale="de_DE">Spielen</translation>
         </phrase>
         <phrase id="BottomBar_Patches">
             <translation locale="en_US">Patches</translation>
+            <translation locale="de_DE">Patches</translation>
         </phrase>
         <phrase id="BottomBar_Settings">
             <translation locale="en_US">Settings</translation>
+            <translation locale="de_DE">Einstellungen</translation>
         </phrase>
         
         <!--Prompt messages-->
         <phrase id="Prompt_CloseWhileExtracting">
             <translation locale="en_US">Closing the launcher stops extracting the client. Confirm closing?</translation>
+            <translation locale="de_DE">Schließen des Launcher stoppt die Extrahierung des Clients. Schließen bestätigen?</translation>
         </phrase>
         <phrase id="Prompt_CloseWhileMoving">
             <translation locale="en_US">Closing the launcher stops moving the files. Confirm closing?</translation>
+            <translation locale="de_DE">Schließen des Launchers stoppt das Verschieben der Dateien. Schließen bestätigen?</translation>
         </phrase>
     </phrases>
 </localization>

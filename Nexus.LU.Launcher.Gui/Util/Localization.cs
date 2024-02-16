@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using Nexus.LU.Launcher.Gui.Component.Base;
@@ -34,6 +36,11 @@ public class Localization
     private readonly Dictionary<string, Dictionary<string, string>> localizedStrings = new Dictionary<string, Dictionary<string, string>>();
     
     /// <summary>
+    /// Localized sizes for the launcher.
+    /// </summary>
+    private readonly Dictionary<string, Dictionary<string, int>> localizedSizes = new Dictionary<string, Dictionary<string, int>>();
+    
+    /// <summary>
     /// Static instance of Localization.
     /// </summary>
     private static Localization? _localization;
@@ -55,7 +62,30 @@ public class Localization
             this.Languages.Add(localeEntryXml.InnerText);
         }
         
-        // Load the XML.
+        // Load the XML sizes.
+        foreach (XmlNode sizeXml in xmlDocument.SelectNodes("//sizes/size")!)
+        {
+            // Load the sizes.
+            var localizationKey = sizeXml.Attributes!["id"]!.Value;
+            var entry = new Dictionary<string, int>();
+            foreach (XmlNode translationXml in sizeXml.ChildNodes)
+            {
+                if (translationXml?.Attributes == null) continue;
+                entry[translationXml.Attributes["locale"]!.Value] = int.Parse(translationXml.InnerText);
+            }
+            
+            // Add the defaults.
+            var defaultSize = int.Parse(sizeXml.Attributes!["default"]!.Value);
+            foreach (var language in this.Languages.Where(language => !entry.ContainsKey(language)))
+            {
+                entry[language] = defaultSize;
+            }
+
+            // Store the sizes.
+            this.localizedSizes[localizationKey] = entry;
+        }
+        
+        // Load the XML translations.
         foreach (XmlNode phraseXml in xmlDocument.SelectNodes("//phrases/phrase")!)
         {
             // Load the translations.
@@ -167,6 +197,30 @@ public class Localization
             Dispatcher.UIThread.InvokeAsync(() => SetText(textObject, this.GetLocalizedString(localizationId)));
         };
         SetText(textObject, this.GetLocalizedString(localizationId));
+    }
+
+    /// <summary>
+    /// Returns the localization size for a key.
+    /// </summary>
+    /// <param name="key">Key to get the localized string of.</param>
+    /// <returns>The localized size.</returns>
+    public int GetLocalizedSize(string key)
+    {
+        return this.localizedSizes[key][this.CurrentLanguage];
+    }
+
+    /// <summary>
+    /// Localizes a width for an object.
+    /// </summary>
+    /// <param name="widthObject">Object to localize.</param>
+    /// <param name="localizationId">Id of the size to use.</param>
+    public void LocalizeWidth(Layoutable widthObject, string localizationId)
+    {
+        LanguageChanged += (language) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(() => widthObject.Width = this.GetLocalizedSize(localizationId));
+        };
+        widthObject.Width = this.GetLocalizedSize(localizationId);
     }
 
     /// <summary>
