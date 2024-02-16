@@ -116,7 +116,7 @@
         </phrase>
         <phrase id="Client_Status_NoSelectedServer">
             <translation locale="en_US">No server selected to play.</translation>
-            <translation locale="de_DE">Kein Server zu spielen ausgewählt.</translation>
+            <translation locale="de_DE">Kein Server zum Spielen ausgewählt.</translation>
         </phrase>
         <phrase id="Client_Status_ReadyToLaunch">
             <translation locale="en_US">Ready to launch: {0} ({1})</translation>
