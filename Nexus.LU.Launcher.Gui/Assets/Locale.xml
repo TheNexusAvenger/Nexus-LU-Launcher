@@ -198,6 +198,9 @@
         <phrase id="Settings_LauncherFilesLabel">
             <translation locale="en_US">Launcher Files</translation>
         </phrase>
+        <phrase id="Settings_ChangeLocationBlockedFlatpak">
+            <translation locale="en_US">Changing install locations is not supported with the Flatpak version of Nexus LU Launcher.</translation>
+        </phrase>
         <phrase id="Settings_ChangeLocationPrompt">
             <translation locale="en_US">Changing install locations will move any clients you have downloaded to it. Continue?</translation>
         </phrase>

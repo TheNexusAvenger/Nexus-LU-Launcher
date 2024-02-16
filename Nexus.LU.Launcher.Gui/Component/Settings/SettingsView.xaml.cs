@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -54,6 +55,14 @@ public class SettingsView : Panel
         };
         this.Get<RoundedImageButton>("ChangeClientParentDirectory").ButtonPressed += (sender, args) =>
         {
+            // Display a prompt to the user that changing client directories is not supported for the Flatpak.
+            // The Flatpak sandbox prevents reads/writes outside of allowed files and portals.
+            if (Environment.GetEnvironmentVariable("FLATPAK_ID") != null)
+            {
+                NotificationPrompt.OpenPrompt(localization.GetLocalizedString("Settings_ChangeLocationBlockedFlatpak"));
+                return;
+            }
+            
             // Prompt for the directory.
             var window = this.GetWindow()!;
             var newDirectoryTask =  window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()
