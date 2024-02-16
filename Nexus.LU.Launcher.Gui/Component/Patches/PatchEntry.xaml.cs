@@ -145,6 +145,12 @@ public class PatchEntry : Border
             Dispatcher.UIThread.InvokeAsync(this.ConnectPatch);
         };
         
+        // Connect the language changing.
+        localization.LanguageChanged += (_) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(this.UpdatePatch);
+        };
+        
         // Connect the buttons.
         this.installButton.ButtonPressed += ((sender, args) =>
         {
@@ -177,6 +183,18 @@ public class PatchEntry : Border
     /// </summary>
     private void ConnectPatch()
     {
+        this.PatchData.StateChanged += (patchState) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(this.UpdateButtons);
+        };
+        this.UpdatePatch();
+    }
+
+    /// <summary>
+    /// Updates the contents of the patch.
+    /// </summary>
+    private void UpdatePatch()
+    {
         var localization = Localization.Get();
         var patch = this.PatchData;
         if (patch.ClientPatch is LocalArchivePatch localArchivePatch)
@@ -189,10 +207,6 @@ public class PatchEntry : Border
             this.patchName.Text = localization.GetLocalizedString($"Patch_Name_{patch.Name}");
             this.patchDescription.Text = localization.GetLocalizedString($"Patch_Description_{patch.Name}");
         }
-        patch.StateChanged += (patchState) =>
-        {
-            Dispatcher.UIThread.InvokeAsync(this.UpdateButtons);
-        };
         this.UpdateButtons();
     }
 

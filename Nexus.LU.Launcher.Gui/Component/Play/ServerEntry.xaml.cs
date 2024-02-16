@@ -106,6 +106,10 @@ public class ServerEntry : Border
         {
             Dispatcher.UIThread.InvokeAsync(this.UpdateSelectButton);
         };
+        Localization.Get().LanguageChanged += (_) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(this.UpdateSelectButton);
+        };
         
         // Update the initial button.
         this.UpdateSelectButton();
