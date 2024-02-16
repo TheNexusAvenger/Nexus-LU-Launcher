@@ -26,7 +26,7 @@
 		<release version="V.2.2.0" date="2024-02-16">
 			<description>
 				<ul>
-					<li>Added Steam One-Click patch. It will add the launcher to the Steam, prompt to set the controller layout, and disable fullscreen from the settings (meant for Steam Deck while in game mode). When not used in Flatpak, this patch restarts Steam after adding the non-Steam game entry.</li>
+					<li>Added Steam One-Click patch. It will add the launcher to Steam, prompt to set the controller layout, and disable fullscreen from the settings (meant for Steam Deck while in game mode). When not used in Flatpak, this patch restarts Steam after adding the non-Steam game entry.</li>
 					<li>Added user-provided patch archives for replacing files.</li>
 					<li>Added locale toggle for en_US, de_DE, and en_GB.</li>
 					<li>Added localization by SardiTime.</li>
