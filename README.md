@@ -97,15 +97,97 @@ Each release needs to be created for their platform.
   version of `glibc` the release will work on. If you have Docker, `python3 publish-docker.py`
   will perform a build with RedHat UBI8 (uses `glibc` 2.28).
 
-# Additions
-## Patches
+# Patches
 Patches can be added and will be approved in pull requests if there
 is a proper justification to have them. They can including finishing incomplete
 features on the client, like guilds, or components that allow the client
 to work, like alternative communication mods.
 
-## Servers *(Cancelled)*
-Creating servers has been removed from the project as of release 0.3.0.
+## Archive Patches
+As of version 2.2.0, patches can be added to the client using ZIP archives.
+There are 4 requirements:
+1. It must be a ZIP archive (rar, tar.gz, and other formats are not supported).
+2. The archive can't only contain a folder containing the all files, typically
+   done by selecting "Send To" > "Compressed (zipped) folder" on the folder containing
+   the patch files.
+3. A valid `patch.json` file exists in the top level of the archive.
+4. If a `boot.cfg` is included, make sure the server name and addess are correct.
+
+### File Structure
+When using "Send To" > "Compressed (zipped) folder" on a folder, it will make
+it so only that folder is the top-level item of the archive. For example:
+```
+MyBadPatch.zip
+|-MyBadPatch    <--When the zip is opened, you will see "MyBadPatch" instead of "res" [!]
+|---res
+|-----myfile1.something
+|-----myfile2.something
+|---patch.json  <--patch.json is not at the top level [!]
+```
+
+Instead, use "Send To" > "Compressed (zipped) folder" on the patch files
+directly (NOT the parent folder of them).
+```
+MyGoodPatch.zip
+|-res         <--When the zip is opened, you will see "res" and "patch.json"
+|---myfile1.something
+|---myfile2.something
+|-patch.json  <--patch.json is at the top level
+```
+
+### `patch.json`
+A `patch.json` file is required in the archive. It can contain the following:
+- `name` (required) - Dictionary of names for the locales the user may have.
+- `description` (required) - Dictionary of descriptions for the locales the
+  user may have.
+- `requirements` (optional) - Optional list of requirements the client must
+  meet to install. Supported options include:
+  - `packed-client` - Requires that the client must be packed.
+  - `unpacked-client` - Requires that the client must be unpacked.
+
+LEGO Universe supports `en_US`, `de_DE`, and `en_GB` locales. **However, the
+launcher only supports en_US due to having no translations**. If a locale is
+not provided, a placeholder text will be used.
+
+This is an example `patch.json` with all supported locales and requiring an
+unpacked client.
+```json
+{
+  "name": {
+    "en_US": "My Cool Patch",
+    "de_DE": "My Cool Patch, But German",
+    "en_GB": "My Cool Patch, But British"
+  },
+  "description": {
+    "en_US": "My description.",
+    "de_DE": "My description, but German.",
+    "en_GB": "My description, but British."
+  },
+  "requirements": {
+    "unpacked-client"
+  }
+}
+```
+
+This is the minimum recommended `patch.json`. It has no requirements.
+```json
+{
+  "name": {
+    "en_US": "My Cool Patch"
+  },
+  "description": {
+    "en_US": "My description."
+  }
+}
+```
+
+### `boot.cfg`
+Patches can include `boot.cfg`, but it will not replace the stored copy.
+Becuase this file is managed, instead of using the file directly, `SERVERNAME`
+and `AUTHSERVERIP` from the file will be added as a server list entry.
+Updating addresses for a given name with an updated patch is supported as
+well. **Make sure to make `SERVERNAME` (likely) unique, and avoid the default
+`Overbuild Universe (US)`.**
 
 # Disclaimer
 LEGO<sup>Ⓡ</sup> is a trademark of the LEGO Group. The LEGO Group is not
