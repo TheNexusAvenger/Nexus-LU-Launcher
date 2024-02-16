@@ -47,11 +47,18 @@ public class Localization
         var localeXmlStream = AssetLoader.Open(new Uri($"avares://{Assembly.GetEntryAssembly()?.GetName().Name}/Assets/Locale.xml"));
         var localeXml = new StreamReader(localeXmlStream).ReadToEnd();
         
-        // Load the XML.
+        // Add the language options.
         var xmlDocument = new XmlDocument();
         xmlDocument.LoadXml(localeXml);
+        foreach (XmlNode localeEntryXml in xmlDocument.SelectNodes("//locales/locale")!)
+        {
+            this.Languages.Add(localeEntryXml.InnerText);
+        }
+        
+        // Load the XML.
         foreach (XmlNode phraseXml in xmlDocument.SelectNodes("//phrases/phrase")!)
         {
+            // Load the translations.
             var localizationKey = phraseXml.Attributes!["id"]!.Value;
             var entry = new Dictionary<string, string>();
             foreach (XmlNode translationXml in phraseXml.ChildNodes)
@@ -59,13 +66,23 @@ public class Localization
                 if (translationXml?.Attributes == null) continue;
                 entry[translationXml.Attributes["locale"]!.Value] = translationXml.InnerText;
             }
+            
+            // Try to match missing translations.
+            foreach (var language in this.Languages)
+            {
+                if (entry.ContainsKey(language)) continue;
+                var baseLanguage = language.Substring(0, language.IndexOf('_') + 1);
+                foreach (var otherLanguage in this.Languages)
+                {
+                    if (!otherLanguage.StartsWith(baseLanguage)) continue;
+                    if (!entry.ContainsKey(otherLanguage)) continue;
+                    entry[language] = entry[otherLanguage];
+                    break;
+                }
+            }
+            
+            // Store the translations.
             this.localizedStrings[localizationKey] = entry;
-        }
-        
-        // Add the language options.
-        foreach (XmlNode localeEntryXml in xmlDocument.SelectNodes("//locales/locale")!)
-        {
-            this.Languages.Add(localeEntryXml.InnerText);
         }
         
         // Set the current language.
