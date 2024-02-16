@@ -60,13 +60,11 @@ The goals of the launcher is the following:
 ## Non-Goals
 The following aren't current goals of the launcher, but could
 be made at some point:
-* Provide a method to change the locale.
-  * Looking for additional translations to be provided before this is implemented.
 * Unpacking the client for use with server hosting.
 * Automate installing WINE for non-Windows and non-macOS installs.
   * The Flatpak release handles this for Linux.
 
-## Custom Download Location
+## Custom Download Location (Non-Flatpak)
 By default, Nexus LU Launcher will download files to a directory named
 `.nlul` in your user directory. This can be changed in the "Settings" tab.
 
@@ -145,8 +143,7 @@ A `patch.json` file is required in the archive. It can contain the following:
   - `packed-client` - Requires that the client must be packed.
   - `unpacked-client` - Requires that the client must be unpacked.
 
-LEGO Universe supports `en_US`, `de_DE`, and `en_GB` locales. **However, the
-launcher only supports en_US due to having no translations**. If a locale is
+LEGO Universe supports `en_US`, `de_DE`, and `en_GB` locales. If a locale is
 not provided, a placeholder text will be used.
 
 This is an example `patch.json` with all supported locales and requiring an
