@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Nexus.LU.Launcher.State.Util;
@@ -11,7 +12,7 @@ public class CombinedOutput
     /// <summary>
     /// Current output.
     /// </summary>
-    public string Output { get; private set; } = "";
+    public string Output => this.outputStringBuilder.ToString();
     
     /// <summary>
     /// Event for the output updating.
@@ -22,12 +23,21 @@ public class CombinedOutput
     /// Semaphore for adding text.
     /// </summary>
     private readonly SemaphoreSlim outputSemaphore = new SemaphoreSlim(1);
+    
+    /// <summary>
+    /// Current output string builder.
+    /// </summary>
+    private readonly StringBuilder outputStringBuilder = new StringBuilder();
 
+    /// <summary>
+    /// Adds a line.
+    /// </summary>
+    /// <param name="line">Line to add.</param>
     private async Task AddLineAsync(string line)
     {
         await this.outputSemaphore.WaitAsync();
-        this.Output += (this.Output == "" ? "" : "\n") + line;
-        OutputUpdated?.Invoke(this.Output);
+        this.outputStringBuilder.Append((outputStringBuilder.Length == 0 ? "" : "\n") + line);
+        OutputUpdated?.Invoke(this.outputStringBuilder.ToString());
         this.outputSemaphore.Release();
     }
 
@@ -57,13 +67,16 @@ public class CombinedOutput
     {
         Task.Run(async () =>
         {
-            // Read the existing messages.
+            // Read the existing messages in bulk.
+            await this.outputSemaphore.WaitAsync();
             while (true)
             {
                 var line = await storedLogOutput.GetNextLineAsync();
                 if (line == null) break;
-                await this.AddLineAsync(line);
+                this.outputStringBuilder.Append((outputStringBuilder.Length == 0 ? "" : "\n") + line);
             }
+            OutputUpdated?.Invoke(this.outputStringBuilder.ToString());
+            this.outputSemaphore.Release();
 
             // Connect new lines being added.
             storedLogOutput.MessageAdded += async () =>
