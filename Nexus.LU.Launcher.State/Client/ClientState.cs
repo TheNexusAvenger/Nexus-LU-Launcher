@@ -428,7 +428,7 @@ public class ClientState
         if (systemInfo.Settings.ArchivePatches.FirstOrDefault(patch => patch.ArchiveName == archiveFileName) != null)
         {
             Logger.Error($"Archive {archiveFileName} already exists.");
-            throw new InvalidOperationException("Prompt_LocalArchivePatch_AlreadyExists");
+            throw new InvalidOperationException("Patch_LocalArchivePatch_AlreadyExistsPrompt");
         }
         
         // Read the patch file.
@@ -445,12 +445,12 @@ public class ClientState
         catch (Exception e)
         {
             Logger.Error($"Failed to read archive {archiveFileName}.\n{e}");
-            throw new InvalidOperationException("Prompt_LocalArchivePatch_ArchiveFileNotReadable");
+            throw new InvalidOperationException("Patch_LocalArchivePatch_ArchiveFileNotReadablePrompt");
         }
         if (patchJson == null)
         {
             Logger.Error($"Archive {archiveFileName} does not have patch.json.");
-            throw new InvalidOperationException("Prompt_LocalArchivePatch_PatchFileNotFound");
+            throw new InvalidOperationException("Patch_LocalArchivePatch_PatchFileNotFoundPrompt");
         }
         
         // Parse the archive file.
@@ -462,17 +462,17 @@ public class ClientState
         catch (Exception e)
         {
             Logger.Error($"Archive {archiveFileName} is unreadable.\n{e}");
-            throw new InvalidOperationException("Prompt_LocalArchivePatch_PatchFileNotReadable");
+            throw new InvalidOperationException("Patch_LocalArchivePatch_PatchFileNotReadablePrompt");
         }
         if (data == null)
         {
             Logger.Error($"Archive {archiveFileName} is unreadable.");
-            throw new InvalidOperationException("Prompt_LocalArchivePatch_PatchFileNotReadable");
+            throw new InvalidOperationException("Patch_LocalArchivePatch_PatchFileNotReadablePrompt");
         }
         if (data.Name == null || data.Description == null)
         {
             Logger.Error($"Archive {archiveFileName} patch.json file is invalid.");
-            throw new InvalidOperationException("Prompt_LocalArchivePatch_PatchFileInvalid");
+            throw new InvalidOperationException("Patch_LocalArchivePatch_PatchFileInvalidPrompt");
         }
         
         // Create the patch and verify it can be applied.

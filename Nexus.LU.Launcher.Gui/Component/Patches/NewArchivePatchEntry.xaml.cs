@@ -55,7 +55,7 @@ public class NewArchivePatchEntry : Border
                     var newPatch = await ClientState.Get().AddArchivePatchAsync(archiveLocation.Path.LocalPath);
                     
                     // Prompt applying the patch.
-                    ConfirmPrompt.OpenPrompt(localization.GetLocalizedString("Prompt_LocalArchivePatch_ConfirmInstallOnAdd"), () => Task.Run(newPatch.InstallAsync));
+                    ConfirmPrompt.OpenPrompt(localization.GetLocalizedString("Patch_LocalArchivePatch_ConfirmInstallOnAddPrompt"), () => Task.Run(newPatch.InstallAsync));
                 }
                 catch (Exception e)
                 {

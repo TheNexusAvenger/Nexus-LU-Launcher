@@ -167,7 +167,7 @@ public class PatchEntry : Border
             if (this.PatchData.ClientPatch is not LocalArchivePatch localArchivePatch) return;
             if (this.PatchData.State != ExtendedPatchState.NotInstalled) return;
             
-            var promptMessage = string.Format(localization.GetLocalizedString("Prompt_LocalArchivePatch_ConfirmRemove"), this.patchName.Text);
+            var promptMessage = string.Format(localization.GetLocalizedString("Patch_LocalArchivePatch_ConfirmRemovePrompt"), this.patchName.Text);
             ConfirmPrompt.OpenPrompt(promptMessage, () => Task.Run(localArchivePatch.Remove));
         });
     }

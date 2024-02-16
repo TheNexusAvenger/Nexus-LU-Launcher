@@ -115,6 +115,35 @@
             <translation locale="en_US">Patch Archive</translation>
         </phrase>
         
+        <!--Patch prompts-->
+        <phrase id="Patch_LocalArchivePatch_AlreadyExistsPrompt">
+            <translation locale="en_US">A patch with this archive name already exists. Uninstall and remove the existing one before replacing.</translation>
+        </phrase>
+        <phrase id="Patch_LocalArchivePatch_ArchiveFileNotReadablePrompt">
+            <translation locale="en_US">The patch archive could not be read. Make sure it is a valid ZIP file.</translation>
+        </phrase>
+        <phrase id="Patch_LocalArchivePatch_PatchFileNotFoundPrompt">
+            <translation locale="en_US">The patch archive does not contain patch.json. The file must not be contained in a subfolder.</translation>
+        </phrase>
+        <phrase id="Patch_LocalArchivePatch_PatchFileNotReadablePrompt">
+            <translation locale="en_US">The patch archive's patch.json was could not be read correctly.</translation>
+        </phrase>
+        <phrase id="Patch_LocalArchivePatch_PatchFileInvalidPrompt">
+            <translation locale="en_US">The patch archive's patch.json was found but has missing data.</translation>
+        </phrase>
+        <phrase id="Patch_LocalArchivePatch_PackedClientRequiredPrompt">
+            <translation locale="en_US">The patch requires a packed client, but an unpacked client was detected.</translation>
+        </phrase>
+        <phrase id="Patch_LocalArchivePatch_UnpackedClientRequiredPrompt">
+            <translation locale="en_US">The patch requires an unpacked client, but a packed client was detected.</translation>
+        </phrase>
+        <phrase id="Patch_LocalArchivePatch_ConfirmInstallOnAddPrompt">
+            <translation locale="en_US">Archive patch added. Do you want to install it now?</translation>
+        </phrase>
+        <phrase id="Patch_LocalArchivePatch_ConfirmRemovePrompt">
+            <translation locale="en_US">Confirm removing patch "{0}"?</translation>
+        </phrase>
+        
         <!--Patch options-->
         <phrase id="Patch_Name_SteamOneClickPatch">
             <translation locale="en_US">Steam One-Click</translation>
@@ -228,33 +257,6 @@
         </phrase>
         <phrase id="Prompt_CloseWhileMoving">
             <translation locale="en_US">Closing the launcher stops moving the files. Confirm closing?</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_AlreadyExists">
-            <translation locale="en_US">A patch with this archive name already exists. Uninstall and remove the existing one before replacing.</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_ArchiveFileNotReadable">
-            <translation locale="en_US">The patch archive could not be read. Make sure it is a valid ZIP file.</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_PatchFileNotFound">
-            <translation locale="en_US">The patch archive does not contain patch.json. The file must not be contained in a subfolder.</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_PatchFileNotReadable">
-            <translation locale="en_US">The patch archive's patch.json was could not be read correctly.</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_PatchFileInvalid">
-            <translation locale="en_US">The patch archive's patch.json was found but has missing data.</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_PackedClientRequired">
-            <translation locale="en_US">The patch requires a packed client, but an unpacked client was detected.</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_UnpackedClientRequired">
-            <translation locale="en_US">The patch requires an unpacked client, but a packed client was detected.</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_ConfirmInstallOnAdd">
-            <translation locale="en_US">Archive patch added. Do you want to install it now?</translation>
-        </phrase>
-        <phrase id="Prompt_LocalArchivePatch_ConfirmRemove">
-            <translation locale="en_US">Confirm removing patch "{0}"?</translation>
         </phrase>
     </phrases>
 </localization>

@@ -69,13 +69,13 @@ public class LocalArchivePatch : IClientPatch
         var packedClientFiles = Path.Combine(this.systemInfo.ClientLocation, "res", "pack");
         if (this.ArchivePatch.Requirements.Contains("packed-client") && !Directory.Exists(packedClientFiles))
         {
-            throw new InvalidOperationException("Prompt_LocalArchivePatch_PackedClientRequired");
+            throw new InvalidOperationException("Patch_LocalArchivePatch_PackedClientRequiredPrompt");
         }
         
         // Verify the client is unpacked.
         if (this.ArchivePatch.Requirements.Contains("unpacked-client") && Directory.Exists(packedClientFiles))
         {
-            throw new InvalidOperationException("Prompt_LocalArchivePatch_UnpackedClientRequired");
+            throw new InvalidOperationException("Patch_LocalArchivePatch_UnpackedClientRequiredPrompt");
         }
     }
 
