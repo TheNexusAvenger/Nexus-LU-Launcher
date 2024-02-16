@@ -2,6 +2,8 @@
 <localization>
     <locales>
         <locale>en_US</locale>
+        <locale>de_DE</locale>
+        <locale>en_GB</locale>
     </locales>
     <phrases>
         <!--Server menu-->
@@ -227,6 +229,9 @@
         <phrase id="Settings_LauncherFilesLabel">
             <translation locale="en_US">Launcher Files</translation>
         </phrase>
+        <phrase id="Settings_LanguageLabel">
+            <translation locale="en_US">Language</translation>
+        </phrase>
         <phrase id="Settings_ChangeLocationBlockedFlatpak">
             <translation locale="en_US">Changing install locations is not supported with the Flatpak version of Nexus LU Launcher.</translation>
         </phrase>
@@ -235,6 +240,15 @@
         </phrase>
         <phrase id="Settings_ChangeLocationFolderPickerTitle">
             <translation locale="en_US">New Client Location</translation>
+        </phrase>
+        <phrase id="Settings_Language_en_US">
+            <translation locale="en_US">English (United States)</translation>
+        </phrase>
+        <phrase id="Settings_Language_de_DE">
+            <translation locale="en_US">German</translation>
+        </phrase>
+        <phrase id="Settings_Language_en_GB">
+            <translation locale="en_US">English (British)</translation>
         </phrase>
         
         <!--Bottom bar-->

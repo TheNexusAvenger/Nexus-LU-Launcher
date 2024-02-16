@@ -5,7 +5,9 @@ using System.Reflection;
 using System.Xml;
 using Avalonia.Controls;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.Gui.Component.Base;
+using Nexus.LU.Launcher.State.Model;
 
 namespace Nexus.LU.Launcher.Gui.Util;
 
@@ -14,7 +16,12 @@ public class Localization
     /// <summary>
     /// Current language to localize for.
     /// </summary>
-    public string CurrentLanguage { get; private set; } = "en_US";
+    public string CurrentLanguage { get; private set; }
+
+    /// <summary>
+    /// Languages that can be used.
+    /// </summary>
+    public readonly List<string> Languages = new List<string>();
 
     /// <summary>
     /// Event for the selected language changing.
@@ -36,7 +43,7 @@ public class Localization
     /// </summary>
     private Localization()
     {
-        // Read the XML locale file..
+        // Read the XML locale file.
         var localeXmlStream = AssetLoader.Open(new Uri($"avares://{Assembly.GetEntryAssembly()?.GetName().Name}/Assets/Locale.xml"));
         var localeXml = new StreamReader(localeXmlStream).ReadToEnd();
         
@@ -53,6 +60,19 @@ public class Localization
                 entry[translationXml.Attributes["locale"]!.Value] = translationXml.InnerText;
             }
             this.localizedStrings[localizationKey] = entry;
+        }
+        
+        // Add the language options.
+        foreach (XmlNode localeEntryXml in xmlDocument.SelectNodes("//locales/locale")!)
+        {
+            this.Languages.Add(localeEntryXml.InnerText);
+        }
+        
+        // Set the current language.
+        this.CurrentLanguage = SystemInfo.GetDefault().Settings.Locale;
+        if (!this.Languages.Contains(this.CurrentLanguage))
+        {
+            this.CurrentLanguage = this.Languages[0];
         }
     }
 
@@ -125,7 +145,26 @@ public class Localization
         var localizationId = GetText(textObject)!;
         
         // Set the text and connect the language changing.
-        LanguageChanged += (language) => SetText(textObject, this.GetLocalizedString(localizationId));
+        LanguageChanged += (language) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(() => SetText(textObject, this.GetLocalizedString(localizationId)));
+        };
         SetText(textObject, this.GetLocalizedString(localizationId));
+    }
+
+    /// <summary>
+    /// Sets the new current language.
+    /// </summary>
+    /// <param name="language">Language to change to.</param>
+    public void SetCurrentLanguage(string language)
+    {
+        // Set the language.
+        this.CurrentLanguage = language;
+        this.LanguageChanged?.Invoke(language);
+        
+        // Store the language.
+        var systemInfo = SystemInfo.GetDefault();
+        systemInfo.Settings.Locale = language;
+        systemInfo.SaveSettings();
     }
 }

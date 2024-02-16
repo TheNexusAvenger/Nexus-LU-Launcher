@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -69,6 +68,11 @@ public class LauncherSettings
     /// Whether to display logs after launching.
     /// </summary>
     public bool LogsEnabled { get; set; }
+
+    /// <summary>
+    /// Locale the user has selected.
+    /// </summary>
+    public string Locale { get; set; } = "en_US";
 
     /// <summary>
     /// Number of threads to use when extracting the client.

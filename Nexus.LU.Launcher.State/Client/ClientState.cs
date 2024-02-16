@@ -540,6 +540,7 @@ public class ClientState
         }
         bootConfig.Set("SERVERNAME", host.ServerName);
         bootConfig.Set("AUTHSERVERIP", host.ServerAddress);
+        bootConfig.Set("LOCALE", systemInfo.Settings.Locale);
         await File.WriteAllTextAsync(bootConfigLocation,bootConfig.ToString());
         
         // Apply any pre-launch patches.

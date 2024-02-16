@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Component.Prompt;
 using Nexus.LU.Launcher.Gui.Util;
@@ -23,6 +24,11 @@ public class SettingsView : Panel
     /// Display of the parent directory.
     /// </summary>
     private readonly TextBlock parentDirectoryDisplay;
+
+    /// <summary>
+    /// Menu for changing the language.
+    /// </summary>
+    private readonly ComboBox languageSelectMenu;
     
     /// <summary>
     /// Parent directory of the clients.
@@ -38,12 +44,28 @@ public class SettingsView : Panel
         AvaloniaXamlLoader.Load(this);
         this.logsToggle = this.Get<RoundedImageButton>("LogsToggle");
         this.parentDirectoryDisplay = this.Get<TextBlock>("ClientParentDirectory");
+        this.languageSelectMenu = this.Get<ComboBox>("LanguageSelect");
         this.UpdateSettings();
         
         // Apply the text.
         var localization = Localization.Get();
         localization.LocalizeText(this.Get<TextBlock>("ShowClientLogsLabel"));
         localization.LocalizeText(this.Get<TextBlock>("LauncherFilesLabel"));
+        localization.LocalizeText(this.Get<TextBlock>("LanguageLabel"));
+        
+        // Create the language menu.
+        foreach (var language in localization.Languages)
+        {
+            this.languageSelectMenu.Items.Add(new TextBlock()
+            {
+                Text = language,
+            });
+            if (language == localization.CurrentLanguage)
+            {
+                this.languageSelectMenu.SelectedIndex = this.languageSelectMenu.Items.Count - 1;
+            }
+        }
+        this.UpdateLanguageList();
         
         // Connect the events.
         this.logsToggle.ButtonPressed += (sender, args) =>
@@ -88,6 +110,14 @@ public class SettingsView : Panel
                     });
             });
         };
+        this.languageSelectMenu.SelectionChanged += (sender, args) =>
+        {
+            localization.SetCurrentLanguage(localization.Languages[languageSelectMenu.SelectedIndex]);
+        };
+        localization.LanguageChanged += (_) =>
+        {
+            Dispatcher.UIThread.InvokeAsync(this.UpdateLanguageList);
+        };
     }
 
     /// <summary>
@@ -112,5 +142,17 @@ public class SettingsView : Panel
         
         // Update the parent directory.
         this.parentDirectoryDisplay.Text = this.CurrentParentDirectory;
+    }
+
+    /// <summary>
+    /// Updates the language list.
+    /// </summary>
+    private void UpdateLanguageList()
+    {
+        var localization = Localization.Get();
+        for (var i = 0; i < localization.Languages.Count; i++)
+        {
+            ((TextBlock) this.languageSelectMenu.Items[i]!).Text = localization.GetLocalizedString($"Settings_Language_{localization.Languages[i]}");
+        }
     }
 }
