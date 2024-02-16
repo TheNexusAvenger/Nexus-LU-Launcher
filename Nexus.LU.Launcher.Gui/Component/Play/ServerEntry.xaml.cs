@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Component.Prompt;
 using Nexus.LU.Launcher.Gui.Util;
@@ -103,7 +104,7 @@ public class ServerEntry : Border
         };
         clientState.ServerList.ServerListChanged += () =>
         {
-            this.RunMainThread(this.UpdateSelectButton);
+            Dispatcher.UIThread.InvokeAsync(this.UpdateSelectButton);
         };
         
         // Update the initial button.

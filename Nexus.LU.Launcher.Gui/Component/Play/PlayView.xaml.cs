@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Nexus.LU.Launcher.Gui.Util;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.State.Client;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
@@ -44,11 +44,11 @@ public class PlayView : Panel
             var clientOutputScroll = this.Get<ScrollViewer>("ClientOutputScroll");
             clientState.ServerList.ServerListChanged += () =>
             {
-                this.RunMainThread(this.UpdateServerList);
+                Dispatcher.UIThread.InvokeAsync(this.UpdateServerList);
             };
             clientState.LauncherStateChanged += (state) =>
             {
-                this.RunMainThread(() =>
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     var outputVisible = SystemInfo.GetDefault().Settings.LogsEnabled && state == LauncherState.Launched;
                     playContainer.IsVisible = !outputVisible;

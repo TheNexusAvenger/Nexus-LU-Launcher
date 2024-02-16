@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Component.Patches;
 using Nexus.LU.Launcher.Gui.Component.Play;
@@ -71,7 +72,7 @@ public class ToggleView : Canvas
         };
         clientState.LauncherStateChanged += (state) =>
         {
-            this.RunMainThread(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
                 playButton.IsVisible = (state != LauncherState.Launched);
                 patchesButton.IsVisible = (state != LauncherState.Launched);

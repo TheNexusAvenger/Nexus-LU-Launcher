@@ -4,6 +4,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Component.Prompt;
 using Nexus.LU.Launcher.Gui.Util;
@@ -141,7 +142,7 @@ public class PatchEntry : Border
         this.PropertyChanged += (sender, args) =>
         {
             if (args.Property != PatchDataProperty) return;
-            this.RunMainThread(this.ConnectPatch);
+            Dispatcher.UIThread.InvokeAsync(this.ConnectPatch);
         };
         
         // Connect the buttons.
@@ -190,7 +191,7 @@ public class PatchEntry : Border
         }
         patch.StateChanged += (patchState) =>
         {
-            this.RunMainThread(this.UpdateButtons);
+            Dispatcher.UIThread.InvokeAsync(this.UpdateButtons);
         };
         this.UpdateButtons();
     }

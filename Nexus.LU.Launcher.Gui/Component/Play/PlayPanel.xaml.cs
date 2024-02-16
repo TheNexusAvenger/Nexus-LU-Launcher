@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.Gui.Component.Base;
 using Nexus.LU.Launcher.Gui.Component.Prompt;
 using Nexus.LU.Launcher.Gui.Util;
@@ -93,7 +94,7 @@ public class PlayPanel : DockPanel
         var clientState = ClientState.Get();
         clientState.LauncherProgressChanged += (progress) =>
         {
-            this.RunMainThread(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
                 this.OnLauncherProgress(progress);
             });
@@ -110,7 +111,7 @@ public class PlayPanel : DockPanel
     /// <param name="percent">Percent to fill.</param>
     private void SetLoadingBar(double percent)
     {
-        this.RunMainThread(() =>
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
             for (var i = 0; i < this.loadingDots.Count; i++)
             {
@@ -147,7 +148,7 @@ public class PlayPanel : DockPanel
     /// <param name="percent">Percent to fill.</param>
     private void SetLoadingAnimation(double percent)
     {
-        this.RunMainThread(() =>
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
             for (var i = 0; i < this.loadingDots.Count; i++)
             {
@@ -315,7 +316,7 @@ public class PlayPanel : DockPanel
                 // The launch may get delayed by pre-launch patches.
                 if (!SystemInfo.GetDefault().Settings.LogsEnabled)
                 {
-                    this.RunMainThread(() =>
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         this.GetWindow()?.Close();
                     });
@@ -326,7 +327,7 @@ public class PlayPanel : DockPanel
                 this.ClientOutputScroll!.ScrollChanged += (sender, args) =>
                 {
                     if (args.ExtentDelta.Y == 0) return;
-                    this.ClientOutputScroll.RunMainThread(this.ClientOutputScroll.ScrollToEnd);
+                    Dispatcher.UIThread.InvokeAsync(this.ClientOutputScroll.ScrollToEnd);
                 };
                 
                 // Combine the log outputs.
@@ -346,12 +347,12 @@ public class PlayPanel : DockPanel
                 combinedOutput.AddOutput(StoredLogOutput.Instance);
 
                 // Display the output.
-                this.RunMainThread(() =>
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     this.ClientOutput!.Text = combinedOutput.Output;
                 });
                 combinedOutput.OutputUpdated += (newOutput) => {
-                    this.RunMainThread(() =>
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         this.ClientOutput!.Text = newOutput;
                     });

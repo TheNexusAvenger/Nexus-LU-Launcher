@@ -2,7 +2,7 @@
 using System.IO;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using Nexus.LU.Launcher.Gui.Util;
+using Avalonia.Threading;
 using Nexus.LU.Launcher.State.Client;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
@@ -56,7 +56,7 @@ public class PatchesView : StackPanel
             this.patchEntries.Add(patchPanel);
             patch.StateChanged += (state) =>
             {
-                this.RunMainThread(UpdateList);
+                Dispatcher.UIThread.InvokeAsync(UpdateList);
             };
         }
         this.newArchivePatchEntry = new NewArchivePatchEntry();
@@ -65,18 +65,18 @@ public class PatchesView : StackPanel
         // Connect updating the patches visibility.
         clientState.LauncherStateChanged += (state) =>
         {
-            this.RunMainThread(this.UpdateVisibility);
+            Dispatcher.UIThread.InvokeAsync(this.UpdateVisibility);
         };
         clientState.PatchAdded += (patch) =>
         {
-            this.RunMainThread(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
                 var patchPanel = new PatchEntry();
                 patchPanel.PatchData = patch;
                 this.patchEntries.Add(patchPanel);
                 patch.StateChanged += (state) =>
                 {
-                    this.RunMainThread(UpdateList);
+                    Dispatcher.UIThread.InvokeAsync(UpdateList);
                 };
                 this.UpdateList();
             });
