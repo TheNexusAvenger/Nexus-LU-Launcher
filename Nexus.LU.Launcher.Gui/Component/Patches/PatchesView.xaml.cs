@@ -27,6 +27,11 @@ public class PatchesView : StackPanel
     private readonly StackPanel patchesList;
 
     /// <summary>
+    /// Entry for adding archive patches.
+    /// </summary>
+    private readonly NewArchivePatchEntry newArchivePatchEntry;
+
+    /// <summary>
     /// List of the patch entries.
     /// </summary>
     private readonly List<PatchEntry> patchEntries = new List<PatchEntry>();
@@ -54,12 +59,27 @@ public class PatchesView : StackPanel
                 this.RunMainThread(UpdateList);
             };
         }
+        this.newArchivePatchEntry = new NewArchivePatchEntry();
         this.UpdateList();
         
         // Connect updating the patches visibility.
         clientState.LauncherStateChanged += (state) =>
         {
             this.RunMainThread(this.UpdateVisibility);
+        };
+        clientState.PatchAdded += (patch) =>
+        {
+            this.RunMainThread(() =>
+            {
+                var patchPanel = new PatchEntry();
+                patchPanel.PatchData = patch;
+                this.patchEntries.Add(patchPanel);
+                patch.StateChanged += (state) =>
+                {
+                    this.RunMainThread(UpdateList);
+                };
+                this.UpdateList();
+            });
         };
         this.UpdateVisibility();
     }
@@ -85,6 +105,7 @@ public class PatchesView : StackPanel
             if (!this.patchesList.Children.Contains(entry)) continue;
             this.patchesList.Children.Remove(entry);
         }
+        this.patchesList.Children.Remove(this.newArchivePatchEntry);
             
         // Add the patches.
         foreach (var entry in this.patchEntries)
@@ -92,5 +113,6 @@ public class PatchesView : StackPanel
             if (entry.PatchData.State == ExtendedPatchState.Incompatible) continue;
             this.patchesList.Children.Add(entry);
         }
+        this.patchesList.Children.Add(this.newArchivePatchEntry);
     }
 }

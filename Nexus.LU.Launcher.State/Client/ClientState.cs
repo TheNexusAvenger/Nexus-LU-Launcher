@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Nexus.LU.Launcher.State.Client.Archive;
 using Nexus.LU.Launcher.State.Client.Patch;
@@ -57,6 +59,11 @@ public class ClientState
     /// This event is fired with every progress bar change. LauncherStateChanged is recommended.
     /// </summary>
     public event Action<LauncherProgress>? LauncherProgressChanged;
+
+    /// <summary>
+    /// Event for when a patch is added.
+    /// </summary>
+    public event Action<ExtendedClientPatch>? PatchAdded;
     
     /// <summary>
     /// List of patches for the launcher.
@@ -405,6 +412,88 @@ public class ClientState
             await patch.RefreshAsync();
         }
         this.Initialize();
+    }
+
+    /// <summary>
+    /// Adds an archive patch.
+    /// An exception is thrown if the patch can't be added.
+    /// </summary>
+    /// <param name="archivePath">Path of the archive.</param>
+    /// <returns>The patch created from the archive.</returns>
+    public async Task<ExtendedClientPatch> AddArchivePatchAsync(string archivePath)
+    {
+        // Throw an exception a patch with the same archive name exists.
+        var archiveFileName = Path.GetFileName(archivePath);
+        var systemInfo = SystemInfo.GetDefault();
+        if (systemInfo.Settings.ArchivePatches.FirstOrDefault(patch => patch.ArchiveName == archiveFileName) != null)
+        {
+            Logger.Error($"Archive {archiveFileName} already exists.");
+            throw new InvalidOperationException("Prompt_LocalArchivePatch_AlreadyExists");
+        }
+        
+        // Read the patch file.
+        string? patchJson = null;
+        try
+        {
+            using var archiveFile = ZipFile.OpenRead(archivePath);
+            var patchJsonEntry = archiveFile.Entries.FirstOrDefault(entry => entry.FullName == "patch.json");
+            if (patchJsonEntry != null)
+            {
+                patchJson = await (new StreamReader(patchJsonEntry.Open())).ReadToEndAsync();
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Failed to read archive {archiveFileName}.\n{e}");
+            throw new InvalidOperationException("Prompt_LocalArchivePatch_ArchiveFileNotReadable");
+        }
+        if (patchJson == null)
+        {
+            Logger.Error($"Archive {archiveFileName} does not have patch.json.");
+            throw new InvalidOperationException("Prompt_LocalArchivePatch_PatchFileNotFound");
+        }
+        
+        // Parse the archive file.
+        ArchivePatchJson? data ;
+        try
+        {
+            data = JsonSerializer.Deserialize<ArchivePatchJson>(patchJson, ArchivePatchJsonJsonContext.Default.ArchivePatchJson);
+        }
+        catch (Exception e)
+        {
+            Logger.Error($"Archive {archiveFileName} is unreadable.\n{e}");
+            throw new InvalidOperationException("Prompt_LocalArchivePatch_PatchFileNotReadable");
+        }
+        if (data == null)
+        {
+            Logger.Error($"Archive {archiveFileName} is unreadable.");
+            throw new InvalidOperationException("Prompt_LocalArchivePatch_PatchFileNotReadable");
+        }
+        if (data.Name == null || data.Description == null)
+        {
+            Logger.Error($"Archive {archiveFileName} patch.json file is invalid.");
+            throw new InvalidOperationException("Prompt_LocalArchivePatch_PatchFileInvalid");
+        }
+        
+        // Create the patch and verify it can be applied.
+        var archivePatchData = new ArchivePatch()
+        {
+            ArchiveName = archiveFileName,
+            Name = data.Name,
+            Description = data.Description,
+            Requirements = data.Requirements,
+        };
+        var archivePatch = new LocalArchivePatch(systemInfo, this.ServerList, archivePatchData);
+        archivePatch.VerifyRequirements();
+        
+        // Add and return the patch.
+        var extendedClientPatch = new ExtendedClientPatch(archivePatch);
+        File.Copy(archivePath, archivePatch.ArchivePath, true);
+        systemInfo.Settings.ArchivePatches.Add(archivePatchData);
+        systemInfo.SaveSettings();
+        this.Patches.Add(extendedClientPatch);
+        this.PatchAdded?.Invoke(extendedClientPatch);
+        return extendedClientPatch;
     }
     
     /// <summary>

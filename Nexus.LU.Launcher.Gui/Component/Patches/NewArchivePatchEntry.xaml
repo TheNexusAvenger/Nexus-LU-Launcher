@@ -1,0 +1,13 @@
+﻿<Border xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Nexus.LU.Launcher.Gui.Component.Base="clr-namespace:Nexus.LU.Launcher.Gui.Component.Base"
+        x:Class="Nexus.LU.Launcher.Gui.Component.Patches.NewArchivePatchEntry"
+        MinHeight="58" Margin="5,5,5,0" Background="#1A1B24" CornerRadius="3">
+    <DockPanel HorizontalAlignment="Center">
+        <Nexus.LU.Launcher.Gui.Component.Base:RoundedButton Name="AddArchivePatchButton" Color="#0078CD"
+                                                            Width="110" Height="38">
+            <TextBlock TextAlignment="Center" Foreground="#FFFFFF" FontFamily="Arial" Name="AddArchivePatchButtonText"
+                       FontWeight="Bold" FontSize="24" Margin="0,2,0,0">Patch_AddArchivePatchButtonText</TextBlock>
+        </Nexus.LU.Launcher.Gui.Component.Base:RoundedButton>
+    </DockPanel>
+</Border>

@@ -17,7 +17,7 @@ public class LocalArchivePatch : IClientPatch
     /// <summary>
     /// State of the patch.
     /// </summary>
-    public PatchState State { get; private set; } = PatchState.Loading;
+    public PatchState State { get; private set; }
 
     /// <summary>
     /// Event for the state changing.
@@ -32,7 +32,7 @@ public class LocalArchivePatch : IClientPatch
     /// <summary>
     /// Path of the archive file.
     /// </summary>
-    private string ArchivePath => Path.Combine(this.systemInfo.SystemFileLocation, "PatchArchives", this.ArchivePatch.ArchiveName);
+    public string ArchivePath => Path.Combine(this.systemInfo.SystemFileLocation, "PatchArchives", this.ArchivePatch.ArchiveName);
 
     /// <summary>
     /// System info of the client.
@@ -55,7 +55,7 @@ public class LocalArchivePatch : IClientPatch
         this.systemInfo = systemInfo;
         this.serverList = serverList;
         this.ArchivePatch = archivePatch;
-        this.RefreshAsync().Wait();
+        this.State = this.ArchivePatch.Installed ? PatchState.Installed : PatchState.NotInstalled;
     }
 
     /// <summary>

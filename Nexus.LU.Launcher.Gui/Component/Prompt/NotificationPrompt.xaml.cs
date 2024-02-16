@@ -9,12 +9,12 @@ using Nexus.LU.Launcher.Gui.Component.Base;
 
 namespace Nexus.LU.Launcher.Gui.Component.Prompt;
 
-public class ConfirmPrompt : Window
+public class NotificationPrompt : Window
 {
     /// <summary>
     /// Prompt that is currently opened.
     /// </summary>
-    public static ConfirmPrompt? CurrentPrompt { get; private set; }
+    public static NotificationPrompt? CurrentPrompt { get; private set; }
 
     /// <summary>
     /// Whether a prompt is open.
@@ -32,16 +32,6 @@ public class ConfirmPrompt : Window
     }
     
     /// <summary>
-    /// Event for the prompt being cancelled.
-    /// </summary>
-    public static readonly RoutedEvent<RoutedEventArgs> CancelledEvent = RoutedEvent.Register<InputElement, RoutedEventArgs>(nameof(PointerEntered), RoutingStrategies.Direct);
-    public event EventHandler<RoutedEventArgs> Cancelled
-    {
-        add => AddHandler(CancelledEvent, value);
-        remove => RemoveHandler(CancelledEvent, value);
-    }
-    
-    /// <summary>
     /// Text of the prompt.
     /// </summary>
     public string Text
@@ -56,9 +46,9 @@ public class ConfirmPrompt : Window
     public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<Window, string>(nameof(Text), "");
     
     /// <summary>
-    /// Creates the confirm prompt.
+    /// Creates the notification prompt.
     /// </summary>
-    public ConfirmPrompt()
+    public NotificationPrompt()
     {
         // Load the XAML.
         AvaloniaXamlLoader.Load(this);
@@ -73,12 +63,6 @@ public class ConfirmPrompt : Window
             CurrentPrompt = null;
             RaiseEvent(new RoutedEventArgs(ConfirmedEvent));
         };
-        this.Get<RoundedImageButton>("Cancel").ButtonPressed += (sender, args) =>
-        {
-            this.Close();
-            CurrentPrompt = null;
-            RaiseEvent(new RoutedEventArgs(CancelledEvent));
-        };
     }
 
     /// <summary>
@@ -86,18 +70,16 @@ public class ConfirmPrompt : Window
     /// </summary>
     /// <param name="message">Message to open.</param>
     /// <param name="confirmed">Callback when the prompt is confirmed.</param>
-    /// <param name="cancelled">Callback when the prompt is cancelled.</param>
-    public static void OpenPrompt(string message, Action? confirmed = null, Action? cancelled = null)
+    public static void OpenPrompt(string message, Action? confirmed = null)
     {
         if (PromptOpen) return;
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            CurrentPrompt = new ConfirmPrompt
+            CurrentPrompt = new NotificationPrompt
             {
                 Text = message
             };
             if (confirmed != null) { CurrentPrompt.Confirmed += (sender, args) => confirmed(); }
-            if (cancelled != null) { CurrentPrompt.Cancelled += (sender, args) => cancelled(); }
             CurrentPrompt.Show();
         });
     }
