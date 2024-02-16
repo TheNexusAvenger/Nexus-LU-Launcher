@@ -181,8 +181,8 @@ public class PatchEntry : Border
         var patch = this.PatchData;
         if (patch.ClientPatch is LocalArchivePatch localArchivePatch)
         {
-            this.patchName.Text = localArchivePatch.ArchivePatch.Name.GetValueOrDefault(localization.CurrentLanguage) ?? $"Patch_Name_{localization.CurrentLanguage}_{localArchivePatch.ArchivePatch.ArchiveName}";
-            this.patchDescription.Text = localArchivePatch.ArchivePatch.Description.GetValueOrDefault(localization.CurrentLanguage) ?? $"Patch_Description_{localization.CurrentLanguage}_{localArchivePatch.ArchivePatch.ArchiveName}";
+            this.patchName.Text = localArchivePatch.ArchivePatch.Name.GetValueOrDefault(localization.CurrentLanguage) ?? localArchivePatch.ArchivePatch.ArchiveName;
+            this.patchDescription.Text = localArchivePatch.ArchivePatch.Description.GetValueOrDefault(localization.CurrentLanguage) ?? "";
         }
         else
         {
