@@ -22,6 +22,7 @@
 			<caption>Nexus LU Launcher example server list</caption>
 	  </screenshot>
 	</screenshots>
+	<launchable type="desktop-id">io.thenexusavenger.Nexus-LU-Launcher.desktop</launchable>
 	<releases>
 		<release version="V.2.2.0" date="2024-02-16">
 			<description>
