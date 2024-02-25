@@ -24,6 +24,15 @@
 	</screenshots>
 	<launchable type="desktop-id">io.thenexusavenger.Nexus-LU-Launcher.desktop</launchable>
 	<releases>
+		<release version="V.2.2.1" date="2024-02-25">
+			<description>
+				<ul>
+					<li>Fixed archive-based patches failing to copy files.</li>
+					<li>Fixed client crashing due to UGCSERVERIP not being set.</li>
+					<li>Fixed Steam One-Click Patch not forcing maximized window.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="V.2.2.0" date="2024-02-16">
 			<description>
 				<ul>
