@@ -488,6 +488,11 @@ public class ClientState
         
         // Add and return the patch.
         var extendedClientPatch = new ExtendedClientPatch(archivePatch);
+        var archiveParentDirectory = Path.GetDirectoryName(archivePatch.ArchivePath)!;
+        if (!Directory.Exists(archiveParentDirectory))
+        {
+            Directory.CreateDirectory(archiveParentDirectory);
+        }
         File.Copy(archivePath, archivePatch.ArchivePath, true);
         systemInfo.Settings.ArchivePatches.Add(archivePatchData);
         systemInfo.SaveSettings();
