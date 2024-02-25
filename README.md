@@ -17,7 +17,7 @@ Instructions on how to get one are not provided.
 
 ### Windows
 [Download and extract `Nexus-LU-Launcher-Windows-x64.zip` from the releases and run the executable.](https://github.com/TheNexusAvenger/Nexus-LU-Launcher/releases/latest)
-Compatibility for Windows 8.1 and older is not guarenteed.
+Compatibility for Windows 8.1 and older is not guaranteed.
 
 ### macOS
 [Download and extract `Nexus-LU-Launcher-macOS-x64.zip` from the releases and run the application.](https://github.com/TheNexusAvenger/Nexus-LU-Launcher/releases/latest)
@@ -109,7 +109,7 @@ There are 4 requirements:
    done by selecting "Send To" > "Compressed (zipped) folder" on the folder containing
    the patch files.
 3. A valid `patch.json` file exists in the top level of the archive.
-4. If a `boot.cfg` is included, make sure the server name and addess are correct.
+4. If a `boot.cfg` is included, make sure the server name and address are correct.
 
 ### File Structure
 When using "Send To" > "Compressed (zipped) folder" on a folder, it will make
@@ -160,9 +160,9 @@ unpacked client.
     "de_DE": "My description, but German.",
     "en_GB": "My description, but British."
   },
-  "requirements": {
+  "requirements": [
     "unpacked-client"
-  }
+  ]
 }
 ```
 
@@ -180,7 +180,7 @@ This is the minimum recommended `patch.json`. It has no requirements.
 
 ### `boot.cfg`
 Patches can include `boot.cfg`, but it will not replace the stored copy.
-Becuase this file is managed, instead of using the file directly, `SERVERNAME`
+Because this file is managed, instead of using the file directly, `SERVERNAME`
 and `AUTHSERVERIP` from the file will be added as a server list entry.
 Updating addresses for a given name with an updated patch is supported as
 well. **Make sure to make `SERVERNAME` (likely) unique, and avoid the default
