@@ -260,6 +260,7 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         {
             // Change the settings.
             var settingsDocument = XDocument.Load(settingsPath);
+            var containsWindowMaximized = false;
             foreach (var element in settingsDocument.Descendants("ConfigurableOption"))
             {
                 var nameAttribute = element.Attribute("name");
@@ -268,6 +269,21 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
                 var valueElement = element.Descendants("Value").FirstOrDefault();
                 if (valueElement == null) continue;
                 valueElement.Value = "1"; // For WINDOWED, this makes it not full screen. For WINDOW_MAXIMIZED, this makes it maximized.
+                if (nameAttribute.Value == "WINDOW_MAXIMIZED")
+                {
+                    containsWindowMaximized = true;
+                }
+            }
+            
+            // Add an entry for the window being maximized.
+            // For some reason, this is not included by default.
+            if (!containsWindowMaximized)
+            {
+                var configurableOptions = settingsDocument.Descendants("ConfigurableOptions").First();
+                var newElement = new XElement("ConfigurableOption", new XElement("ValueSet", new XElement("Value", "1")));
+                newElement.SetAttributeValue("name", "WINDOW_MAXIMIZED");
+                newElement.SetAttributeValue("type", "7");
+                configurableOptions.Add(newElement);
             }
 
             // Save the settings.
