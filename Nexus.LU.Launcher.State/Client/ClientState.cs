@@ -546,6 +546,10 @@ public class ClientState
         bootConfig.Set("SERVERNAME", host.ServerName);
         bootConfig.Set("AUTHSERVERIP", host.ServerAddress);
         bootConfig.Set("LOCALE", systemInfo.Settings.Locale);
+        if (bootConfig.Get<string>("UGCSERVERIP") == "localhost")
+        {
+            bootConfig.Set("UGCSERVERIP", "404.thenexusavenger.io");
+        }
         await File.WriteAllTextAsync(bootConfigLocation,bootConfig.ToString());
         
         // Apply any pre-launch patches.
