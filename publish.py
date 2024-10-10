@@ -100,7 +100,7 @@ for macOsBuild in MACOS_PACKAGE_BUILDS:
 
 # Write any files about limitations.
 if buildMode == "macOS":
-    with open("bin/requirements-maxos.txt", "w") as file:
+    with open("bin/requirements-macos.txt", "w") as file:
         file.write("The following macOS version was used and will be the minimum version that will work with this relase:\n")
         file.write(platform.mac_ver()[0])
 elif buildMode == "Linux":
