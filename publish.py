@@ -55,19 +55,19 @@ if os.path.exists("bin"):
 os.mkdir("bin")
 
 # Compile the releases.
-for platform in PLATFORMS:
+for platformData in PLATFORMS:
     # Compile the project for the platform.
-    print("Exporting for " + platform[0])
-    subprocess.call(["dotnet", "publish", "-r", platform[1], "-c", "Release", "Nexus.LU.Launcher.Gui/Nexus.LU.Launcher.Gui.csproj"])
+    print("Exporting for " + platformData[0])
+    subprocess.call(["dotnet", "publish", "-r", platformData[1], "-c", "Release", "Nexus.LU.Launcher.Gui/Nexus.LU.Launcher.Gui.csproj"])
 
     # Clear the unwanted files of the compile.
     dotNetVersion = os.listdir("Nexus.LU.Launcher.Gui/bin/Release/")[0]
-    outputDirectory = "Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish"
+    outputDirectory = "Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + platformData[1] + "/publish"
     for file in os.listdir(outputDirectory):
         if file.endswith(".pdb"):
             os.remove(outputDirectory + "/" + file)
     if len(os.listdir(outputDirectory)) == 0 or (not os.path.exists(outputDirectory + "/Nexus.LU.Launcher.Gui") and not os.path.exists(outputDirectory + "/Nexus.LU.Launcher.Gui.exe")):
-        print("Build for " + platform[0] + " failed and will not be created.")
+        print("Build for " + platformData[0] + " failed and will not be created.")
         continue
 
     # Rename the GUI executables.
@@ -83,7 +83,7 @@ for platform in PLATFORMS:
         os.rename(outputDirectory + "/Nexus.LU.Launcher.Gui.exe", windowsOutputFile)
 
     # Create the archive.
-    shutil.make_archive("bin/Nexus-LU-Launcher-" + platform[0], "zip", "Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + platform[1] + "/publish")
+    shutil.make_archive("bin/Nexus-LU-Launcher-" + platformData[0], "zip", "Nexus.LU.Launcher.Gui/bin/Release/" + dotNetVersion + "/" + platformData[1] + "/publish")
 
 # Package the macOS release.
 dotNetVersion = os.listdir("Nexus.LU.Launcher.Gui/bin/Release/")[0]

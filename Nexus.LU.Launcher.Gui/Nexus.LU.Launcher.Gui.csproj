@@ -17,8 +17,6 @@
             <SubType>Designer</SubType>
         </AvaloniaResource>
         <AvaloniaResource Include="Assets\**" />
-        <!--Required for macOS publishing. (https://github.com/dotnet/runtime/issues/93044)-->
-        <LinkerArg Include="-Wl,-ld_classic" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
     </ItemGroup>
 
     <ItemGroup>
