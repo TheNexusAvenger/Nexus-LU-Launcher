@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Nexus.LU.Launcher.State.Client.Patch.Valve;
@@ -138,6 +139,28 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
             });
             shortcutsFile.Write(shortcutsPath);
             entryAdded = true;
+            
+            // Prepare the controller mapping.
+            var userId = Path.GetFileName(userPath);
+            var controllerConfigPath = Path.Combine(this.steamLocation!, "steamapps", "common", "Steam Controller Configs", userId, "config", "nexus lu launcher");
+            Logger.Info($"Adding controller files to {controllerConfigPath}");
+            if (!Directory.Exists(controllerConfigPath))
+            {
+                Directory.CreateDirectory(controllerConfigPath);
+            }
+            
+            // Copy the files.
+            var assembly = Assembly.GetAssembly(typeof(SteamOneClickPatch))!;
+            var assemblyName = assembly.GetName().Name;
+            foreach (var assemblyResource in assembly.GetManifestResourceNames())
+            {
+                var basePath = $"{assemblyName}.Assets.Steam.ControllerConfigs.";
+                if (!assemblyResource.StartsWith(basePath)) continue;
+                var fileName = assemblyResource.Replace(basePath, "");
+                var filePath = Path.Combine(controllerConfigPath, fileName);
+                Logger.Info($"Adding controller file to {filePath}");
+                await assembly.GetManifestResourceStream(assemblyResource)!.CopyToAsync(new FileStream(filePath, FileMode.Create, FileAccess.Write));
+            }
         }
         
         // Shut down Steam if an entry was added.
@@ -196,9 +219,6 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
             }
         }
         
-        // Prompt setting the controller layout.
-        await this.PromptControllerLayoutAsync();
-        
         // Set the patch as installed and ready for the settings change.
         if (this.systemInfo.GetPatchStore("SteamOneClick", "State") == null)
         {
@@ -222,19 +242,13 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
     /// Performs operations between setting the boot.cfg and launching
     /// the client. This will yield launching the client.
     /// </summary>
-    public async Task OnClientRequestLaunchAsync()
+    public Task OnClientRequestLaunchAsync()
     {
-        // Prompt to set the controller layout.
-        if (this.systemInfo.GetPatchStore("SteamOneClick", "LastSteamShutdownLine") != null)
-        {
-            await this.PromptControllerLayoutAsync();
-        }
-        
         // Return if the patch is not active.
         if (this.systemInfo.GetPatchStore("SteamOneClick", "State") != "PendingSettingsChange")
         {
             Logger.Debug("Settings file not changed because the state was not set to do so.");
-            return;
+            return Task.CompletedTask;
         }
 
         // Find the LEGO Universe settings file.
@@ -253,7 +267,7 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         if (!File.Exists(settingsPath))
         {
             Logger.Warn("Settings file not found. This is normal if this is the first launch of the game.");
-            return;
+            return Task.CompletedTask;
         }
         
         try
@@ -298,38 +312,6 @@ public class SteamOneClickPatch : IPreLaunchClientPatch
         {
             Logger.Error($"Failed to update client settings.\n{e}");
         }
-    }
-
-    /// <summary>
-    /// Prompts to set the controller layout.
-    /// </summary>
-    private async Task PromptControllerLayoutAsync()
-    {
-        // Return if the last shutdown line is the same.
-        var previousLastShutdownTime = this.systemInfo.GetPatchStore("SteamOneClick", "LastSteamShutdownLine");
-        if (previousLastShutdownTime != null)
-        {
-            var lastShutdownLine = "";
-            var bootstrapLogPath = Path.Combine(this.steamLocation!, "logs", "bootstrap_log.txt");
-            foreach (var line in await File.ReadAllLinesAsync(bootstrapLogPath))
-            {
-                if (!line.Contains("Shutdown")) continue;
-                lastShutdownLine = line;
-            }
-            if (lastShutdownLine == previousLastShutdownTime)
-            {
-                Logger.Warn("Controller layout prompt is pending, but a restart of Steam was not detected.");
-                return;
-            }
-            this.systemInfo.SetPatchStore("SteamOneClick", "LastSteamShutdownLine", null);
-            this.systemInfo.SaveSettings();
-        }
-        
-        // Prompt to change the layout.
-        Logger.Debug("Prompting for controller layout.");
-        var webProcess = new Process(); 
-        webProcess.StartInfo.FileName = "steam://controllerconfig/2672019776/3160129134";
-        webProcess.StartInfo.UseShellExecute = true;
-        webProcess.Start();
+        return Task.CompletedTask;
     }
 }
