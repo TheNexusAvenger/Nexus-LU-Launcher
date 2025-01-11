@@ -263,6 +263,14 @@
             <translation locale="en_US">Removes the advertisement for DLU from the zone loading screen. This is to return the localization file back to the original version.</translation>
             <translation locale="de_DE">Entfernt die Werbeanzeige für DLU vom Zonenladebildschirm. Dies wird getan, um die Lokalisationsdatei zu ihrer ursprünglichen Version zurückzusetzen.</translation>
         </phrase>
+        <phrase id="Patch_Name_EnableWineWaylandPatch">
+            <translation locale="en_US">Enable WINE Wayland Driver</translation>
+            <!--TODO: de_DE translation-->
+        </phrase>
+        <phrase id="Patch_Description_EnableWineWaylandPatch">
+            <translation locale="en_US">Enables the WINE Wayland driver for native Wayland support. Requires WINE 8.4 or later.</translation>
+            <!--TODO: de_DE translation-->
+        </phrase>
         
         <!--Patch states-->
         <phrase id="Patch_Status_Loading">

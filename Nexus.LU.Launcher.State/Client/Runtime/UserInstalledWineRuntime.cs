@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Nexus.LU.Launcher.State.Enum;
+using Nexus.LU.Launcher.State.Model;
 
 namespace Nexus.LU.Launcher.State.Client.Runtime;
 
@@ -13,7 +14,21 @@ public class UserInstalledWineRuntime : IRuntime
     /// State of the runtime.
     /// </summary>
     public RuntimeState RuntimeState => Environment.GetEnvironmentVariable("PATH")!.Split(":").Any(directory => File.Exists(Path.Combine(directory, "wine"))) ? RuntimeState.Installed : RuntimeState.ManualInstallRequired;
+    
+    /// <summary>
+    /// System info of the client.
+    /// </summary>
+    private readonly SystemInfo systemInfo;
 
+    /// <summary>
+    /// Creates a user installed WINE runtime.
+    /// </summary>
+    /// <param name="systemInfo">System info of the client.</param>
+    public UserInstalledWineRuntime(SystemInfo systemInfo)
+    {
+        this.systemInfo = systemInfo;
+    }
+    
     /// <summary>
     /// Attempts to install the emulator.
     /// </summary>
@@ -30,6 +45,23 @@ public class UserInstalledWineRuntime : IRuntime
     /// <returns>The process of the runtime.</returns>
     public Process RunApplication(string executablePath, string workingDirectory)
     {
+        // Determine if the Wayland driver should be used.
+        var useWayland = false;
+        if (this.systemInfo.GetPatchStore("EnableWineWayland", "ForceWaylandDriver")?.ToLower() == "true")
+        {
+            var sessionType = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE");
+            if (sessionType?.ToLower() == "wayland")
+            {
+                Logger.Debug("The WINE Wayland driver will be used.");
+                useWayland = true;
+            }
+            else
+            {
+                Logger.Warn($"The Wayland driver was requested but {sessionType} was detected.");
+            }
+        }
+
+        // Start the WINE process.
         Logger.Info("Starting with user-provided WINE install.");
         var clientProcess = new Process
         {
@@ -43,6 +75,11 @@ public class UserInstalledWineRuntime : IRuntime
             }
         };
         clientProcess.StartInfo.EnvironmentVariables["WINEDLLOVERRIDES"] = "dinput8.dll=n,b";
+        if (useWayland)
+        {
+            // On older WINE installs, this can be required to force starting with the Wayland driver instead of XWayland.
+            clientProcess.StartInfo.EnvironmentVariables["DISPLAY"] = "";
+        }
         clientProcess.StartInfo.EnvironmentVariables["WINEPREFIX"] = Path.Combine(workingDirectory, "..", "WinePrefix");
         return clientProcess;
     }

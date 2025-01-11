@@ -111,6 +111,7 @@ public class ClientState
             new ExtendedClientPatch(new FixAssemblyVendorHologramPatch(systemInfo)),
             new ExtendedClientPatch(new FixAvantGardensSurvivalCrashPatch(systemInfo)),
             new ExtendedClientPatch(new RemoveDluPatchAd(systemInfo)),
+            new ExtendedClientPatch(new EnableWineWaylandPatch(systemInfo)),
         };
         foreach (var archivePatch in systemInfo.Settings.ArchivePatches)
         {
@@ -122,7 +123,7 @@ public class ClientState
         {
             new NativeWindowsRuntime(),
             new MacOsWineRuntime(),
-            new UserInstalledWineRuntime(),
+            new UserInstalledWineRuntime(systemInfo),
         };
         
         // Initialize the state.
