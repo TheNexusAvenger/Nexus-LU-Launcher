@@ -24,6 +24,14 @@
 	</screenshots>
 	<launchable type="desktop-id">io.thenexusavenger.Nexus-LU-Launcher.desktop</launchable>
 	<releases>
+		<release version="V.2.3.0" date="2025-01-11">
+			<description>
+				<ul>
+					<li>Added WINE Wayland option in patch list.</li>
+					<li>Migrated to .NET 9.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="V.2.2.1" date="2024-02-25">
 			<description>
 				<ul>

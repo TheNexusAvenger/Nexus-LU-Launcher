@@ -69,7 +69,7 @@ By default, Nexus LU Launcher will download files to a directory named
 `.nlul` in your user directory. This can be changed in the "Settings" tab.
 
 # Building
-Nexus LEGO Universe Launcher requires .NET 8.0 to be installed
+Nexus LEGO Universe Launcher requires .NET 9.0 to be installed
 since it allows packaging as single files without the requirement of
 decompressing files. After cloning the repository **with the submodules**,
 building can be done with the `dotnet build`:
