@@ -316,7 +316,7 @@ public class PlayPanel : DockPanel
                 // The launch may get delayed by pre-launch patches.
                 if (!SystemInfo.GetDefault().Settings.LogsEnabled)
                 {
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    var _ = Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         this.GetWindow()?.Close();
                     });
@@ -347,7 +347,7 @@ public class PlayPanel : DockPanel
                 combinedOutput.AddOutput(StoredLogOutput.Instance);
 
                 // Display the output.
-                Dispatcher.UIThread.InvokeAsync(() =>
+                var __ = Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     this.ClientOutput!.Text = combinedOutput.Output;
                 });

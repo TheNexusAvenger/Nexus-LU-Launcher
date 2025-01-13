@@ -110,7 +110,7 @@ public class ClientArchive
                 // Create and return the archive.
                 return new ClientArchive(archiveLocation, filteredEntries);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Output a warning if the archive type is not correct.
                 Logger.Warn($"File \"{archiveLocation}\" is not a {archiveType} file.");

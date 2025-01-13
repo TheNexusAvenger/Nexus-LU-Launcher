@@ -10,7 +10,7 @@ public class RarFileArchiveEntry : IClientArchiveEntry
     /// <summary>
     /// Path of the file.
     /// </summary>
-    public string Path => this.entry.Key;
+    public string Path => this.entry.Key!;
 
     /// <summary>
     /// Length of the file for the entry.
