@@ -265,11 +265,11 @@
         </phrase>
         <phrase id="Patch_Name_EnableWineWaylandPatch">
             <translation locale="en_US">Enable WINE Wayland Driver</translation>
-            <!--TODO: de_DE translation-->
+            <translation locale="de_DE">Aktiviere WINE Wayland Treiber</translation>
         </phrase>
         <phrase id="Patch_Description_EnableWineWaylandPatch">
-            <translation locale="en_US">Enables the WINE Wayland driver for native Wayland support. Requires WINE 8.4 or later.</translation>
-            <!--TODO: de_DE translation-->
+            <translation locale="en_US">Enables the WINE Wayland driver for native Wayland support. Requires WINE 8.4 or higher.</translation>
+            <translation locale="de_DE">Aktiviert den WINE Wayland Treiber für native Wayland Unterstützung. Benötigt WINE 8.4 oder höher.</translation>
         </phrase>
         
         <!--Patch states-->
