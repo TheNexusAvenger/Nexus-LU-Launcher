@@ -20,13 +20,13 @@ public class RarFileArchiveEntry : IClientArchiveEntry
     /// <summary>
     /// .rar file entry to use.
     /// </summary>
-    private readonly RarArchiveEntry entry;
+    private readonly IArchiveEntry entry;
 
     /// <summary>
     /// Creates a .rar archive entry.
     /// </summary>
     /// <param name="entry">.rar file entry to use.</param>
-    private RarFileArchiveEntry(RarArchiveEntry entry)
+    private RarFileArchiveEntry(IArchiveEntry entry)
     {
         this.entry = entry;
     }
@@ -38,7 +38,7 @@ public class RarFileArchiveEntry : IClientArchiveEntry
     /// <returns>Entries for the archive.</returns>
     public static List<IClientArchiveEntry> GetEntries(string path)
     {
-        var rarFile = RarArchive.Open(path);
+        var rarFile = RarArchive.OpenArchive(path);
         return rarFile.Entries.Where(entry => !entry.IsDirectory).Select(entry => (IClientArchiveEntry) new RarFileArchiveEntry(entry)).ToList();
     }
     

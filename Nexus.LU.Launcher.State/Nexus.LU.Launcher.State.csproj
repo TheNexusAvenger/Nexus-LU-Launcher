@@ -9,7 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="Nexus.Logging" Version="1.3.0" />
-      <PackageReference Include="SharpCompress" Version="0.38.0" />
+      <PackageReference Include="SharpCompress" Version="0.46.3" />
     </ItemGroup>
 
 </Project>
