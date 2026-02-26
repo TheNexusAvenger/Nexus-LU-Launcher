@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Nexus.LU.Launcher.State.Client.Patch;
 using Nexus.LU.Launcher.State.Enum;
 using Nexus.LU.Launcher.State.Model;
 
@@ -49,15 +50,14 @@ public class UserInstalledWineRuntime : IRuntime
         var useWayland = false;
         if (this.systemInfo.GetPatchStore("EnableWineWayland", "ForceWaylandDriver")?.ToLower() == "true")
         {
-            var sessionType = Environment.GetEnvironmentVariable("XDG_SESSION_TYPE");
-            if (sessionType?.ToLower() == "wayland")
+            if (EnableWineWaylandPatch.CanUseWayland())
             {
                 Logger.Debug("The WINE Wayland driver will be used.");
                 useWayland = true;
             }
             else
             {
-                Logger.Warn($"The Wayland driver was requested but {sessionType} was detected.");
+                Logger.Warn($"The Wayland driver was requested but {Environment.GetEnvironmentVariable("XDG_SESSION_TYPE")} was detected.");
             }
         }
 

@@ -46,7 +46,7 @@ public class EnableWineWaylandPatch : IClientPatch
     /// The launcher might be launched under X11 in Gamescope, so this handles that special case.
     /// </summary>
     /// <returns></returns>
-    private static bool CanUseWayland()
+    public static bool CanUseWayland()
     {
         // Check if XDG_SESSION_TYPE is Wayland.
         if (Environment.GetEnvironmentVariable("XDG_SESSION_TYPE")?.ToLower() == "wayland")
