@@ -24,9 +24,17 @@
 	</screenshots>
 	<launchable type="desktop-id">io.thenexusavenger.Nexus-LU-Launcher.desktop</launchable>
 	<releases>
+		<release version="V.2.4.1" date="2026-08-30">
+			<description>
+				<ul>
+					<li>Fixed not launching on X11 on Linux.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="V.2.4.0" date="2026-08-30">
 			<description>
 				<ul>
+					<li>Enabled Wayland in Avalonia (UI framework).</li>
 					<li>Removed special case for detecting Wayland capability for the Steam Deck using Gamescope due to not working previously.</li>
 					<li>Migrated to .NET 10.</li>
 				</ul>

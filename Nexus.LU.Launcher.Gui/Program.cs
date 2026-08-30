@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Nexus.LU.Launcher.State.Client.Patch;
 
 namespace Nexus.LU.Launcher.Gui;
 
@@ -10,9 +11,11 @@ public class Program
     /// <param name="args">Arguments from the command line.</param>
     public static void Main(string[] args)
     {
-        AppBuilder.Configure<App>()
-            .UsePlatformDetect()
-            .UseWayland()
-            .StartWithClassicDesktopLifetime(args);
+        var builder = AppBuilder.Configure<App>().UsePlatformDetect();
+        if (EnableWineWaylandPatch.CanUseWayland())
+        {
+            builder.UseWayland();
+        }
+        builder.StartWithClassicDesktopLifetime(args);
     }
 }
