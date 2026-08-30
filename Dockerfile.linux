@@ -1,8 +1,8 @@
-FROM registry.access.redhat.com/ubi8/dotnet-90
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
 
 # Prepare the build dependences.
 USER root
-RUN microdnf install clang zlib-devel python3
+RUN apt update && apt install -y clang zlib1g-dev python3
 
 # Copy the launcher build files and run the publish.
 WORKDIR /build

@@ -9,7 +9,7 @@
         Width="680" Height="470"
         TransparencyLevelHint="Transparent"
         Background="Transparent"
-        SystemDecorations="None"
+        WindowDecorations="None"
         Title="Nexus LEGO Universe Launcher"
         Icon="/Assets/Images/NexusLegoUniverseLauncherLogo.ico">
     <Canvas>
