@@ -24,6 +24,14 @@
 	</screenshots>
 	<launchable type="desktop-id">io.thenexusavenger.Nexus-LU-Launcher.desktop</launchable>
 	<releases>
+		<release version="V.2.4.0" date="2026-08-30">
+			<description>
+				<ul>
+					<li>Removed special case for detecting Wayland capability for the Steam Deck using Gamescope due to not working previously.</li>
+					<li>Migrated to .NET 10.</li>
+				</ul>
+			</description>
+		</release>
 		<release version="V.2.3.2" date="2026-02-25">
 			<description>
 				<ul>

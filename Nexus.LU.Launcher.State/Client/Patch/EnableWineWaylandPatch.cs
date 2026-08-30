@@ -43,27 +43,11 @@ public class EnableWineWaylandPatch : IClientPatch
 
     /// <summary>
     /// Returns if LEGO Universe can be launched using Wayland.
-    /// The launcher might be launched under X11 in Gamescope, so this handles that special case.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Whether Wayland can be used for the current environment.</returns>
     public static bool CanUseWayland()
     {
-        // Check if XDG_SESSION_TYPE is Wayland.
-        if (Environment.GetEnvironmentVariable("XDG_SESSION_TYPE")?.ToLower() == "wayland")
-        {
-            return true;
-        }
-        
-        // Check if an environment variable ending in WAYLAND_DISPLAY is set.
-        // This is hacky and not standard, but it only really needs to work for the Steam Deck.
-        foreach (DictionaryEntry environmentVariable in Environment.GetEnvironmentVariables())
-        {
-            if (!environmentVariable.Key.ToString()!.ToLower().EndsWith("wayland_display")) continue;
-            return true;
-        }
-
-        // Return false (not under Wayland).
-        return false;
+        return Environment.GetEnvironmentVariable("XDG_SESSION_TYPE")?.ToLower() == "wayland";
     }
     
     /// <summary>
